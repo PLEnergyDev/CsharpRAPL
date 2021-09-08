@@ -1,4 +1,4 @@
-﻿namespace TestProject.CardsExample {
+﻿namespace ExampleProject.CardsExample {
 	public enum Value {
 		Two,
 		Three,

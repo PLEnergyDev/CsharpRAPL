@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TestProject.CardsExample {
+namespace ExampleProject.CardsExample {
 	public class Deck {
 		private readonly List<Card> _deck = new();
 		private Random Random { get; set; }
