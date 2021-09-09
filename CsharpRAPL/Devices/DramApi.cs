@@ -1,9 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System;
 
 namespace CsharpRAPL.Devices {
-	public class DramApi : DeviceApi {
+	public sealed class DramApi : DeviceApi {
 		public DramApi(List<int> socketIds = null) : base(socketIds) { }
 
 		public override List<string> OpenRaplFiles() {
@@ -24,9 +24,8 @@ namespace CsharpRAPL.Devices {
 			}
 
 			var raplFiles = new List<string>();
-			foreach ((string socketDirectoryName, int raplSocketId) in socketNames) {
+			foreach ((string socketDirectoryName, int raplSocketId) in socketNames)
 				raplFiles.Add(GetDramFile(socketDirectoryName, raplSocketId));
-			}
 
 			return raplFiles;
 		}
