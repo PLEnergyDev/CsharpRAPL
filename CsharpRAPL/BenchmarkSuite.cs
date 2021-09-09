@@ -13,8 +13,8 @@ namespace CsharpRAPL {
 			_benchmarks.Add(new Benchmark(benchmarkName, iterations, benchmark, benchmarkOutput));
 		}
 
-		public void RunAll() {
-			foreach (Benchmark bench in _benchmarks) {
+		public void RunAll(int skipAmount = 0) {
+			foreach (Benchmark bench in _benchmarks.Skip(skipAmount)) {
 				bench.Run();
 			}
 		}
