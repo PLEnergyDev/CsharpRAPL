@@ -132,7 +132,7 @@ namespace CsharpRAPL {
 				measure.Apis.Where(tuple => tuple.apiName == "timer")).Average(tuple => tuple.apiValue);
 
 			double tempValues = _resultBuffer.SelectMany(measure =>
-				measure.Apis.Where(tuple => tuple.apiName == "temp")).Average(tuple => tuple.apiValue);
+				measure.Apis.Where(tuple => tuple.apiName == "temp")).Average(tuple => tuple.apiValue / 1000);
 
 			double dramValues = _resultBuffer.SelectMany(measure =>
 				measure.Apis.Where(tuple => tuple.apiName == "dram")).Average(tuple => tuple.apiValue);
