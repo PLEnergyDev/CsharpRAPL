@@ -17,7 +17,7 @@ namespace CsharpRAPL {
 		public void RunAll(int skipAmount = 0) {
 			List<Benchmark> benchmarks = _benchmarks.Skip(skipAmount).ToList();
 			foreach ((int index, Benchmark bench) in benchmarks.WithIndex()) {
-				Console.WriteLine($"Starting {bench.Name} which is {index} out of {benchmarks.Count}");
+				Console.WriteLine($"Starting {bench.Name} which is {index} out of {benchmarks.Count - 1} tests");
 				bench.Run();
 			}
 		}
