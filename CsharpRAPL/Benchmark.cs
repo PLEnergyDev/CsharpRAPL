@@ -1,24 +1,28 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
+using CsharpRAPL.Analysis;
 using CsharpRAPL.Data;
 using CsharpRAPL.Devices;
+using CsvHelper;
+using CsvHelper.Configuration;
 
 namespace CsharpRAPL {
 	public class Benchmark {
+		public int Iterations { get; }
+		public string Name { get; }
+
 		private const int MaxExecutionTime = 2700; //In seconds
 
 		// Prints everything to a null stream similar to /dev/null
 		private readonly TextWriter _benchmarkOutputStream = new StreamWriter(Stream.Null);
-		private readonly RAPL _rapl;
+		private RAPL _rapl;
 		private readonly TextWriter _stdout;
 		private double _elapsedTime;
 		private List<Measure> _resultBuffer = new();
 		private readonly string _outputFilePath;
-		public int Iterations { get; private set; }
-		public string Name { get; private set; }
+
 
 		private readonly Func<int> _benchmark;
 		private readonly Action<int> _benchmarkOutput;
@@ -30,27 +34,18 @@ namespace CsharpRAPL {
 		}
 
 
-		public Benchmark(string name, int iterations, bool silenceBenchmarkOutput = true) {
+		public Benchmark(string name, int iterations, bool silenceBenchmarkOutput = true, string group = null) {
 			Name = name;
-
 			_stdout = Console.Out;
 			Directory.CreateDirectory($"results/{name}");
-			_outputFilePath =
-				$"results/{name}/{name}-{DateTime.Now.ToString("s").Replace(":", "-")}.csv";
+			string time = DateTime.Now.ToString("s").Replace(":", "-");
+
+			_outputFilePath = $"results/{name}/{name}-{time}.csv";
 
 			if (!silenceBenchmarkOutput)
 				_benchmarkOutputStream = _stdout;
 
 			Iterations = iterations;
-
-			_rapl = new RAPL(
-				new List<Sensor> {
-					new("timer", new TimerApi(), CollectionApproach.Difference),
-					new("package", new PackageApi(), CollectionApproach.Difference),
-					new("dram", new DramApi(), CollectionApproach.Difference),
-					new("temp", new TempApi(), CollectionApproach.Average)
-				}
-			);
 		}
 
 		private void Start() {
@@ -82,6 +77,15 @@ namespace CsharpRAPL {
 		public void Run<TR>(Func<TR> benchmark, Action<TR> benchmarkOutput) {
 			//Sets console to write to null
 			Console.SetOut(_benchmarkOutputStream);
+
+			_rapl = new RAPL(
+				new List<Sensor> {
+					new("timer", new TimerApi(), CollectionApproach.Difference),
+					new("package", new PackageApi(), CollectionApproach.Difference),
+					new("dram", new DramApi(), CollectionApproach.Difference),
+					new("temp", new TempApi(), CollectionApproach.Average)
+				}
+			);
 
 			_elapsedTime = 0;
 			_resultBuffer = new List<Measure>();
@@ -125,42 +129,38 @@ namespace CsharpRAPL {
 		//Saves result to temporary file
 		//This is overwritten each time SaveResults is run
 		private void SaveResults() {
-			double packageValues = _resultBuffer.SelectMany(measure =>
-				measure.Apis.Where(tuple => tuple.apiName == "package")).Average(tuple => tuple.apiValue);
+			using var writer = new StreamWriter(_outputFilePath);
+			using var csv = new CsvWriter(writer, new CsvConfiguration(CultureInfo.InvariantCulture)
+				{ Delimiter = ";" });
+			csv.WriteRecords(GetResults());
+		}
 
-			double timeValues = _resultBuffer.SelectMany(measure =>
-				measure.Apis.Where(tuple => tuple.apiName == "timer")).Average(tuple => tuple.apiValue);
-
-			double tempValues = _resultBuffer.SelectMany(measure =>
-				measure.Apis.Where(tuple => tuple.apiName == "temp")).Average(tuple => tuple.apiValue / 1000);
-
-			double dramValues = _resultBuffer.SelectMany(measure =>
-				measure.Apis.Where(tuple => tuple.apiName == "dram")).Average(tuple => tuple.apiValue);
-
-			string header =
-				$"duration(ms) avg={timeValues};pkg(µj) avg={packageValues};dram(µj) avg={dramValues};temp(C) avg={tempValues}" +
-				"\n";
-			var result = new StringBuilder(header);
-
+		public List<BenchmarkResult> GetResults() {
+			var result = new List<BenchmarkResult>();
 
 			foreach (Measure m in _resultBuffer) {
-				foreach ((string apiName, double apiValue) in m.Apis)
+				var data = new BenchmarkResult();
+				foreach ((string apiName, double apiValue) in m.Apis) {
 					switch (apiName) {
 						case "temp":
-							result.Append(apiValue / 1000);
+							data.Temperature = apiValue / 1000;
 							break;
 						case "timer":
-							result.Append($"{apiValue,0:N3};");
+							data.ElapsedTime = apiValue;
+							break;
+						case "dram":
+							data.DramPower = apiValue;
+							break;
+						case "pkg":
+							data.PackagePower = apiValue;
 							break;
 						default:
-							result.Append(apiValue + ";");
-							break;
+							throw new ArgumentOutOfRangeException($"{apiName} is not suported");
 					}
-
-				result.AppendLine();
+				}
 			}
 
-			File.WriteAllText(_outputFilePath, result.ToString());
+			return result;
 		}
 	}
 }
