@@ -1,6 +1,7 @@
-﻿using CsharpRAPL;
+using System;
+using System.Collections.Generic;
+using CsharpRAPL;
 using ExampleProject.Examples;
-
 
 Benchmarks.Iterations = args.Length > 0 ? int.Parse(args[0]) : 1;
 Benchmarks.LoopIterations = args.Length > 1 ? int.Parse(args[1]) : 100_000_000;
@@ -35,8 +36,25 @@ suite.AddBenchmark(Benchmarks.Iterations, Benchmarks.IfElseIf);
 suite.AddBenchmark(Benchmarks.Iterations, Benchmarks.Switch);
 suite.AddBenchmark(Benchmarks.Iterations, Benchmarks.CompOp);
 
-suite.AddBenchmark( Benchmarks.Iterations, Benchmarks.Increment);
-suite.AddBenchmark( Benchmarks.Iterations, Benchmarks.Decrement);
-
+suite.AddBenchmark(Benchmarks.Iterations, Benchmarks.Increment);
+suite.AddBenchmark(Benchmarks.Iterations, Benchmarks.Decrement);
 
 suite.RunAll();
+
+// EXAMPLE USAGE OF ANALYSIS
+// Save the p-values to a dictionary
+Dictionary<string, double> pValues = suite.AnalyseResults("ForLoop", "WhileLoop");
+
+
+// Print the p-values to console
+// The lower the p-value the higher the chance for that statement to be correct
+// P-value means the chance of the null hypothesis to be true
+Console.WriteLine("Is the null hypothesis true? I.e. is the opposite of what the key implies true?");
+foreach ((string name, double value) in pValues) {
+	Console.WriteLine($"{name}:{value}");
+}
+
+Console.WriteLine("Is the alternate hypothesis true? I.e. is what the key implies true?");
+foreach ((string name, double value) in pValues) {
+	Console.WriteLine($"{name}:{1 - value}");
+}

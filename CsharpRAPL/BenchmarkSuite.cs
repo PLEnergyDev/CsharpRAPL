@@ -1,25 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+using System.Diagnostics;
 using System.Linq;
 
 namespace CsharpRAPL {
 	public class BenchmarkSuite {
-		private readonly List<Benchmark> _benchmarks = new();
+		public bool HasRun { get; private set; }
+		private Dictionary<string, Benchmark> Benchmarks { get; } = new();
 
 		public void AddBenchmark(int iterations, Func<int> benchmark) {
 			string benchmarkName = benchmark.Method.Name;
-			if (_benchmarks.Any(bench => bench.Name == benchmarkName))
+			if (Benchmarks.ContainsKey(benchmarkName))
 				throw new Exception($"Trying to add a benchmark with the same name twice. Name is: {benchmarkName}");
-			_benchmarks.Add(new Benchmark(benchmarkName, iterations, benchmark, Console.WriteLine));
+
+			Benchmarks.Add(benchmarkName, new Benchmark(benchmarkName, iterations, benchmark, Console.WriteLine));
 		}
 
 		public void RunAll(int skipAmount = 0) {
-			List<Benchmark> benchmarks = _benchmarks.Skip(skipAmount).ToList();
-			foreach ((int index, Benchmark bench) in benchmarks.WithIndex()) {
-				Console.WriteLine($"Starting {bench.Name} which is {index} out of {benchmarks.Count - 1} tests");
-				bench.Run();
+			if (Environment.OSVersion.Platform != PlatformID.Unix) {
+				throw new NotSupportedException("Running the benchmarks is only supported on Unix.");
 			}
+
+			List<Benchmark> benchmarks = Benchmarks.Skip(skipAmount).Select(pair => pair.Value).ToList();
+
+			if (benchmarks.Count != 0)
+				HasRun = true;
+
+			var timer = new Stopwatch();
+			foreach ((int index, Benchmark bench) in benchmarks.WithIndex()) {
+				Console.WriteLine($"Starting {bench.Name} which is the {index + 1} out of {benchmarks.Count} tests");
+				timer.Start();
+				bench.Run();
+				timer.Stop();
+				Console.WriteLine($"Finished {bench.Name} which took {timer.ElapsedMilliseconds}ms");
+				timer.Reset();
+			}
+		}
+
+		public Dictionary<string, double> AnalyseResults(string firstBenchmarkName, string secondBenchmarkName) {
+			if (!HasRun) {
+				throw new NotSupportedException(
+					"It's not supported to analyse results before the benchmarks have run. Use Analysis class instead where you can use paths");
+			}
+
+			if (Benchmarks.ContainsKey(firstBenchmarkName)) {
+				throw new KeyNotFoundException($"No benchmark with the name {firstBenchmarkName} has been registered.");
+			}
+
+			if (Benchmarks.ContainsKey(secondBenchmarkName)) {
+				throw new KeyNotFoundException(
+					$"No benchmark with the name {secondBenchmarkName} has been registered.");
+			}
+
+			Benchmark firstBenchmark = Benchmarks[firstBenchmarkName];
+			Benchmark secondBenchmark = Benchmarks[secondBenchmarkName];
+			var analysis = new Analysis.Analysis(firstBenchmark, secondBenchmark);
+			return analysis.CalculatePValue();
 		}
 	}
 }
