@@ -3,6 +3,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Accord.Statistics.Testing;
+using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Data;
 using CsvHelper;
 using CsvHelper.Configuration;
 

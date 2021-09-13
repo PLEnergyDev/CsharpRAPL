@@ -2,50 +2,53 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using CsharpRAPL.Analysis;
 using CsharpRAPL.Data;
 using CsharpRAPL.Devices;
 using CsvHelper;
 using CsvHelper.Configuration;
 
-namespace CsharpRAPL {
+namespace CsharpRAPL.Benchmarking {
 	public class Benchmark {
 		public int Iterations { get; }
 		public string Name { get; }
+		public string Group { get; }
 
 		private const int MaxExecutionTime = 2700; //In seconds
 
 		// Prints everything to a null stream similar to /dev/null
 		private readonly TextWriter _benchmarkOutputStream = new StreamWriter(Stream.Null);
-		private RAPL _rapl;
 		private readonly TextWriter _stdout;
-		private double _elapsedTime;
-		private List<Measure> _resultBuffer = new();
 		private readonly string _outputFilePath;
-
-
 		private readonly Func<int> _benchmark;
 		private readonly Action<int> _benchmarkOutput;
 
+		private RAPL _rapl;
+		private double _elapsedTime;
+		private List<Measure> _resultBuffer = new();
+
 		public Benchmark(string name, int iterations, Func<int> benchmark, Action<int> benchmarkOutput,
-			bool silenceBenchmarkOutput = true) : this(name, iterations, silenceBenchmarkOutput) {
+			bool silenceBenchmarkOutput = true, string group = null) {
+			Name = name;
+			Group = group;
+			Iterations = iterations;
+
 			_benchmark = benchmark;
 			_benchmarkOutput = benchmarkOutput;
-		}
-
-
-		public Benchmark(string name, int iterations, bool silenceBenchmarkOutput = true, string group = null) {
-			Name = name;
 			_stdout = Console.Out;
-			Directory.CreateDirectory($"results/{name}");
-			string time = DateTime.Now.ToString("s").Replace(":", "-");
-
-			_outputFilePath = $"results/{name}/{name}-{time}.csv";
 
 			if (!silenceBenchmarkOutput)
 				_benchmarkOutputStream = _stdout;
 
-			Iterations = iterations;
+
+			string time = DateTime.Now.ToString("s").Replace(":", "-");
+			if (Group != null) {
+				Directory.CreateDirectory($"results/{group}/{name}");
+				_outputFilePath = $"results/{group}/{name}/{name}-{time}.csv";
+			}
+			else {
+				Directory.CreateDirectory($"results/{name}");
+				_outputFilePath = $"results/{name}/{name}-{time}.csv";
+			}
 		}
 
 		private void Start() {
