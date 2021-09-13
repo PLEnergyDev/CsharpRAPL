@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace CsharpRAPL {
+namespace CsharpRAPL.Benchmarking {
 	public class BenchmarkSuite {
 		public bool HasRun { get; private set; }
 		private Dictionary<string, Benchmark> Benchmarks { get; } = new();
 
-		public void AddBenchmark(int iterations, Func<int> benchmark) {
+		public void AddBenchmark(string group, int iterations, Func<int> benchmark) {
 			string benchmarkName = benchmark.Method.Name;
 			if (Benchmarks.ContainsKey(benchmarkName))
 				throw new Exception($"Trying to add a benchmark with the same name twice. Name is: {benchmarkName}");
 
-			Benchmarks.Add(benchmarkName, new Benchmark(benchmarkName, iterations, benchmark, Console.WriteLine));
+			Benchmarks.Add(benchmarkName, new Benchmark(benchmarkName, iterations, benchmark, Console.WriteLine,
+				@group: group));
+		}
+
+		public void AddBenchmark(int iterations, Func<int> benchmark) {
+			AddBenchmark(null, iterations, benchmark);
 		}
 
 		public void RunAll(int skipAmount = 0) {
