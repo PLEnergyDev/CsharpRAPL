@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace CsharpRAPL {
-	public abstract class DeviceApi {
+	public abstract class DeviceApi : IDeviceApi {
 		private readonly List<int> _socketIds;
 		private readonly List<string> _sysFiles;
 
-		public DeviceApi(List<int> socketIds = null) {
+		protected DeviceApi(List<int> socketIds = null) {
 			List<int> allSocketIds = GetSocketIds();
 			if (socketIds == null)
 				_socketIds = allSocketIds;
@@ -25,13 +25,13 @@ namespace CsharpRAPL {
 			_sysFiles = OpenRaplFiles();
 		}
 
-		private static List<int> GetCpus() {
+		public List<int> GetCpus() {
 			const string apiFile = "/sys/devices/system/cpu/present";
 			var cpuList = new List<int>();
 			var cpuCountRe = new Regex(@"\d+|-");
 			MatchCollection cpuMatches = cpuCountRe.Matches(File.ReadAllText(apiFile).Trim());
 
-			for (var i = 0; i < cpuMatches.Count; i++)
+			for (var i = 0; i < cpuMatches.Count; i++) {
 				if (cpuMatches[i].Value == "-") {
 					int before = int.Parse(cpuMatches[i - 1].Value);
 					int after = int.Parse(cpuMatches[i + 1].Value);
@@ -40,11 +40,12 @@ namespace CsharpRAPL {
 				else {
 					cpuList.Add(int.Parse(cpuMatches[i].Value));
 				}
+			}
 
 			return cpuList;
 		}
 
-		private static List<int> GetSocketIds() {
+		public List<int> GetSocketIds() {
 			var socketIdList = new List<int>();
 
 			foreach (int cpuId in GetCpus()) {
