@@ -154,7 +154,7 @@ namespace CsharpRAPL.Benchmarking {
 						case "dram":
 							data.DramPower = apiValue;
 							break;
-						case "pkg":
+						case "package":
 							data.PackagePower = apiValue;
 							break;
 						default:
