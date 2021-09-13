@@ -161,6 +161,8 @@ namespace CsharpRAPL.Benchmarking {
 							throw new ArgumentOutOfRangeException($"{apiName} is not suported");
 					}
 				}
+
+				result.Add(data);
 			}
 
 			return result;
