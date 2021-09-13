@@ -48,11 +48,11 @@ namespace CsharpRAPL.Benchmarking {
 					"It's not supported to analyse results before the benchmarks have run. Use Analysis class instead where you can use paths");
 			}
 
-			if (Benchmarks.ContainsKey(firstBenchmarkName)) {
+			if (!Benchmarks.ContainsKey(firstBenchmarkName)) {
 				throw new KeyNotFoundException($"No benchmark with the name {firstBenchmarkName} has been registered.");
 			}
 
-			if (Benchmarks.ContainsKey(secondBenchmarkName)) {
+			if (!Benchmarks.ContainsKey(secondBenchmarkName)) {
 				throw new KeyNotFoundException(
 					$"No benchmark with the name {secondBenchmarkName} has been registered.");
 			}
