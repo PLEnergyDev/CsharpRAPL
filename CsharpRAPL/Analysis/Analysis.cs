@@ -10,17 +10,23 @@ using CsvHelper.Configuration;
 
 namespace CsharpRAPL.Analysis {
 	public class Analysis {
-		private readonly List<BenchmarkResult> _firstDataset;
-		private readonly List<BenchmarkResult> _secondDataset;
+		private readonly (string Name, List<BenchmarkResult> Data) _firstDataset;
+		private readonly (string Name, List<BenchmarkResult> Data) _secondDataset;
 
 		public Analysis(string pathToFirstData, string pathToSecondData) {
-			_firstDataset = ReadData(pathToFirstData);
-			_secondDataset = ReadData(pathToSecondData);
+			_firstDataset = (Path.GetFileNameWithoutExtension(pathToFirstData), ReadData(pathToFirstData));
+			_secondDataset = (Path.GetFileNameWithoutExtension(pathToSecondData), ReadData(pathToSecondData));
 		}
 
 		public Analysis(Benchmark firstBenchmark, Benchmark secondBenchmark) {
-			_firstDataset = firstBenchmark.GetResults();
-			_secondDataset = secondBenchmark.GetResults();
+			_firstDataset = (firstBenchmark.Name, firstBenchmark.GetResults());
+			_secondDataset = (secondBenchmark.Name, secondBenchmark.GetResults());
+		}
+
+		public Analysis(string firstBenchmarkName, List<BenchmarkResult> firstBenchmarkResults,
+			string secondBenchmarkName, List<BenchmarkResult> secondBenchmarkResults) {
+			_firstDataset = (firstBenchmarkName, firstBenchmarkResults);
+			_secondDataset = (secondBenchmarkName, secondBenchmarkResults);
 		}
 
 		private static List<BenchmarkResult> ReadData(string path) {
@@ -32,14 +38,14 @@ namespace CsharpRAPL.Analysis {
 		}
 
 		public Dictionary<string, double> CalculatePValue() {
-			double[] timesOne = _firstDataset.Select(data => data.ElapsedTime).ToArray();
-			double[] timesTwo = _secondDataset.Select(data => data.ElapsedTime).ToArray();
+			double[] timesOne = _firstDataset.Data.Select(data => data.ElapsedTime).ToArray();
+			double[] timesTwo = _secondDataset.Data.Select(data => data.ElapsedTime).ToArray();
 
-			double[] packageOne = _firstDataset.Select(data => data.PackagePower).ToArray();
-			double[] packageTwo = _secondDataset.Select(data => data.PackagePower).ToArray();
+			double[] packageOne = _firstDataset.Data.Select(data => data.PackagePower).ToArray();
+			double[] packageTwo = _secondDataset.Data.Select(data => data.PackagePower).ToArray();
 
-			double[] dramOne = _firstDataset.Select(data => data.DramPower).ToArray();
-			double[] dramTwo = _secondDataset.Select(data => data.DramPower).ToArray();
+			double[] dramOne = _firstDataset.Data.Select(data => data.DramPower).ToArray();
+			double[] dramTwo = _secondDataset.Data.Select(data => data.DramPower).ToArray();
 
 
 			double firstTimeMean = timesOne.Average();
@@ -61,12 +67,12 @@ namespace CsharpRAPL.Analysis {
 			var dramSecondTTest = new TTest(dramTwo, firstDramMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
 
 			var results = new Dictionary<string, double> {
-				{ "firstLowerThanSecondTime", timeFirstTTest.PValue },
-				{ "secondLowerThanFirstTime", timeSecondTTest.PValue },
-				{ "firstLowerThanSecondPkg", pkgFirstTTest.PValue },
-				{ "secondLowerThanFirstPkg", pkgSecondTTest.PValue },
-				{ "firstLowerThanSecondDram", dramFirstTTest.PValue },
-				{ "secondLowerThanFirstDram", dramSecondTTest.PValue }
+				{ $"{_firstDataset.Name} lower than {_secondDataset.Name} Time", timeFirstTTest.PValue },
+				{ $"{_secondDataset.Name} lower than {_firstDataset.Name} Time", timeSecondTTest.PValue },
+				{ $"{_firstDataset.Name} lower than {_secondDataset.Name} Package", pkgFirstTTest.PValue },
+				{ $"{_secondDataset.Name} lower than {_firstDataset.Name} Package", pkgSecondTTest.PValue },
+				{ $"{_firstDataset.Name} lower than {_secondDataset.Name} Dram", dramFirstTTest.PValue },
+				{ $"{_secondDataset.Name} lower than {_firstDataset.Name} Dram", dramSecondTTest.PValue }
 			};
 
 			return results;
