@@ -37,6 +37,63 @@ namespace CsharpRAPL.Analysis {
 			return csv.GetRecords<BenchmarkResult>().ToList();
 		}
 
+		public ((string Name, BenchmarkResult First), (string Name, BenchmarkResult Second)) GetAverage() {
+			var first = new BenchmarkResult {
+				Temperature = _firstDataset.Data.Average(result => result.Temperature),
+				DramPower = _firstDataset.Data.Average(result => result.DramPower),
+				ElapsedTime = _firstDataset.Data.Average(result => result.ElapsedTime),
+				PackagePower = _firstDataset.Data.Average(result => result.PackagePower),
+			};
+
+			var second = new BenchmarkResult {
+				Temperature = _secondDataset.Data.Average(result => result.Temperature),
+				DramPower = _secondDataset.Data.Average(result => result.DramPower),
+				ElapsedTime = _secondDataset.Data.Average(result => result.ElapsedTime),
+				PackagePower = _secondDataset.Data.Average(result => result.PackagePower),
+			};
+
+
+			return ((_firstDataset.Name, first), (_secondDataset.Name, second));
+		}
+
+		public ((string Name, BenchmarkResult First), (string Name, BenchmarkResult Second)) GetMax() {
+			var first = new BenchmarkResult {
+				Temperature = _firstDataset.Data.Max(result => result.Temperature),
+				DramPower = _firstDataset.Data.Max(result => result.DramPower),
+				ElapsedTime = _firstDataset.Data.Max(result => result.ElapsedTime),
+				PackagePower = _firstDataset.Data.Max(result => result.PackagePower),
+			};
+
+			var second = new BenchmarkResult {
+				Temperature = _secondDataset.Data.Max(result => result.Temperature),
+				DramPower = _secondDataset.Data.Max(result => result.DramPower),
+				ElapsedTime = _secondDataset.Data.Max(result => result.ElapsedTime),
+				PackagePower = _secondDataset.Data.Max(result => result.PackagePower),
+			};
+
+
+			return ((_firstDataset.Name, first), (_secondDataset.Name, second));
+		}
+
+		public ((string Name, BenchmarkResult First), (string Name, BenchmarkResult Second)) GetMin() {
+			var first = new BenchmarkResult {
+				Temperature = _firstDataset.Data.Min(result => result.Temperature),
+				DramPower = _firstDataset.Data.Min(result => result.DramPower),
+				ElapsedTime = _firstDataset.Data.Min(result => result.ElapsedTime),
+				PackagePower = _firstDataset.Data.Min(result => result.PackagePower),
+			};
+
+			var second = new BenchmarkResult {
+				Temperature = _secondDataset.Data.Min(result => result.Temperature),
+				DramPower = _secondDataset.Data.Min(result => result.DramPower),
+				ElapsedTime = _secondDataset.Data.Min(result => result.ElapsedTime),
+				PackagePower = _secondDataset.Data.Min(result => result.PackagePower),
+			};
+
+
+			return ((_firstDataset.Name, first), (_secondDataset.Name, second));
+		}
+
 		public Dictionary<string, double> CalculatePValue() {
 			double[] timesOne = _firstDataset.Data.Select(data => data.ElapsedTime).ToArray();
 			double[] timesTwo = _secondDataset.Data.Select(data => data.ElapsedTime).ToArray();

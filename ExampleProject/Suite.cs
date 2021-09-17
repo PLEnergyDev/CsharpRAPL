@@ -11,8 +11,9 @@ var suite = new BenchmarkCollector(Benchmarks.Iterations);
 suite.RunAll();
 
 // EXAMPLE USAGE OF ANALYSIS
+var analysis = suite.AnalyseResults("ForLoop", "WhileLoop");
 // Save the p-values to a dictionary
-Dictionary<string, double> pValues = suite.AnalyseResults("ForLoop", "WhileLoop");
+Dictionary<string, double> pValues = analysis.CalculatePValue();
 
 
 // Print the p-values to console
@@ -27,3 +28,8 @@ Console.WriteLine("Is the alternate hypothesis true? I.e. is what the key implie
 foreach ((string name, double value) in pValues) {
 	Console.WriteLine($"{name}:{1 - value}");
 }
+
+
+Console.WriteLine("Min:\n" + analysis.GetMin());
+Console.WriteLine("Max:\n" + analysis.GetMax());
+Console.WriteLine("Average:\n" + analysis.GetAverage());

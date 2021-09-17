@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -42,7 +42,7 @@ namespace CsharpRAPL.Benchmarking {
 			}
 		}
 
-		public Dictionary<string, double> AnalyseResults(string firstBenchmarkName, string secondBenchmarkName) {
+		public Analysis.Analysis AnalyseResults(string firstBenchmarkName, string secondBenchmarkName) {
 			if (!HasRun) {
 				throw new NotSupportedException(
 					"It's not supported to analyse results before the benchmarks have run. Use Analysis class instead where you can use paths");
@@ -60,7 +60,7 @@ namespace CsharpRAPL.Benchmarking {
 			Benchmark firstBenchmark = Benchmarks[firstBenchmarkName];
 			Benchmark secondBenchmark = Benchmarks[secondBenchmarkName];
 			var analysis = new Analysis.Analysis(firstBenchmark, secondBenchmark);
-			return analysis.CalculatePValue();
+			return analysis;
 		}
 	}
 }
