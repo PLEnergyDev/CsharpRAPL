@@ -37,7 +37,7 @@ namespace CsharpRAPL.Analysis {
 			return csv.GetRecords<BenchmarkResult>().ToList();
 		}
 
-		public ((string Name, BenchmarkResult First), (string Name, BenchmarkResult Second)) GetAverage() {
+		public ((string Name, BenchmarkResult Data) FirstDataSet, (string Name, BenchmarkResult Data) SecondDataSet) GetAverage() {
 			var first = new BenchmarkResult {
 				Temperature = _firstDataset.Data.Average(result => result.Temperature),
 				DramPower = _firstDataset.Data.Average(result => result.DramPower),
@@ -56,7 +56,7 @@ namespace CsharpRAPL.Analysis {
 			return ((_firstDataset.Name, first), (_secondDataset.Name, second));
 		}
 
-		public ((string Name, BenchmarkResult First), (string Name, BenchmarkResult Second)) GetMax() {
+		public ((string Name, BenchmarkResult Data) FirstDataSet, (string Name, BenchmarkResult Data) SecondDataSet) GetMax() {
 			var first = new BenchmarkResult {
 				Temperature = _firstDataset.Data.Max(result => result.Temperature),
 				DramPower = _firstDataset.Data.Max(result => result.DramPower),
@@ -75,7 +75,7 @@ namespace CsharpRAPL.Analysis {
 			return ((_firstDataset.Name, first), (_secondDataset.Name, second));
 		}
 
-		public ((string Name, BenchmarkResult First), (string Name, BenchmarkResult Second)) GetMin() {
+		public ((string Name, BenchmarkResult Data) FirstDataSet, (string Name, BenchmarkResult Data) SecondDataSet) GetMin() {
 			var first = new BenchmarkResult {
 				Temperature = _firstDataset.Data.Min(result => result.Temperature),
 				DramPower = _firstDataset.Data.Min(result => result.DramPower),

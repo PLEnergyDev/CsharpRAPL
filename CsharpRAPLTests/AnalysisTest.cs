@@ -102,5 +102,65 @@ namespace CsharpRAPL.Tests {
 			Assert.AreEqual(5.5762042132764618E-09, pValues["addSet lower than divideSet Dram"], double.Epsilon);
 			Assert.AreEqual(0.99999996149930748, pValues["divideSet lower than addSet Dram"], double.Epsilon);
 		}
+
+		[Test]
+		public void TestMin01() {
+			Analysis.Analysis analysis = new("addSet.csv", "divideSet.csv");
+			var ((firstName, firstData), (secondName, secondData)) = analysis.GetMin();
+			Assert.AreEqual("addSet", firstName);
+			Assert.AreEqual("divideSet", secondName);
+
+			Assert.AreEqual(74463, firstData.DramPower, double.Epsilon);
+			Assert.AreEqual(147156, secondData.DramPower, double.Epsilon);
+
+			Assert.AreEqual(2458673, firstData.PackagePower, double.Epsilon);
+			Assert.AreEqual(4949878, secondData.PackagePower, double.Epsilon);
+
+			Assert.AreEqual(147.91499999999999, firstData.ElapsedTime, double.Epsilon);
+			Assert.AreEqual( 293.086, secondData.ElapsedTime, double.Epsilon);
+
+			Assert.AreEqual(73.5, firstData.Temperature, double.Epsilon);
+			Assert.AreEqual(73.5, secondData.Temperature, double.Epsilon);
+		}
+
+		[Test]
+		public void TestMax01() {
+			Analysis.Analysis analysis = new("addSet.csv", "divideSet.csv");
+			var ((firstName, firstData), (secondName, secondData)) = analysis.GetMax();
+			Assert.AreEqual("addSet", firstName);
+			Assert.AreEqual("divideSet", secondName);
+
+			Assert.AreEqual(80688.0, firstData.DramPower, double.Epsilon);
+			Assert.AreEqual(157470.0, secondData.DramPower, double.Epsilon);
+
+			Assert.AreEqual(2592645.0, firstData.PackagePower, double.Epsilon);
+			Assert.AreEqual(5139086.0, secondData.PackagePower, double.Epsilon);
+
+			Assert.AreEqual(151.454, firstData.ElapsedTime, double.Epsilon);
+			Assert.AreEqual(297.47, secondData.ElapsedTime, double.Epsilon);
+
+			Assert.AreEqual(76.5, firstData.Temperature, double.Epsilon);
+			Assert.AreEqual(75.0, secondData.Temperature, double.Epsilon);
+		}
+
+		[Test]
+		public void TestAverage01() {
+			Analysis.Analysis analysis = new("addSet.csv", "divideSet.csv");
+			var ((firstName, firstData), (secondName, secondData)) = analysis.GetAverage();
+			Assert.AreEqual("addSet", firstName);
+			Assert.AreEqual("divideSet", secondName);
+
+			Assert.AreEqual(76405.666666666672, firstData.DramPower, double.Epsilon);
+			Assert.AreEqual(150024.0, secondData.DramPower, double.Epsilon);
+
+			Assert.AreEqual(2507480.6666666665, firstData.PackagePower, double.Epsilon);
+			Assert.AreEqual(5021705.5, secondData.PackagePower, double.Epsilon);
+
+			Assert.AreEqual(149.01250000000002, firstData.ElapsedTime, double.Epsilon);
+			Assert.AreEqual(294.70683333333335, secondData.ElapsedTime, double.Epsilon);
+
+			Assert.AreEqual(74.833333333333329, firstData.Temperature, double.Epsilon);
+			Assert.AreEqual(74.25, secondData.Temperature, double.Epsilon);
+		}
 	}
 }
