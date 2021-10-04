@@ -8,13 +8,13 @@ namespace CsharpRAPL.Benchmarking {
 		public bool HasRun { get; private set; }
 		private Dictionary<string, Benchmark> Benchmarks { get; } = new();
 
-		public void AddBenchmark(string group, int iterations, Func<int> benchmark) {
+		public void AddBenchmark(string? group, int iterations, Func<int> benchmark) {
 			string benchmarkName = benchmark.Method.Name;
 			if (Benchmarks.ContainsKey(benchmarkName))
 				throw new Exception($"Trying to add a benchmark with the same name twice. Name is: {benchmarkName}");
 
 			Benchmarks.Add(benchmarkName, new Benchmark(benchmarkName, iterations, benchmark, Console.WriteLine,
-				@group: group));
+				group: group));
 		}
 
 		public void AddBenchmark(int iterations, Func<int> benchmark) {

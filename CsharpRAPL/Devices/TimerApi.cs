@@ -1,20 +1,20 @@
-using System.Collections.Generic;
 using System.Diagnostics;
+using CsharpRAPL.Data;
 
 namespace CsharpRAPL.Devices {
 	public sealed class TimerApi : DeviceApi {
 		private readonly Stopwatch _sw = new();
 
-		public TimerApi() {
+		public TimerApi() : base(CollectionApproach.Difference) {
 			_sw.Start();
 		}
 
-		public override List<string> OpenRaplFiles() {
-			return null;
+		protected override string OpenRaplFile() {
+			return "";
 		}
 
-		public override List<double> Collect() {
-			return new List<double> { _sw.Elapsed.TotalMilliseconds };
+		protected override double Collect() {
+			return _sw.Elapsed.TotalMilliseconds;
 		}
 	}
 }
