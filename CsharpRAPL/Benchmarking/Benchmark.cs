@@ -1,9 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using CsharpRAPL.Data;
-using CsharpRAPL.Devices;
 using CsvHelper;
 using CsvHelper.Configuration;
 
@@ -11,7 +10,7 @@ namespace CsharpRAPL.Benchmarking {
 	public class Benchmark {
 		public int Iterations { get; }
 		public string Name { get; }
-		public string Group { get; }
+		public string? Group { get; }
 
 		private const int MaxExecutionTime = 2700; //In seconds
 
@@ -21,13 +20,13 @@ namespace CsharpRAPL.Benchmarking {
 		private readonly string _outputFilePath;
 		private readonly Func<int> _benchmark;
 		private readonly Action<int> _benchmarkOutput;
+		private readonly List<BenchmarkResult> _resultBuffer = new();
 
-		private RAPL _rapl;
+		private RAPL? _rapl;
 		private double _elapsedTime;
-		private List<Measure> _resultBuffer = new();
 
 		public Benchmark(string name, int iterations, Func<int> benchmark, Action<int> benchmarkOutput,
-			bool silenceBenchmarkOutput = true, string group = null) {
+			bool silenceBenchmarkOutput = true, string? group = null) {
 			Name = name;
 			Group = group;
 			Iterations = iterations;
@@ -52,27 +51,27 @@ namespace CsharpRAPL.Benchmarking {
 		}
 
 		private void Start() {
-			_rapl.Start();
+			if (_rapl != null)
+				_rapl.Start();
+			else
+				throw new NotSupportedException("Rapl has not been initialized");
 		}
 
 		private void End() {
-			_rapl.End();
+			if (_rapl != null)
+				_rapl.End();
+			else
+				throw new NotSupportedException("Rapl has not been initialized");
 
 			//Result only valid if all results are valid
 			//Only then is the result added and duration is incremented
 			if (!_rapl.IsValid()) return;
-			var mes = new Measure(_rapl.GetResults());
-			_resultBuffer.Add(mes);
-			_elapsedTime += mes.Duration / 1_000;
+			_resultBuffer.Add(_rapl.GetResults());
+			_elapsedTime += _resultBuffer[^1].ElapsedTime / 1_000;
 		}
 
 		public void Run() {
 			Run(_benchmark, _benchmarkOutput);
-		}
-
-		// Used to run benchmarks which take a single input argument -- The benchmarks is curried into a function which takes zero input arguments
-		public void Run<T, TR>(Func<T, TR> benchmark, T input, Action<TR> benchmarkOutput) {
-			Run(() => benchmark(input), benchmarkOutput);
 		}
 
 		//Performns benchmarking
@@ -81,17 +80,10 @@ namespace CsharpRAPL.Benchmarking {
 			//Sets console to write to null
 			Console.SetOut(_benchmarkOutputStream);
 
-			_rapl = new RAPL(
-				new List<Sensor> {
-					new("timer", new TimerApi(), CollectionApproach.Difference),
-					new("package", new PackageApi(), CollectionApproach.Difference),
-					new("dram", new DramApi(), CollectionApproach.Difference),
-					new("temp", new TempApi(), CollectionApproach.Average)
-				}
-			);
+			_rapl = new RAPL();
 
 			_elapsedTime = 0;
-			_resultBuffer = new List<Measure>();
+			_resultBuffer.Clear();
 			for (var i = 0; i < Iterations; i++) {
 				if (Iterations != 1)
 					Print(Console.Write, $"\r{i + 1} of {Iterations} for {Name}");
@@ -139,32 +131,7 @@ namespace CsharpRAPL.Benchmarking {
 		}
 
 		public List<BenchmarkResult> GetResults() {
-			var result = new List<BenchmarkResult>();
-
-			foreach (Measure m in _resultBuffer) {
-				var data = new BenchmarkResult();
-				foreach ((string apiName, double apiValue) in m.Apis) {
-					switch (apiName) {
-						case "temp":
-							data.Temperature = apiValue / 1000;
-							break;
-						case "timer":
-							data.ElapsedTime = apiValue;
-							break;
-						case "dram":
-							data.DramPower = apiValue;
-							break;
-						case "package":
-							data.PackagePower = apiValue;
-							break;
-						default:
-							throw new ArgumentOutOfRangeException($"{apiName} is not suported");
-					}
-				}
-
-				result.Add(data);
-			}
-
+			var result = new List<BenchmarkResult>(_resultBuffer);
 			return result;
 		}
 	}

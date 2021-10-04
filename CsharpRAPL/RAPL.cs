@@ -1,35 +1,46 @@
-using System.Collections.Generic;
-using System.Linq;
+using CsharpRAPL.Data;
+using CsharpRAPL.Devices;
 
 namespace CsharpRAPL {
 	public sealed class RAPL {
-		private readonly List<Sensor> _apis;
+		private readonly DramApi _dramApi;
+		private readonly TimerApi _timerApi;
+		private readonly PackageApi _packageApi;
+		private readonly TempApi _tempApi;
 
-		public RAPL(List<Sensor> sensors) {
-			_apis = sensors;
+		public RAPL() {
+			_dramApi = new DramApi();
+			_timerApi = new TimerApi();
+			_packageApi = new PackageApi();
+			_tempApi = new TempApi();
 		}
 
 		public void Start() {
-			_apis.ForEach(api => api.Start());
+			_dramApi.Start();
+			_tempApi.Start();
+			_timerApi.Start();
+			_packageApi.Start();
 		}
 
 		public void End() {
-			_apis.ForEach(api => api.End());
+			_dramApi.End();
+			_tempApi.End();
+			_timerApi.End();
+			_packageApi.End();
 		}
 
 		public bool IsValid() {
-			return _apis.All(api => api.IsValid());
+			return _dramApi.IsValid() && _tempApi.IsValid() && _timerApi.IsValid() && _packageApi.IsValid();
 		}
 
-		public List<(string deviceName, double value)> GetResults() {
-			var res = new List<(string d, double v)>();
-			foreach (Sensor api in _apis)
-				if (api.Delta.Count == 1)
-					res.Add((api.Name, api.Delta[0]));
-				else
-					res.AddRange(api.Delta.Select((t, i) => (api.Name + i, t)));
-
-			return res;
+		public BenchmarkResult GetResults() {
+			BenchmarkResult result = new() {
+				DramPower = _dramApi.Delta,
+				Temperature = _tempApi.Delta,
+				ElapsedTime = _timerApi.Delta,
+				PackagePower = _packageApi.Delta
+			};
+			return result;
 		}
 	}
 }
