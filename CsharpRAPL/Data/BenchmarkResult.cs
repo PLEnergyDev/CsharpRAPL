@@ -1,7 +1,7 @@
 ﻿using CsvHelper.Configuration.Attributes;
 
 namespace CsharpRAPL.Data {
-	public class BenchmarkResult {
+	public record BenchmarkResult {
 		[Index(0)] public double ElapsedTime { get; set; }
 		[Index(1)] public double PackagePower { get; set; }
 		[Index(2)] public double DramPower { get; set; }
