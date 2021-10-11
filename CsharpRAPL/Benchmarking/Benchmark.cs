@@ -127,11 +127,9 @@ namespace CsharpRAPL.Benchmarking {
 		}
 
 		public List<BenchmarkResult> GetResults(bool ignoreFirst = true) {
-			if (ignoreFirst) {
-				return new List<BenchmarkResult>(_resultBuffer.Skip(1));
-			} else {
-				return new List<BenchmarkResult>(_resultBuffer);
-			}
+			return ignoreFirst
+				? new List<BenchmarkResult>(_resultBuffer.Skip(1))
+				: new List<BenchmarkResult>(_resultBuffer);
 		}
 	}
 }
