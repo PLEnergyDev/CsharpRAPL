@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using CsharpRAPL.Data;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -125,8 +126,12 @@ namespace CsharpRAPL.Benchmarking {
 			csv.WriteRecords(GetResults());
 		}
 
-		public List<BenchmarkResult> GetResults() {
-			return new List<BenchmarkResult>(_resultBuffer);
+		public List<BenchmarkResult> GetResults(bool ignoreFirst = true) {
+			if (ignoreFirst) {
+				return new List<BenchmarkResult>(_resultBuffer.Skip(1));
+			} else {
+				return new List<BenchmarkResult>(_resultBuffer);
+			}
 		}
 	}
 }
