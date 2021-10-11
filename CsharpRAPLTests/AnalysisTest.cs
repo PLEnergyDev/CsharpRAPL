@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using CsharpRAPL.Data;
@@ -9,157 +9,234 @@ using NUnit.Framework;
 namespace CsharpRAPL.Tests {
 	public class AnalysisTest {
 		private readonly List<BenchmarkResult> _addSet = new() {
-			new BenchmarkResult
-				{ ElapsedTime = 149.586, PackagePower = 2566705, DramPower = 80688, Temperature = 76.5 },
-			new BenchmarkResult { ElapsedTime = 148.821, PackagePower = 2483820, DramPower = 75745, Temperature = 75 },
-			new BenchmarkResult
-				{ ElapsedTime = 148.009, PackagePower = 2458673, DramPower = 74646, Temperature = 74.5 },
-			new BenchmarkResult
-				{ ElapsedTime = 147.915, PackagePower = 2459466, DramPower = 74523, Temperature = 74.5 },
-			new BenchmarkResult { ElapsedTime = 148.290, PackagePower = 2483575, DramPower = 74463, Temperature = 75 },
-			new BenchmarkResult { ElapsedTime = 151.454, PackagePower = 2592645, DramPower = 78369, Temperature = 73.5 }
+			new BenchmarkResult {
+				ElapsedTime = 0.05249999999999977, PackagePower = 29236, DramPower = 672, Temperature = 43000,
+				Result = "10"
+			},
+			new BenchmarkResult {
+				ElapsedTime = 0.05039999999999978, PackagePower = 30823, DramPower = 672, Temperature = 43000,
+				Result = "10"
+			},
+			new BenchmarkResult {
+				ElapsedTime = 0.044800000000000395, PackagePower = 31494, DramPower = 1098, Temperature = 42000,
+				Result = "10"
+			},
+			new BenchmarkResult {
+				ElapsedTime = 0.04449999999999932, PackagePower = 39368, DramPower = 977, Temperature = 42000,
+				Result = "10"
+			},
+			new BenchmarkResult {
+				ElapsedTime = 0.04420000000000002, PackagePower = 39917, DramPower = 976, Temperature = 43000,
+				Result = "10"
+			},
+			new BenchmarkResult {
+				ElapsedTime = 0.04460000000000086, PackagePower = 33508, DramPower = 733, Temperature = 43000,
+				Result = "10"
+			}
 		};
 
-		private readonly List<BenchmarkResult> _divideSet = new() {
-			new BenchmarkResult
-				{ ElapsedTime = 293.600, PackagePower = 4949878, DramPower = 147582, Temperature = 74.5 },
-			new BenchmarkResult
-				{ ElapsedTime = 295.657, PackagePower = 5075792, DramPower = 149658, Temperature = 73.5 },
-			new BenchmarkResult
-				{ ElapsedTime = 297.470, PackagePower = 5139086, DramPower = 157470, Temperature = 73.5 },
-			new BenchmarkResult { ElapsedTime = 293.774, PackagePower = 4986316, DramPower = 148743, Temperature = 74 },
-			new BenchmarkResult { ElapsedTime = 294.654, PackagePower = 5026781, DramPower = 149535, Temperature = 75 },
-			new BenchmarkResult { ElapsedTime = 293.086, PackagePower = 4952380, DramPower = 147156, Temperature = 75 }
+		private readonly List<BenchmarkResult> _subtractSet = new() {
+			new BenchmarkResult {
+				ElapsedTime = 0.05210000000000026, PackagePower = 26122, DramPower = 611, Temperature = 44000,
+				Result = "10"
+			},
+			new BenchmarkResult {
+				ElapsedTime = 0.05370000000000008, PackagePower = 24720, DramPower = 610, Temperature = 44000,
+				Result = "10"
+			},
+			new BenchmarkResult {
+				ElapsedTime = 0.054999999999999716, PackagePower = 30884, DramPower = 977, Temperature = 44000,
+				Result = "10"
+			},
+			new BenchmarkResult {
+				ElapsedTime = 0.05240000000000222, PackagePower = 27709, DramPower = 671, Temperature = 44000,
+				Result = "10"
+			},
+			new BenchmarkResult {
+				ElapsedTime = 0.05190000000000339, PackagePower = 25696, DramPower = 611, Temperature = 44000,
+				Result = "10"
+			},
+			new BenchmarkResult {
+				ElapsedTime = 0.050200000000000244, PackagePower = 24536, DramPower = 611, Temperature = 44000,
+				Result = "10"
+			}
 		};
 
 		[OneTimeSetUp]
 		public void Setup() {
-			using (var addWriter = new StreamWriter("addSet.csv")) {
+			using (var addWriter = new StreamWriter("AddSet.csv")) {
 				using var addCsv = new CsvWriter(addWriter, new CsvConfiguration(CultureInfo.InvariantCulture)
 					{ Delimiter = ";" });
 
 				addCsv.WriteRecords(_addSet);
 			}
 
-			using (var divideWriter = new StreamWriter("divideSet.csv")) {
-				using var divideCsv = new CsvWriter(divideWriter, new CsvConfiguration(CultureInfo.InvariantCulture)
+			using (var subtractWriter = new StreamWriter("SubtractSet.csv")) {
+				using var subtractCsv = new CsvWriter(subtractWriter, new CsvConfiguration(CultureInfo.InvariantCulture)
 					{ Delimiter = ";" });
-				divideCsv.WriteRecords(_divideSet);
+				subtractCsv.WriteRecords(_subtractSet);
 			}
 		}
 
 		[OneTimeTearDown]
 		public void OneTimeTearDown() {
-			if (File.Exists("addSet.csv"))
-				File.Delete("addSet.csv");
+			if (File.Exists("AddSet.csv"))
+				File.Delete("AddSet.csv");
 
-			if (File.Exists("divideSet.csv"))
-				File.Delete("divideSet.csv");
+			if (File.Exists("SubtractSet.csv"))
+				File.Delete("SubtractSet.csv");
 		}
 
 		[Test]
 		public void TestAnalysisUsingResults01() {
-			Analysis.Analysis analysis = new("Add", _addSet, "Divide", _divideSet);
+			Analysis.Analysis analysis = new("Add", _addSet, "Subtract", _subtractSet);
 
 			Dictionary<string, double> pValues = analysis.CalculatePValue();
 
 			Assert.AreEqual(6, pValues.Count);
-			Assert.AreEqual(7.2445981000707043E-12, pValues["Add lower than Divide Time"], double.Epsilon);
-			Assert.AreEqual(0.9999999999812168, pValues["Divide lower than Add Time"], double.Epsilon);
-			Assert.AreEqual(6.7758661046381478E-10, pValues["Add lower than Divide Package"], double.Epsilon);
-			Assert.AreEqual(0.99999999750195823, pValues["Divide lower than Add Package"], double.Epsilon);
-			Assert.AreEqual(5.5762042132764618E-09, pValues["Add lower than Divide Dram"], double.Epsilon);
-			Assert.AreEqual(0.99999996149930748, pValues["Divide lower than Add Dram"], double.Epsilon);
+			Assert.AreEqual(0.0060343042213520269d, pValues["Add lower than Subtract Time"], double.Epsilon);
+			Assert.AreEqual(0.99981711352607316d, pValues["Subtract lower than Add Time"], double.Epsilon);
+			Assert.AreEqual(0.99492199073071008d, pValues["Add lower than Subtract Package"], double.Epsilon);
+			Assert.AreEqual(0.00030370946908713393d, pValues["Subtract lower than Add Package"], double.Epsilon);
+			Assert.AreEqual(0.96480846223727446d, pValues["Add lower than Subtract Dram"], double.Epsilon);
+			Assert.AreEqual(0.017135715146229153d, pValues["Subtract lower than Add Dram"], double.Epsilon);
 		}
 
 		[Test]
 		public void TestAnalysisUsingResults02() {
-			Analysis.Analysis analysis = new("Test1", _addSet, "Test2", _divideSet);
+			Analysis.Analysis analysis = new("Test1", _addSet, "Test2", _subtractSet);
 
 			Dictionary<string, double> pValues = analysis.CalculatePValue();
 
 			Assert.AreEqual(6, pValues.Count);
-			Assert.AreEqual(7.2445981000707043E-12, pValues["Test1 lower than Test2 Time"], double.Epsilon);
-			Assert.AreEqual(0.9999999999812168, pValues["Test2 lower than Test1 Time"], double.Epsilon);
-			Assert.AreEqual(6.7758661046381478E-10, pValues["Test1 lower than Test2 Package"], double.Epsilon);
-			Assert.AreEqual(0.99999999750195823, pValues["Test2 lower than Test1 Package"], double.Epsilon);
-			Assert.AreEqual(5.5762042132764618E-09, pValues["Test1 lower than Test2 Dram"], double.Epsilon);
-			Assert.AreEqual(0.99999996149930748, pValues["Test2 lower than Test1 Dram"], double.Epsilon);
+			Assert.AreEqual(0.0060343042213520269d, pValues["Test1 lower than Test2 Time"], double.Epsilon);
+			Assert.AreEqual(0.99981711352607316d, pValues["Test2 lower than Test1 Time"], double.Epsilon);
+			Assert.AreEqual(0.99492199073071008d, pValues["Test1 lower than Test2 Package"], double.Epsilon);
+			Assert.AreEqual(0.00030370946908713393d, pValues["Test2 lower than Test1 Package"], double.Epsilon);
+			Assert.AreEqual(0.96480846223727446d, pValues["Test1 lower than Test2 Dram"], double.Epsilon);
+			Assert.AreEqual(0.017135715146229153d, pValues["Test2 lower than Test1 Dram"], double.Epsilon);
 		}
 
 		[Test]
 		public void TestAnalysisUsingCSV01() {
-			Analysis.Analysis analysis = new("addSet.csv", "divideSet.csv");
+			Analysis.Analysis analysis = new("AddSet.csv", "SubtractSet.csv");
 
 			Dictionary<string, double> pValues = analysis.CalculatePValue();
 
 			Assert.AreEqual(6, pValues.Count);
-			Assert.AreEqual(7.2445981000707043E-12, pValues["addSet lower than divideSet Time"], double.Epsilon);
-			Assert.AreEqual(0.9999999999812168, pValues["divideSet lower than addSet Time"], double.Epsilon);
-			Assert.AreEqual(6.7758661046381478E-10, pValues["addSet lower than divideSet Package"], double.Epsilon);
-			Assert.AreEqual(0.99999999750195823, pValues["divideSet lower than addSet Package"], double.Epsilon);
-			Assert.AreEqual(5.5762042132764618E-09, pValues["addSet lower than divideSet Dram"], double.Epsilon);
-			Assert.AreEqual(0.99999996149930748, pValues["divideSet lower than addSet Dram"], double.Epsilon);
+			Assert.AreEqual(0.0060343042213520269d, pValues["AddSet lower than SubtractSet Time"], double.Epsilon);
+			Assert.AreEqual(0.99981711352607316d, pValues["SubtractSet lower than AddSet Time"], double.Epsilon);
+			Assert.AreEqual(0.99492199073071008d, pValues["AddSet lower than SubtractSet Package"], double.Epsilon);
+			Assert.AreEqual(0.00030370946908713393d, pValues["SubtractSet lower than AddSet Package"], double.Epsilon);
+			Assert.AreEqual(0.96480846223727446d, pValues["AddSet lower than SubtractSet Dram"], double.Epsilon);
+			Assert.AreEqual(0.017135715146229153d, pValues["SubtractSet lower than AddSet Dram"], double.Epsilon);
 		}
 
 		[Test]
 		public void TestMin01() {
-			Analysis.Analysis analysis = new("addSet.csv", "divideSet.csv");
-			((string firstName, BenchmarkResult firstData), (string secondName, BenchmarkResult secondData)) = analysis.GetMin();
-			Assert.AreEqual("addSet", firstName);
-			Assert.AreEqual("divideSet", secondName);
+			Analysis.Analysis analysis = new("AddSet.csv", "SubtractSet.csv");
+			((string firstName, BenchmarkResult firstData), (string secondName, BenchmarkResult secondData)) =
+				analysis.GetMin();
+			Assert.AreEqual("AddSet", firstName);
+			Assert.AreEqual("SubtractSet", secondName);
 
-			Assert.AreEqual(74463, firstData.DramPower, double.Epsilon);
-			Assert.AreEqual(147156, secondData.DramPower, double.Epsilon);
+			Assert.AreEqual(672.0d, firstData.DramPower, double.Epsilon);
+			Assert.AreEqual(610.0d, secondData.DramPower, double.Epsilon);
 
-			Assert.AreEqual(2458673, firstData.PackagePower, double.Epsilon);
-			Assert.AreEqual(4949878, secondData.PackagePower, double.Epsilon);
+			Assert.AreEqual(29236.0d, firstData.PackagePower, double.Epsilon);
+			Assert.AreEqual(24536.0d, secondData.PackagePower, double.Epsilon);
 
-			Assert.AreEqual(147.91499999999999, firstData.ElapsedTime, double.Epsilon);
-			Assert.AreEqual( 293.086, secondData.ElapsedTime, double.Epsilon);
+			Assert.AreEqual(0.044200000000000017d, firstData.ElapsedTime, double.Epsilon);
+			Assert.AreEqual(0.050200000000000244d, secondData.ElapsedTime, double.Epsilon);
 
-			Assert.AreEqual(73.5, firstData.Temperature, double.Epsilon);
-			Assert.AreEqual(73.5, secondData.Temperature, double.Epsilon);
+			Assert.AreEqual(42000.0d, firstData.Temperature, double.Epsilon);
+			Assert.AreEqual(44000.0d, secondData.Temperature, double.Epsilon);
 		}
 
 		[Test]
 		public void TestMax01() {
-			Analysis.Analysis analysis = new("addSet.csv", "divideSet.csv");
-			((string firstName, BenchmarkResult firstData), (string secondName, BenchmarkResult secondData)) = analysis.GetMax();
-			Assert.AreEqual("addSet", firstName);
-			Assert.AreEqual("divideSet", secondName);
+			Analysis.Analysis analysis = new("AddSet.csv", "SubtractSet.csv");
+			((string firstName, BenchmarkResult firstData), (string secondName, BenchmarkResult secondData)) =
+				analysis.GetMax();
+			Assert.AreEqual("AddSet", firstName);
+			Assert.AreEqual("SubtractSet", secondName);
 
-			Assert.AreEqual(80688.0, firstData.DramPower, double.Epsilon);
-			Assert.AreEqual(157470.0, secondData.DramPower, double.Epsilon);
+			Assert.AreEqual(1098.0d, firstData.DramPower, double.Epsilon);
+			Assert.AreEqual(977.0d, secondData.DramPower, double.Epsilon);
 
-			Assert.AreEqual(2592645.0, firstData.PackagePower, double.Epsilon);
-			Assert.AreEqual(5139086.0, secondData.PackagePower, double.Epsilon);
+			Assert.AreEqual(39917.0d, firstData.PackagePower, double.Epsilon);
+			Assert.AreEqual(30884.0d, secondData.PackagePower, double.Epsilon);
 
-			Assert.AreEqual(151.454, firstData.ElapsedTime, double.Epsilon);
-			Assert.AreEqual(297.47, secondData.ElapsedTime, double.Epsilon);
+			Assert.AreEqual(0.052499999999999769d, firstData.ElapsedTime, double.Epsilon);
+			Assert.AreEqual(0.054999999999999716d, secondData.ElapsedTime, double.Epsilon);
 
-			Assert.AreEqual(76.5, firstData.Temperature, double.Epsilon);
-			Assert.AreEqual(75.0, secondData.Temperature, double.Epsilon);
+			Assert.AreEqual(43000.0d, firstData.Temperature, double.Epsilon);
+			Assert.AreEqual(44000.0d, secondData.Temperature, double.Epsilon);
 		}
 
 		[Test]
 		public void TestAverage01() {
-			Analysis.Analysis analysis = new("addSet.csv", "divideSet.csv");
-			((string firstName, BenchmarkResult firstData), (string secondName, BenchmarkResult secondData)) = analysis.GetAverage();
-			Assert.AreEqual("addSet", firstName);
-			Assert.AreEqual("divideSet", secondName);
+			Analysis.Analysis analysis = new("AddSet.csv", "SubtractSet.csv");
+			((string firstName, BenchmarkResult firstData), (string secondName, BenchmarkResult secondData)) =
+				analysis.GetAverage();
+			Assert.AreEqual("AddSet", firstName);
+			Assert.AreEqual("SubtractSet", secondName);
 
-			Assert.AreEqual(76405.666666666672, firstData.DramPower, double.Epsilon);
-			Assert.AreEqual(150024.0, secondData.DramPower, double.Epsilon);
+			Assert.AreEqual(854.66666666666663d, firstData.DramPower, double.Epsilon);
+			Assert.AreEqual(681.83333333333337d, secondData.DramPower, double.Epsilon);
 
-			Assert.AreEqual(2507480.6666666665, firstData.PackagePower, double.Epsilon);
-			Assert.AreEqual(5021705.5, secondData.PackagePower, double.Epsilon);
+			Assert.AreEqual(34057.666666666664d, firstData.PackagePower, double.Epsilon);
+			Assert.AreEqual(26611.166666666668d, secondData.PackagePower, double.Epsilon);
 
-			Assert.AreEqual(149.01250000000002, firstData.ElapsedTime, double.Epsilon);
-			Assert.AreEqual(294.70683333333335, secondData.ElapsedTime, double.Epsilon);
+			Assert.AreEqual(0.046833333333333359d, firstData.ElapsedTime, double.Epsilon);
+			Assert.AreEqual(0.052550000000000985d, secondData.ElapsedTime, double.Epsilon);
 
-			Assert.AreEqual(74.833333333333329, firstData.Temperature, double.Epsilon);
-			Assert.AreEqual(74.25, secondData.Temperature, double.Epsilon);
+			Assert.AreEqual(42666.666666666664d, firstData.Temperature, double.Epsilon);
+			Assert.AreEqual(44000.0d, secondData.Temperature, double.Epsilon);
+		}
+
+		[Test]
+		public void TestEnsure01() {
+			Analysis.Analysis analysis = new("AddSet.csv", "SubtractSet.csv");
+			(bool isValid, string message) = analysis.EnsureResults();
+			Assert.True(isValid);
+			Assert.AreEqual("", message);
+		}
+
+		[Test]
+		public void TestEnsure02() {
+			List<BenchmarkResult> badSet = new() {
+				new BenchmarkResult {
+					ElapsedTime = 0.05210000000000026, PackagePower = 26122, DramPower = 611, Temperature = 44000,
+					Result = "10"
+				},
+				new BenchmarkResult {
+					ElapsedTime = 0.05370000000000008, PackagePower = 24720, DramPower = 610, Temperature = 44000,
+					Result = "10"
+				},
+				new BenchmarkResult {
+					ElapsedTime = 0.054999999999999716, PackagePower = 30884, DramPower = 977, Temperature = 44000,
+					Result = "10"
+				},
+				new BenchmarkResult {
+					ElapsedTime = 0.05240000000000222, PackagePower = 27709, DramPower = 671, Temperature = 44000,
+					Result = "10"
+				},
+				new BenchmarkResult {
+					ElapsedTime = 0.05190000000000339, PackagePower = 25696, DramPower = 611, Temperature = 44000,
+					Result = "10"
+				},
+				new BenchmarkResult {
+					ElapsedTime = 0.050200000000000244, PackagePower = 24536, DramPower = 611, Temperature = 44000,
+					Result = "11"
+				}
+			};
+			Analysis.Analysis analysis = new("BadSet", badSet, "AddSet", _addSet);
+
+			(bool isValid, string message) = analysis.EnsureResults();
+
+			Assert.False(isValid);
+			Assert.AreEqual("Not all results in BadSet was equal. Namely: 10, 11.", message);
 		}
 	}
 }

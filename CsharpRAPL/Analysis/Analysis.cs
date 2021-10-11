@@ -1,97 +1,50 @@
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using Accord.Statistics.Testing;
 using CsharpRAPL.Benchmarking;
 using CsharpRAPL.Data;
-using CsvHelper;
-using CsvHelper.Configuration;
+using ScottPlot;
 
 namespace CsharpRAPL.Analysis {
 	public class Analysis {
-		private readonly (string Name, List<BenchmarkResult> Data) _firstDataset;
-		private readonly (string Name, List<BenchmarkResult> Data) _secondDataset;
+		private readonly DataSet _firstDataset;
+		private readonly DataSet _secondDataset;
 
 		public Analysis(string pathToFirstData, string pathToSecondData) {
-			_firstDataset = (Path.GetFileNameWithoutExtension(pathToFirstData), ReadData(pathToFirstData));
-			_secondDataset = (Path.GetFileNameWithoutExtension(pathToSecondData), ReadData(pathToSecondData));
+			_firstDataset = new DataSet(pathToFirstData);
+			_secondDataset = new DataSet(pathToSecondData);
 		}
 
 		public Analysis(IBenchmark firstBenchmark, IBenchmark secondBenchmark) {
-			_firstDataset = (firstBenchmark.Name, firstBenchmark.GetResults());
-			_secondDataset = (secondBenchmark.Name, secondBenchmark.GetResults());
+			_firstDataset = new DataSet(firstBenchmark.Name, firstBenchmark.GetResults());
+			_secondDataset = new DataSet(secondBenchmark.Name, secondBenchmark.GetResults());
 		}
 
 		public Analysis(string firstBenchmarkName, List<BenchmarkResult> firstBenchmarkResults,
 			string secondBenchmarkName, List<BenchmarkResult> secondBenchmarkResults) {
-			_firstDataset = (firstBenchmarkName, firstBenchmarkResults);
-			_secondDataset = (secondBenchmarkName, secondBenchmarkResults);
+			_firstDataset = new DataSet(firstBenchmarkName, firstBenchmarkResults);
+			_secondDataset = new DataSet(secondBenchmarkName, secondBenchmarkResults);
 		}
 
-		private static List<BenchmarkResult> ReadData(string path) {
-			using var reader = new StreamReader(path);
-			using var csv = new CsvReader(reader,
-				new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" });
-
-			return csv.GetRecords<BenchmarkResult>().ToList();
+		public Analysis(DataSet firstDataset, DataSet secondDataset) {
+			_firstDataset = firstDataset;
+			_secondDataset = secondDataset;
 		}
 
-		public ((string Name, BenchmarkResult Data) FirstDataSet, (string Name, BenchmarkResult Data) SecondDataSet) GetAverage() {
-			var first = new BenchmarkResult {
-				Temperature = _firstDataset.Data.Average(result => result.Temperature),
-				DramPower = _firstDataset.Data.Average(result => result.DramPower),
-				ElapsedTime = _firstDataset.Data.Average(result => result.ElapsedTime),
-				PackagePower = _firstDataset.Data.Average(result => result.PackagePower)
-			};
-
-			var second = new BenchmarkResult {
-				Temperature = _secondDataset.Data.Average(result => result.Temperature),
-				DramPower = _secondDataset.Data.Average(result => result.DramPower),
-				ElapsedTime = _secondDataset.Data.Average(result => result.ElapsedTime),
-				PackagePower = _secondDataset.Data.Average(result => result.PackagePower)
-			};
-
-
-			return ((_firstDataset.Name, first), (_secondDataset.Name, second));
+		public ((string Name, BenchmarkResult Data) FirstDataSet, (string Name, BenchmarkResult Data) SecondDataSet)
+			GetAverage() {
+			return ((_firstDataset.Name, _firstDataset.GetAverage()),
+				(_secondDataset.Name, _secondDataset.GetAverage()));
 		}
 
-		public ((string Name, BenchmarkResult Data) FirstDataSet, (string Name, BenchmarkResult Data) SecondDataSet) GetMax() {
-			var first = new BenchmarkResult {
-				Temperature = _firstDataset.Data.Max(result => result.Temperature),
-				DramPower = _firstDataset.Data.Max(result => result.DramPower),
-				ElapsedTime = _firstDataset.Data.Max(result => result.ElapsedTime),
-				PackagePower = _firstDataset.Data.Max(result => result.PackagePower)
-			};
-
-			var second = new BenchmarkResult {
-				Temperature = _secondDataset.Data.Max(result => result.Temperature),
-				DramPower = _secondDataset.Data.Max(result => result.DramPower),
-				ElapsedTime = _secondDataset.Data.Max(result => result.ElapsedTime),
-				PackagePower = _secondDataset.Data.Max(result => result.PackagePower)
-			};
-
-
-			return ((_firstDataset.Name, first), (_secondDataset.Name, second));
+		public ((string Name, BenchmarkResult Data) FirstDataSet, (string Name, BenchmarkResult Data) SecondDataSet)
+			GetMax() {
+			return ((_firstDataset.Name, _firstDataset.GetMax()), (_secondDataset.Name, _secondDataset.GetMax()));
 		}
 
-		public ((string Name, BenchmarkResult Data) FirstDataSet, (string Name, BenchmarkResult Data) SecondDataSet) GetMin() {
-			var first = new BenchmarkResult {
-				Temperature = _firstDataset.Data.Min(result => result.Temperature),
-				DramPower = _firstDataset.Data.Min(result => result.DramPower),
-				ElapsedTime = _firstDataset.Data.Min(result => result.ElapsedTime),
-				PackagePower = _firstDataset.Data.Min(result => result.PackagePower)
-			};
-
-			var second = new BenchmarkResult {
-				Temperature = _secondDataset.Data.Min(result => result.Temperature),
-				DramPower = _secondDataset.Data.Min(result => result.DramPower),
-				ElapsedTime = _secondDataset.Data.Min(result => result.ElapsedTime),
-				PackagePower = _secondDataset.Data.Min(result => result.PackagePower)
-			};
-
-
-			return ((_firstDataset.Name, first), (_secondDataset.Name, second));
+		public ((string Name, BenchmarkResult Data) FirstDataSet, (string Name, BenchmarkResult Data) SecondDataSet)
+			GetMin() {
+			return ((_firstDataset.Name, _firstDataset.GetMin()), (_secondDataset.Name, _secondDataset.GetMin()));
 		}
 
 		public Dictionary<string, double> CalculatePValue() {
@@ -133,6 +86,28 @@ namespace CsharpRAPL.Analysis {
 			};
 
 			return results;
+		}
+
+		public (bool isValid, string message) EnsureResults() {
+			(bool isValid, string message) first = _firstDataset.EnsureResults();
+			if (!first.isValid)
+				return first;
+			(bool isValid, string message) second = _secondDataset.EnsureResults();
+			if (!second.isValid)
+				return second;
+
+			return (true, "");
+		}
+
+		public void PlotAllResults() {
+			PlotResults(BenchmarkResultType.ElapsedTime);
+			PlotResults(BenchmarkResultType.PackagePower);
+			PlotResults(BenchmarkResultType.DramPower);
+			PlotResults(BenchmarkResultType.Temperature);
+		}
+
+		public void PlotResults(BenchmarkResultType resultType, Alignment alignment = Alignment.UpperRight) {
+			BenchmarkPlot.PlotResults(resultType, alignment, _firstDataset, _secondDataset);
 		}
 	}
 }
