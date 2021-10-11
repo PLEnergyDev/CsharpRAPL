@@ -5,7 +5,7 @@
 		public abstract string OpenRaplFile();
 
 		public string GetSocketDirectoryName() {
-			return $"/sys/class/powercap/intel-rapl/intel-rapl:0";
+			return "/sys/class/powercap/intel-rapl/intel-rapl:0";
 		}
 	}
 }

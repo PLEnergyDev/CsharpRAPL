@@ -6,10 +6,13 @@ namespace CsharpRAPL.Benchmarking {
 		public string? Group { get; }
 
 		public string Description { get; }
+		
+		public int Order { get; }
 
-		public BenchmarkAttribute(string? group, string description) {
+		public BenchmarkAttribute(string? group, string description, int order = 0) {
 			Group = group;
 			Description = description;
+			Order = order;
 		}
 	}
 }

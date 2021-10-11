@@ -105,7 +105,7 @@ namespace CsharpRAPL.Tests {
 		[Test]
 		public void TestMin01() {
 			Analysis.Analysis analysis = new("addSet.csv", "divideSet.csv");
-			var ((firstName, firstData), (secondName, secondData)) = analysis.GetMin();
+			((string firstName, BenchmarkResult firstData), (string secondName, BenchmarkResult secondData)) = analysis.GetMin();
 			Assert.AreEqual("addSet", firstName);
 			Assert.AreEqual("divideSet", secondName);
 
@@ -125,7 +125,7 @@ namespace CsharpRAPL.Tests {
 		[Test]
 		public void TestMax01() {
 			Analysis.Analysis analysis = new("addSet.csv", "divideSet.csv");
-			var ((firstName, firstData), (secondName, secondData)) = analysis.GetMax();
+			((string firstName, BenchmarkResult firstData), (string secondName, BenchmarkResult secondData)) = analysis.GetMax();
 			Assert.AreEqual("addSet", firstName);
 			Assert.AreEqual("divideSet", secondName);
 
@@ -145,7 +145,7 @@ namespace CsharpRAPL.Tests {
 		[Test]
 		public void TestAverage01() {
 			Analysis.Analysis analysis = new("addSet.csv", "divideSet.csv");
-			var ((firstName, firstData), (secondName, secondData)) = analysis.GetAverage();
+			((string firstName, BenchmarkResult firstData), (string secondName, BenchmarkResult secondData)) = analysis.GetAverage();
 			Assert.AreEqual("addSet", firstName);
 			Assert.AreEqual("divideSet", secondName);
 

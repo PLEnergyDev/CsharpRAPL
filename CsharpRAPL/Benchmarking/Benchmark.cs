@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -7,10 +7,11 @@ using CsvHelper;
 using CsvHelper.Configuration;
 
 namespace CsharpRAPL.Benchmarking {
-	public class Benchmark {
+	public class Benchmark<T> : IBenchmark {
 		public int Iterations { get; }
 		public string Name { get; }
 		public string? Group { get; }
+		public int Order { get; }
 
 		private const int MaxExecutionTime = 2700; //In seconds
 
@@ -18,26 +19,24 @@ namespace CsharpRAPL.Benchmarking {
 		private readonly TextWriter _benchmarkOutputStream = new StreamWriter(Stream.Null);
 		private readonly TextWriter _stdout;
 		private readonly string _outputFilePath;
-		private readonly Func<int> _benchmark;
-		private readonly Action<int> _benchmarkOutput;
+		private readonly Func<T> _benchmark;
 		private readonly List<BenchmarkResult> _resultBuffer = new();
 
 		private RAPL? _rapl;
 		private double _elapsedTime;
 
-		public Benchmark(string name, int iterations, Func<int> benchmark, Action<int> benchmarkOutput,
-			bool silenceBenchmarkOutput = true, string? group = null) {
+		public Benchmark(string name, int iterations, Func<T> benchmark, bool silenceBenchmarkOutput = true,
+			string? group = null, int order = 0) {
 			Name = name;
 			Group = group;
 			Iterations = iterations;
+			Order = order;
 
 			_benchmark = benchmark;
-			_benchmarkOutput = benchmarkOutput;
 			_stdout = Console.Out;
 
 			if (!silenceBenchmarkOutput)
 				_benchmarkOutputStream = _stdout;
-
 
 			string time = DateTime.Now.ToString("s").Replace(":", "-");
 			if (Group != null) {
@@ -51,32 +50,29 @@ namespace CsharpRAPL.Benchmarking {
 		}
 
 		private void Start() {
-			if (_rapl != null)
-				_rapl.Start();
-			else
+			if (_rapl is null)
 				throw new NotSupportedException("Rapl has not been initialized");
+
+			_rapl.Start();
 		}
 
-		private void End() {
-			if (_rapl != null)
-				_rapl.End();
-			else
+		private void End(T benchmarkOutput) {
+			if (_rapl is null)
 				throw new NotSupportedException("Rapl has not been initialized");
+
+			_rapl.End();
 
 			//Result only valid if all results are valid
 			//Only then is the result added and duration is incremented
 			if (!_rapl.IsValid()) return;
-			_resultBuffer.Add(_rapl.GetResults());
+			BenchmarkResult result = _rapl.GetResults() with { Result = benchmarkOutput?.ToString() ?? string.Empty };
+			_resultBuffer.Add(result);
 			_elapsedTime += _resultBuffer[^1].ElapsedTime / 1_000;
 		}
 
-		public void Run() {
-			Run(_benchmark, _benchmarkOutput);
-		}
-
-		//Performns benchmarking
+		//Performs benchmarking
 		//Writes progress to stdout if there is more than one iteration
-		public void Run<TR>(Func<TR> benchmark, Action<TR> benchmarkOutput) {
+		public void Run() {
 			//Sets console to write to null
 			Console.SetOut(_benchmarkOutputStream);
 
@@ -90,12 +86,11 @@ namespace CsharpRAPL.Benchmarking {
 
 				//Actually performing benchmark and resulting IO
 				Start();
-				TR res = benchmark();
-				End();
+				T benchmarkOutput = _benchmark();
+				End(benchmarkOutput);
 
 				if (_benchmarkOutputStream.Equals(_stdout))
 					Print(Console.WriteLine);
-				benchmarkOutput(res);
 
 				if (!(_elapsedTime >= MaxExecutionTime)) continue;
 
@@ -131,8 +126,7 @@ namespace CsharpRAPL.Benchmarking {
 		}
 
 		public List<BenchmarkResult> GetResults() {
-			var result = new List<BenchmarkResult>(_resultBuffer);
-			return result;
+			return new List<BenchmarkResult>(_resultBuffer);
 		}
 	}
 }

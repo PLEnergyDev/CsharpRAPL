@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CsharpRAPL.Analysis;
 using CsharpRAPL.Benchmarking;
 using ExampleProject;
 
@@ -11,7 +12,7 @@ var suite = new BenchmarkCollector(Benchmarks.Iterations);
 suite.RunAll();
 
 // EXAMPLE USAGE OF ANALYSIS
-var analysis = suite.AnalyseResults("ForLoop", "WhileLoop");
+Analysis analysis = suite.AnalyseResults("ForLoop", "WhileLoop");
 // Save the p-values to a dictionary
 Dictionary<string, double> pValues = analysis.CalculatePValue();
 
