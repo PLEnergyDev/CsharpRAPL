@@ -18,7 +18,7 @@ namespace CsharpRAPL.Analysis {
 			_secondDataset = (Path.GetFileNameWithoutExtension(pathToSecondData), ReadData(pathToSecondData));
 		}
 
-		public Analysis(Benchmark firstBenchmark, Benchmark secondBenchmark) {
+		public Analysis(IBenchmark firstBenchmark, IBenchmark secondBenchmark) {
 			_firstDataset = (firstBenchmark.Name, firstBenchmark.GetResults());
 			_secondDataset = (secondBenchmark.Name, secondBenchmark.GetResults());
 		}
@@ -42,14 +42,14 @@ namespace CsharpRAPL.Analysis {
 				Temperature = _firstDataset.Data.Average(result => result.Temperature),
 				DramPower = _firstDataset.Data.Average(result => result.DramPower),
 				ElapsedTime = _firstDataset.Data.Average(result => result.ElapsedTime),
-				PackagePower = _firstDataset.Data.Average(result => result.PackagePower),
+				PackagePower = _firstDataset.Data.Average(result => result.PackagePower)
 			};
 
 			var second = new BenchmarkResult {
 				Temperature = _secondDataset.Data.Average(result => result.Temperature),
 				DramPower = _secondDataset.Data.Average(result => result.DramPower),
 				ElapsedTime = _secondDataset.Data.Average(result => result.ElapsedTime),
-				PackagePower = _secondDataset.Data.Average(result => result.PackagePower),
+				PackagePower = _secondDataset.Data.Average(result => result.PackagePower)
 			};
 
 
@@ -61,14 +61,14 @@ namespace CsharpRAPL.Analysis {
 				Temperature = _firstDataset.Data.Max(result => result.Temperature),
 				DramPower = _firstDataset.Data.Max(result => result.DramPower),
 				ElapsedTime = _firstDataset.Data.Max(result => result.ElapsedTime),
-				PackagePower = _firstDataset.Data.Max(result => result.PackagePower),
+				PackagePower = _firstDataset.Data.Max(result => result.PackagePower)
 			};
 
 			var second = new BenchmarkResult {
 				Temperature = _secondDataset.Data.Max(result => result.Temperature),
 				DramPower = _secondDataset.Data.Max(result => result.DramPower),
 				ElapsedTime = _secondDataset.Data.Max(result => result.ElapsedTime),
-				PackagePower = _secondDataset.Data.Max(result => result.PackagePower),
+				PackagePower = _secondDataset.Data.Max(result => result.PackagePower)
 			};
 
 
@@ -80,14 +80,14 @@ namespace CsharpRAPL.Analysis {
 				Temperature = _firstDataset.Data.Min(result => result.Temperature),
 				DramPower = _firstDataset.Data.Min(result => result.DramPower),
 				ElapsedTime = _firstDataset.Data.Min(result => result.ElapsedTime),
-				PackagePower = _firstDataset.Data.Min(result => result.PackagePower),
+				PackagePower = _firstDataset.Data.Min(result => result.PackagePower)
 			};
 
 			var second = new BenchmarkResult {
 				Temperature = _secondDataset.Data.Min(result => result.Temperature),
 				DramPower = _secondDataset.Data.Min(result => result.DramPower),
 				ElapsedTime = _secondDataset.Data.Min(result => result.ElapsedTime),
-				PackagePower = _secondDataset.Data.Min(result => result.PackagePower),
+				PackagePower = _secondDataset.Data.Min(result => result.PackagePower)
 			};
 
 

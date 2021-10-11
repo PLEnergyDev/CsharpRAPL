@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using CsharpRAPL.Benchmarking;
 
 namespace ExampleProject {
+	[SuppressMessage("ReSharper", "UnusedMember.Global")]
 	public static class Benchmarks {
 		public static int Iterations;
 		public static int LoopIterations;
@@ -115,7 +117,7 @@ namespace ExampleProject {
 			return res;
 		}
 
-		[Benchmark("Operations", "Tests simple divison where the parts are marked as constant")]
+		[Benchmark("Operations", "Tests simple division where the parts are marked as constant")]
 		public static int DivideConst() {
 			const int a = 10;
 			const int b = 2;
