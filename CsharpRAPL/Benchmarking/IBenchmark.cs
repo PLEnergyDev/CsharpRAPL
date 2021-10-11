@@ -8,6 +8,6 @@ namespace CsharpRAPL.Benchmarking {
 		public string? Group { get; }
 		public int Order { get; }
 		public void Run();
-		public List<BenchmarkResult> GetResults();
+		public List<BenchmarkResult> GetResults(bool ignoreFirst = true);
 	}
 }
