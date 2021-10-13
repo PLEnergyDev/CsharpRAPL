@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using CsharpRAPL.Analysis;
 
 namespace CsharpRAPL.Benchmarking {
 	public class BenchmarkSuite {
-		public bool HasRun { get; private set; }
 		private Dictionary<string, IBenchmark> Benchmarks { get; } = new();
 
 		public void AddBenchmark<T>(string? group, int iterations, Func<T> benchmark, int order = 0) {
@@ -27,9 +27,6 @@ namespace CsharpRAPL.Benchmarking {
 				throw new NotSupportedException("Running the benchmarks is only supported on Unix.");
 			}
 
-			if (benchmarks.Count != 0)
-				HasRun = true;
-
 			var timer = new Stopwatch();
 			foreach ((int index, IBenchmark bench) in benchmarks.WithIndex()) {
 				Console.WriteLine($"Starting {bench.Name} which is the {index + 1} out of {benchmarks.Count} tests");
@@ -42,11 +39,6 @@ namespace CsharpRAPL.Benchmarking {
 		}
 
 		public Analysis.Analysis AnalyseResults(string firstBenchmarkName, string secondBenchmarkName) {
-			if (!HasRun) {
-				throw new NotSupportedException(
-					"It's not supported to analyse results before the benchmarks have run. Use Analysis class instead where you can use paths");
-			}
-
 			if (!Benchmarks.ContainsKey(firstBenchmarkName)) {
 				throw new KeyNotFoundException($"No benchmark with the name {firstBenchmarkName} has been registered.");
 			}
@@ -59,6 +51,26 @@ namespace CsharpRAPL.Benchmarking {
 			IBenchmark firstBenchmark = Benchmarks[firstBenchmarkName];
 			IBenchmark secondBenchmark = Benchmarks[secondBenchmarkName];
 			return new Analysis.Analysis(firstBenchmark, secondBenchmark);;
+		}
+
+		public IReadOnlyCollection<IBenchmark> GetBenchmarks() {
+			return Benchmarks.Values;
+		}
+
+		public void PlotGroups() {
+			Dictionary<string, List<IBenchmark>> groups = new();
+			foreach (IBenchmark benchmark in Benchmarks.Values.Where(benchmark => benchmark.Group != null)) {
+				Debug.Assert(benchmark.Group != null, "benchmark.Group != null");
+				if (!groups.ContainsKey(benchmark.Group)) {
+					groups.Add(benchmark.Group, new List<IBenchmark>());
+				}
+
+				groups[benchmark.Group].Add(benchmark);
+			}
+
+			foreach (KeyValuePair<string, List<IBenchmark>> pair in groups) {
+				BenchmarkPlot.PlotAllResults(pair.Value.ToArray());
+			}
 		}
 	}
 }

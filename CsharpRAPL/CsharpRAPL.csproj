@@ -8,7 +8,7 @@
     <ItemGroup>
       <PackageReference Include="Accord.Statistics" Version="3.8.2-alpha" />
       <PackageReference Include="CsvHelper" Version="27.1.1" />
-      <PackageReference Include="ScottPlot" Version="4.1.25" />
+      <PackageReference Include="ScottPlot" Version="4.0.49" />
     </ItemGroup>
 
     <ItemGroup>
