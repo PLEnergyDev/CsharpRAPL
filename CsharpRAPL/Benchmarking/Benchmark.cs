@@ -83,24 +83,18 @@ namespace CsharpRAPL.Benchmarking {
 			_resultBuffer.Clear();
 			for (var i = 0; i < Iterations; i++) {
 				if (Iterations != 1)
-					Print(Console.Write, $"\r{i + 1} of {Iterations} for {Name}");
+					Print(Console.Write, $"\r{i} of {Iterations} for {Name}");
 
 				//Actually performing benchmark and resulting IO
 				Start();
 				T benchmarkOutput = _benchmark();
 				End(benchmarkOutput);
 
-				if (_benchmarkOutputStream.Equals(_stdout))
-					Print(Console.WriteLine);
-
 				if (!(_elapsedTime >= MaxExecutionTime)) continue;
 
-				Print(Console.WriteLine, $"\nEnding for {Name} benchmark due to time constraints");
+				Print(Console.WriteLine, $"\rEnding for {Name} benchmark due to time constraints");
 				break;
 			}
-
-			if (Iterations != 1)
-				Print(Console.WriteLine);
 
 			SaveResults();
 
