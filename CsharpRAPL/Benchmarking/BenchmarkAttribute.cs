@@ -8,11 +8,14 @@ namespace CsharpRAPL.Benchmarking {
 		public string Description { get; }
 		
 		public int Order { get; }
+		
+		public bool Skip { get; }
 
-		public BenchmarkAttribute(string? group, string description, int order = 0) {
+		public BenchmarkAttribute(string? group, string description, int order = 0, bool skip = false) {
 			Group = group;
 			Description = description;
 			Order = order;
+			Skip = skip;
 		}
 	}
 }

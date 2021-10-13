@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using CsharpRAPL.Analysis;
 using CsharpRAPL.Benchmarking;
 using ExampleProject;
@@ -34,3 +35,10 @@ foreach ((string name, double value) in pValues) {
 Console.WriteLine("Min:\n" + analysis.GetMin());
 Console.WriteLine("Max:\n" + analysis.GetMax());
 Console.WriteLine("Average:\n" + analysis.GetAverage());
+
+//Plots the two things in the analysis.
+//analysis.PlotAnalysis();
+//Plots all benchmarks in their groups (Benchmarks without a group won't be plotted)
+suite.PlotGroups();
+//Plots all benchmarks to a single plot
+//BenchmarkPlot.PlotResults(BenchmarkResultType.Temperature, suite.GetBenchmarks().ToArray());

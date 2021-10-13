@@ -1,35 +1,43 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CsharpRAPL.Benchmarking;
 using ScottPlot;
 
 namespace CsharpRAPL.Analysis;
 
 public static class BenchmarkPlot {
-	public static void PlotResults(BenchmarkResultType resultType, Alignment alignment = Alignment.UpperRight,
-		params DataSet[] dataSets) {
-		var plt = new Plot();
+	public static void PlotResults(BenchmarkResultType resultType,
+		params IBenchmark[] dataSets) {
+		PlotResults(resultType,
+			dataSets.Select(benchmark => new DataSet(benchmark.Name, benchmark.GetResults())).ToArray());
+	}
+
+	public static void PlotResults(BenchmarkResultType resultType, params DataSet[] dataSets) {
+		if (dataSets.All(set => set.Data.Count == 0))
+			throw new NotSupportedException("Plotting without data is not supported.");
+		
+
+		var plt = new Plot(600, 450);
 		//We need this to move the data along x
 		double[] iterationCount = Enumerable.Range(0, dataSets.Max(set => set.Data.Count))
 			.Select(i => (double)i).ToArray();
 
-		var graphData = new List<double[]>();
 		var names = new List<string>();
 
 		foreach (DataSet dataSet in dataSets) {
 			double[] data = GetPlotData(dataSet, resultType);
-			graphData.Add(data);
 			names.Add(dataSet.Name);
-			plt.AddScatter(iterationCount, data, label: dataSet.Name);
+			plt.PlotScatter(iterationCount, data, label: dataSet.Name);
 		}
 
 		plt.XLabel("Iteration");
-		plt.XAxis2.Label(string.Join(" - ", names) + $" - {resultType}");
+		plt.Title(string.Join(" - ", names) + $" - {resultType}");
 		plt.YLabel(GetYLabel(resultType));
-		plt.Legend(location: alignment);
+		plt.Legend(location: legendLocation.upperRight);
 
-		plt.SetAxisLimitsY(0, graphData.Max(data => data.Max()) * 1.5f);
+		plt.AxisAuto(0, 0.5);
 
 		//This is what is shown since we work with integers here we want it to be presented like so
 		plt.XTicks(Enumerable.Range(1, iterationCount.Length).Select(i => i.ToString()).ToArray());
@@ -60,5 +68,19 @@ public static class BenchmarkPlot {
 		};
 
 		return yLabel;
+	}
+
+	public static void PlotAllResults(params IBenchmark[] dataSet) {
+		PlotResults(BenchmarkResultType.ElapsedTime, dataSet);
+		PlotResults(BenchmarkResultType.PackagePower, dataSet);
+		PlotResults(BenchmarkResultType.DramPower, dataSet);
+		PlotResults(BenchmarkResultType.Temperature, dataSet);
+	}
+
+	public static void PlotAllResults(params DataSet[] dataSet) {
+		PlotResults(BenchmarkResultType.ElapsedTime, dataSet);
+		PlotResults(BenchmarkResultType.PackagePower, dataSet);
+		PlotResults(BenchmarkResultType.DramPower, dataSet);
+		PlotResults(BenchmarkResultType.Temperature, dataSet);
 	}
 }

@@ -13,7 +13,8 @@ namespace CsharpRAPL.Benchmarking {
 		public string Name { get; }
 		public string? Group { get; }
 		public int Order { get; }
-
+		public bool HasRun { get; private set; }
+		
 		private const int MaxExecutionTime = 2700; //In seconds
 
 		// Prints everything to a null stream similar to /dev/null
@@ -81,7 +82,7 @@ namespace CsharpRAPL.Benchmarking {
 
 			_elapsedTime = 0;
 			_resultBuffer.Clear();
-			for (var i = 0; i < Iterations; i++) {
+			for (var i = 0; i <= Iterations; i++) {
 				if (Iterations != 1)
 					Print(Console.Write, $"\r{i} of {Iterations} for {Name}");
 
@@ -97,6 +98,7 @@ namespace CsharpRAPL.Benchmarking {
 			}
 
 			SaveResults();
+			HasRun = true;
 
 			//Resets console output
 			Console.SetOut(_stdout);

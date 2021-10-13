@@ -1,9 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Accord.Statistics.Testing;
 using CsharpRAPL.Benchmarking;
 using CsharpRAPL.Data;
-using ScottPlot;
 
 namespace CsharpRAPL.Analysis {
 	public class Analysis {
@@ -16,6 +16,11 @@ namespace CsharpRAPL.Analysis {
 		}
 
 		public Analysis(IBenchmark firstBenchmark, IBenchmark secondBenchmark) {
+			if (!firstBenchmark.HasRun || !secondBenchmark.HasRun) {
+				throw new NotSupportedException(
+					"It's not supported to analyse results before the benchmarks have run. Use Analysis class instead if you have csv files.");
+			}
+
 			_firstDataset = new DataSet(firstBenchmark.Name, firstBenchmark.GetResults());
 			_secondDataset = new DataSet(secondBenchmark.Name, secondBenchmark.GetResults());
 		}
@@ -99,15 +104,15 @@ namespace CsharpRAPL.Analysis {
 			return (true, "");
 		}
 
-		public void PlotAllResults() {
-			PlotResults(BenchmarkResultType.ElapsedTime);
-			PlotResults(BenchmarkResultType.PackagePower);
-			PlotResults(BenchmarkResultType.DramPower);
-			PlotResults(BenchmarkResultType.Temperature);
+		public void PlotAnalysis() {
+			PlotAnalysis(BenchmarkResultType.ElapsedTime);
+			PlotAnalysis(BenchmarkResultType.PackagePower);
+			PlotAnalysis(BenchmarkResultType.DramPower);
+			PlotAnalysis(BenchmarkResultType.Temperature);
 		}
 
-		public void PlotResults(BenchmarkResultType resultType, Alignment alignment = Alignment.UpperRight) {
-			BenchmarkPlot.PlotResults(resultType, alignment, _firstDataset, _secondDataset);
+		public void PlotAnalysis(BenchmarkResultType resultType) {
+			BenchmarkPlot.PlotResults(resultType, _firstDataset, _secondDataset);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using CsharpRAPL.Data;
 
 namespace CsharpRAPL.Benchmarking {
@@ -7,6 +7,7 @@ namespace CsharpRAPL.Benchmarking {
 		public string Name { get; }
 		public string? Group { get; }
 		public int Order { get; }
+		public bool HasRun { get; }
 		public void Run();
 		public List<BenchmarkResult> GetResults(bool ignoreFirst = true);
 	}

@@ -21,6 +21,7 @@ namespace CsharpRAPL.Benchmarking {
 			foreach (MethodInfo methodInfo in assembly.GetTypes().SelectMany(type => type.GetMethods())) {
 				var benchmarkAttribute = methodInfo.GetCustomAttribute<BenchmarkAttribute>();
 				if (benchmarkAttribute == null) continue;
+				if (benchmarkAttribute.Skip) continue;
 				AddBenchmark(benchmarkAttribute.Group, Iterations, methodInfo.CreateDelegate<Func<int>>(),
 					benchmarkAttribute.Order);
 			}
