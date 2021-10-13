@@ -13,8 +13,7 @@ namespace CsharpRAPL.Benchmarking {
 			if (Benchmarks.ContainsKey(benchmarkName))
 				throw new Exception($"Trying to add a benchmark with the same name twice. Name is: {benchmarkName}");
 
-			Benchmarks.Add(benchmarkName, new Benchmark<T>(benchmarkName, iterations, benchmark,
-				false, group, order));
+			Benchmarks.Add(benchmarkName, new Benchmark<T>(benchmarkName, iterations, benchmark, false, group, order));
 		}
 
 		public void AddBenchmark<T>(int iterations, Func<T> benchmark) {
@@ -28,7 +27,6 @@ namespace CsharpRAPL.Benchmarking {
 				throw new NotSupportedException("Running the benchmarks is only supported on Unix.");
 			}
 
-
 			if (benchmarks.Count != 0)
 				HasRun = true;
 
@@ -38,7 +36,7 @@ namespace CsharpRAPL.Benchmarking {
 				timer.Start();
 				bench.Run();
 				timer.Stop();
-				Console.WriteLine($"Finished {bench.Name} which took {timer.ElapsedMilliseconds}ms");
+				Console.WriteLine($"\rFinished {bench.Name} which took {timer.ElapsedMilliseconds}ms\n");
 				timer.Reset();
 			}
 		}
@@ -60,8 +58,7 @@ namespace CsharpRAPL.Benchmarking {
 
 			IBenchmark firstBenchmark = Benchmarks[firstBenchmarkName];
 			IBenchmark secondBenchmark = Benchmarks[secondBenchmarkName];
-			var analysis = new Analysis.Analysis(firstBenchmark, secondBenchmark);
-			return analysis;
+			return new Analysis.Analysis(firstBenchmark, secondBenchmark);;
 		}
 	}
 }
