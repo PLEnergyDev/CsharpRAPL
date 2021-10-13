@@ -8,10 +8,35 @@ using ScottPlot;
 namespace CsharpRAPL.Analysis;
 
 public static class BenchmarkPlot {
+	
 	public static void PlotResults(BenchmarkResultType resultType,
 		params IBenchmark[] dataSets) {
 		PlotResults(resultType,
 			dataSets.Select(benchmark => new DataSet(benchmark.Name, benchmark.GetResults())).ToArray());
+	}
+
+	//TODO: Note that this expect the path is the root of the groups e.g.
+	// Data/ would be a root that contained Data/Loops and Data/Control
+	public static void PlotResultsGroupsFromFolder(BenchmarkResultType resultType, string path) {
+		var groups = new Dictionary<string, List<DataSet>>();
+
+		foreach (string file in Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories)) {
+			string group = Path.GetRelativePath(Directory.GetCurrentDirectory(),file).Split(Path.DirectorySeparatorChar)[1];
+			if (!groups.ContainsKey(group))
+				groups.Add(group, new List<DataSet>());
+			groups[group].Add(new DataSet(file));
+		}
+
+		foreach (KeyValuePair<string, List<DataSet>> keyValuePair in groups) {
+			PlotResults(resultType, keyValuePair.Value.ToArray());
+		}
+	}
+
+	public static void PlotAllResultsGroupsFromFolder(string path) {
+		PlotResultsGroupsFromFolder(BenchmarkResultType.ElapsedTime, path);
+		PlotResultsGroupsFromFolder(BenchmarkResultType.PackagePower, path);
+		PlotResultsGroupsFromFolder(BenchmarkResultType.DramPower, path);
+		PlotResultsGroupsFromFolder(BenchmarkResultType.Temperature, path);
 	}
 
 	public static void PlotResults(BenchmarkResultType resultType, params DataSet[] dataSets) {
