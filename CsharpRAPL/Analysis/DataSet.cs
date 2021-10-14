@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -34,7 +34,7 @@ public class DataSet {
 		using var csv = new CsvReader(reader,
 			new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" });
 
-		return new DataSet(Path.GetFileNameWithoutExtension(path), csv.GetRecords<BenchmarkResult>().ToList());
+		return new DataSet(Path.GetFileNameWithoutExtension(path).Split('-')[0], csv.GetRecords<BenchmarkResult>().ToList());
 	}
 
 	public (bool isValid, string message) EnsureResults() {

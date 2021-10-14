@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using Accord.Statistics;
 using CsharpRAPL.Benchmarking;
 using ScottPlot;
+using ScottPlot.Drawing;
 
 namespace CsharpRAPL.Analysis;
 
@@ -42,45 +45,55 @@ public static class BenchmarkPlot {
 	public static void PlotResults(BenchmarkResultType resultType, params DataSet[] dataSets) {
 		if (dataSets.All(set => set.Data.Count == 0))
 			throw new NotSupportedException("Plotting without data is not supported.");
-		
 
 		var plt = new Plot(600, 450);
-		//We need this to move the data along x
-		double[] iterationCount = Enumerable.Range(0, dataSets.Max(set => set.Data.Count))
-			.Select(i => (double)i).ToArray();
 
-		var names = new List<string>();
+		string[] names = dataSets.Select(set => set.Name).ToArray();
 
-		foreach (DataSet dataSet in dataSets) {
-			double[] data = GetPlotData(dataSet, resultType);
-			names.Add(dataSet.Name);
-			plt.PlotScatter(iterationCount, data, label: dataSet.Name);
+		var hatchIndex = 3;
+		foreach ((int index, DataSet dataSet) in dataSets.WithIndex()) {
+			double[] plotData = GetPlotData(dataSet, resultType);
+			double min = plotData.Min();
+			double max = plotData.Max();
+
+			BoxPlot bar = plt.PlotBoxPlot(index, plotData, min, max,
+				$"{dataSet.Name}\nMax: {max:F4} Min: {min:F4}\nLowerQ: {plotData.LowerQuartile():F4} UpperQ: {plotData.UpperQuartile():F4}");
+
+			if (hatchIndex > 9) {
+				hatchIndex = 0;
+			}
+
+			bar.HatchStyle = (HatchStyle)hatchIndex;
+			bar.HatchColor = Color.Gray;
+			hatchIndex++;
 		}
 
-		plt.XLabel("Iteration");
-		plt.Title(string.Join(" - ", names) + $" - {resultType}");
+		//plt.Legend(location: legendLocation.upperRight);
+		plt.XTicks(Enumerable.Range(0, dataSets.Length).Select(i1 => (double)i1).ToArray(), names);
+		plt.XLabel("Benchmark");
 		plt.YLabel(GetYLabel(resultType));
-		plt.Legend(location: legendLocation.upperRight);
+		plt.Title($"{resultType}");
 
-		plt.AxisAuto(0, 0.5);
+		DateTime dateTime = DateTime.Now;
+		var time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";
 
-		//This is what is shown since we work with integers here we want it to be presented like so
-		plt.XTicks(Enumerable.Range(1, iterationCount.Length).Select(i => i.ToString()).ToArray());
-		string time = DateTime.Now.ToString("s").Replace(":", "-");
-		Directory.CreateDirectory($"results/graphs/{resultType}");
-		plt.SaveFig($"results/graphs/{resultType}/{string.Join(" - ", names)}-{time}.png");
+		plt.SaveFig($"results/graphs/{resultType}/{time}.png");
 	}
 
 	private static double[] GetPlotData(DataSet dataSet, BenchmarkResultType resultType) {
-		double[] data = resultType switch {
-			BenchmarkResultType.ElapsedTime => dataSet.Data.Select(result => result.ElapsedTime).ToArray(),
-			BenchmarkResultType.PackagePower => dataSet.Data.Select(result => result.PackagePower).ToArray(),
-			BenchmarkResultType.DramPower => dataSet.Data.Select(result => result.DramPower).ToArray(),
-			BenchmarkResultType.Temperature => dataSet.Data.Select(result => result.Temperature / 1000).ToArray(),
+		List<double> data = resultType switch {
+			BenchmarkResultType.ElapsedTime => dataSet.Data.Where(result => result.ElapsedTime > double.Epsilon)
+				.Select(result => result.ElapsedTime).ToList(),
+			BenchmarkResultType.PackagePower => dataSet.Data.Where(result => result.PackagePower > double.Epsilon)
+				.Select(result => result.PackagePower).ToList(),
+			BenchmarkResultType.DramPower => dataSet.Data.Where(result => result.DramPower > double.Epsilon)
+				.Select(result => result.DramPower).ToList(),
+			BenchmarkResultType.Temperature => dataSet.Data.Where(result => result.Temperature > double.Epsilon)
+				.Select(result => result.Temperature / 1000).ToList(),
 			_ => throw new ArgumentOutOfRangeException(nameof(resultType), resultType, null)
 		};
 
-		return data;
+		return data.ToArray();
 	}
 
 	private static string GetYLabel(BenchmarkResultType resultType) {
