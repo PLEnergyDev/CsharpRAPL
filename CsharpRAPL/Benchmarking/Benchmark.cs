@@ -40,7 +40,8 @@ namespace CsharpRAPL.Benchmarking {
 			if (!silenceBenchmarkOutput)
 				_benchmarkOutputStream = _stdout;
 
-			string time = DateTime.Now.ToString("s").Replace(":", "-");
+			DateTime dateTime = DateTime.Now;
+			var time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";
 			if (Group != null) {
 				Directory.CreateDirectory($"results/{group}/{name}");
 				_outputFilePath = $"results/{group}/{name}/{name}-{time}.csv";
