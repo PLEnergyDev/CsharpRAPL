@@ -76,7 +76,7 @@ public static class BenchmarkPlot {
 
 		DateTime dateTime = DateTime.Now;
 		var time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";
-
+		Directory.CreateDirectory($"results/graphs/{resultType}");
 		plt.SaveFig($"results/graphs/{resultType}/{time}.png");
 	}
 
