@@ -50,7 +50,7 @@ namespace CsharpRAPL.Benchmarking {
 
 			IBenchmark firstBenchmark = Benchmarks[firstBenchmarkName];
 			IBenchmark secondBenchmark = Benchmarks[secondBenchmarkName];
-			return new Analysis.Analysis(firstBenchmark, secondBenchmark);;
+			return new Analysis.Analysis(firstBenchmark, secondBenchmark);
 		}
 
 		public IReadOnlyCollection<IBenchmark> GetBenchmarks() {
