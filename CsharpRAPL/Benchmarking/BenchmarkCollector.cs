@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -22,8 +22,16 @@ namespace CsharpRAPL.Benchmarking {
 				var benchmarkAttribute = methodInfo.GetCustomAttribute<BenchmarkAttribute>();
 				if (benchmarkAttribute == null) continue;
 				if (benchmarkAttribute.Skip) continue;
-				AddBenchmark(benchmarkAttribute.Group, Iterations, methodInfo.CreateDelegate<Func<int>>(),
-					benchmarkAttribute.Order);
+
+				Type funcType = typeof(Func<>).MakeGenericType(methodInfo.ReturnType);
+
+				MethodInfo addBenchmarkMethod = GetType().GetMethods()[1];
+				MethodInfo genericAddBenchmark = addBenchmarkMethod.MakeGenericMethod(methodInfo.ReturnType);
+
+				genericAddBenchmark.Invoke(this, new object[] {
+					benchmarkAttribute.Group, Iterations, methodInfo.CreateDelegate(funcType),
+					benchmarkAttribute.Order
+				});
 			}
 		}
 	}
