@@ -16,17 +16,17 @@ namespace CsharpRAPL {
 		}
 
 		public void Start() {
-			_dramApi.Start();
-			_tempApi.Start();
 			_timerApi.Start();
+			_tempApi.Start();
+			_dramApi.Start();
 			_packageApi.Start();
 		}
 
 		public void End() {
+			_packageApi.End();
 			_dramApi.End();
 			_tempApi.End();
 			_timerApi.End();
-			_packageApi.End();
 		}
 
 		public bool IsValid() {
