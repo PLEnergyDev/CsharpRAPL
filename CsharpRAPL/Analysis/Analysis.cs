@@ -52,6 +52,18 @@ namespace CsharpRAPL.Analysis {
 			return ((_firstDataset.Name, _firstDataset.GetMin()), (_secondDataset.Name, _secondDataset.GetMin()));
 		}
 
+		public ((string Name, BenchmarkResult Data) FirstDataSet, (string Name, BenchmarkResult Data) SecondDataSet)
+			GetMaxBy(BenchmarkResultType resultType) {
+			return ((_firstDataset.Name, _firstDataset.GetMaxBy(resultType)),
+				(_secondDataset.Name, _secondDataset.GetMaxBy(resultType)));
+		}
+
+		public ((string Name, BenchmarkResult Data) FirstDataSet, (string Name, BenchmarkResult Data) SecondDataSet)
+			GetMinBy(BenchmarkResultType resultType) {
+			return ((_firstDataset.Name, _firstDataset.GetMinBy(resultType)),
+				(_secondDataset.Name, _secondDataset.GetMinBy(resultType)));
+		}
+
 		public Dictionary<string, double> CalculatePValue() {
 			double[] timesOne = _firstDataset.Data.Select(data => data.ElapsedTime).ToArray();
 			double[] timesTwo = _secondDataset.Data.Select(data => data.ElapsedTime).ToArray();
