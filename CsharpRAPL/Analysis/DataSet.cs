@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -34,7 +35,8 @@ public class DataSet {
 		using var csv = new CsvReader(reader,
 			new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" });
 
-		return new DataSet(Path.GetFileNameWithoutExtension(path).Split('-')[0], csv.GetRecords<BenchmarkResult>().ToList());
+		return new DataSet(Path.GetFileNameWithoutExtension(path).Split('-')[0],
+			csv.GetRecords<BenchmarkResult>().ToList());
 	}
 
 	public (bool isValid, string message) EnsureResults() {
@@ -57,6 +59,16 @@ public class DataSet {
 		};
 	}
 
+	public BenchmarkResult GetMinBy(BenchmarkResultType resultType) {
+		return resultType switch {
+			BenchmarkResultType.ElapsedTime => Data.MinBy(result => result.ElapsedTime),
+			BenchmarkResultType.PackagePower => Data.MinBy(result => result.PackagePower),
+			BenchmarkResultType.DramPower => Data.MinBy(result => result.DramPower),
+			BenchmarkResultType.Temperature => Data.MinBy(result => result.Temperature),
+			_ => throw new ArgumentOutOfRangeException(nameof(resultType), resultType, null)
+		} ?? throw new InvalidOperationException("The data set had no elements.");
+	}
+
 	public BenchmarkResult GetMax() {
 		return new BenchmarkResult {
 			Temperature = Data.Max(result => result.Temperature),
@@ -64,6 +76,16 @@ public class DataSet {
 			ElapsedTime = Data.Max(result => result.ElapsedTime),
 			PackagePower = Data.Max(result => result.PackagePower)
 		};
+	}
+
+	public BenchmarkResult GetMaxBy(BenchmarkResultType resultType) {
+		return resultType switch {
+			BenchmarkResultType.ElapsedTime => Data.MaxBy(result => result.ElapsedTime),
+			BenchmarkResultType.PackagePower => Data.MaxBy(result => result.PackagePower),
+			BenchmarkResultType.DramPower => Data.MaxBy(result => result.DramPower),
+			BenchmarkResultType.Temperature => Data.MaxBy(result => result.Temperature),
+			_ => throw new ArgumentOutOfRangeException(nameof(resultType), resultType, null)
+		} ?? throw new InvalidOperationException("The data set had no elements.");
 	}
 
 	public BenchmarkResult GetAverage() {
