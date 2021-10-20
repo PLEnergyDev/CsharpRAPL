@@ -2,7 +2,7 @@
 using ScottPlot;
 using ScottPlot.Drawing;
 
-namespace CsharpRAPL.Analysis;
+namespace CsharpRAPL.Plotting;
 
 public static class PlotExtensionMethods {
 	public static BoxPlot PlotBoxPlot(this Plot plot,

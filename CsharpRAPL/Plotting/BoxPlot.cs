@@ -9,7 +9,7 @@ using ScottPlot.Config;
 using ScottPlot.Drawing;
 using HatchStyle = ScottPlot.Drawing.HatchStyle;
 
-namespace CsharpRAPL.Analysis;
+namespace CsharpRAPL.Plotting;
 
 public class BoxPlot : Plottable, IPlottable {
 	public readonly double Position;

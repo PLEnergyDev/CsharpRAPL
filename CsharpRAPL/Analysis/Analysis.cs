@@ -4,6 +4,7 @@ using System.Linq;
 using Accord.Statistics.Testing;
 using CsharpRAPL.Benchmarking;
 using CsharpRAPL.Data;
+using CsharpRAPL.Plotting;
 
 namespace CsharpRAPL.Analysis {
 	public class Analysis {
