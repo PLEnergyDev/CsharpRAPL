@@ -33,7 +33,7 @@ namespace CsharpRAPL.Benchmarking {
 				timer.Start();
 				bench.Run();
 				timer.Stop();
-				Console.WriteLine($"\rFinished {bench.Name} which took {timer.ElapsedMilliseconds}ms\n");
+				Console.WriteLine($"\rFinished {bench.Name} which took {timer.ElapsedMilliseconds}ms with {bench.Iterations} iterations\n");
 				timer.Reset();
 			}
 		}
