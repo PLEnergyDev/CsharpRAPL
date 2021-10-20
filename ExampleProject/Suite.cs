@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using CsharpRAPL.Analysis;
 using CsharpRAPL.Benchmarking;
-using ExampleProject;
 
-Benchmarks.Iterations = args.Length > 0 ? int.Parse(args[0]) : 1;
-Benchmarks.LoopIterations = args.Length > 1 ? int.Parse(args[1]) : 100_000_000;
+int iterations = args.Length > 0 ? int.Parse(args[0]) : 1; 
+int loopIterations = args.Length > 1 ? int.Parse(args[1]) : 100_000_000;
 
-var suite = new BenchmarkCollector(Benchmarks.Iterations);
+var suite = new BenchmarkCollector(iterations, loopIterations);
 
 suite.RunAll();
 

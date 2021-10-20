@@ -6,14 +6,18 @@ using System.Reflection;
 namespace CsharpRAPL.Benchmarking {
 	public class BenchmarkCollector : BenchmarkSuite {
 		public int Iterations { get; }
+		public int LoopIterations { get; }
 
 		/// <summary>
 		/// A map of a return type and a variation of the benchmark method using the return type as the generic argument
 		/// </summary>
 		private readonly Dictionary<Type, AddBenchmarkVariation> _registeredAddBenchmarkVariations = new();
 
-		public BenchmarkCollector(int iterations, bool onlyCalling = true) {
+		private readonly List<Type> _registeredBenchmarkClasses = new();
+
+		public BenchmarkCollector(int iterations, int loopIterations, bool onlyCalling = true) {
 			Iterations = iterations;
+			LoopIterations = loopIterations;
 			if (onlyCalling)
 				CollectBenchmarks(Assembly.GetCallingAssembly());
 			else {
@@ -31,6 +35,11 @@ namespace CsharpRAPL.Benchmarking {
 				CheckMethodValidity(benchmark);
 				if (benchmarkAttribute.Skip) continue;
 
+				Type? benchmarkClass = _registeredBenchmarkClasses.FirstOrDefault(type => type == benchmark.DeclaringType);
+				if (benchmarkClass == null) {
+					RegisterBenchmarkClass(benchmark.DeclaringType!);
+				}
+
 				if (!_registeredAddBenchmarkVariations.ContainsKey(benchmark.ReturnType)) {
 					//If we haven't registered this return type yet, register it.
 					RegisterAddBenchmarkVariation(benchmark);
@@ -47,6 +56,24 @@ namespace CsharpRAPL.Benchmarking {
 					benchmarkAttribute.Order
 				});
 			}
+		}
+
+		private void RegisterBenchmarkClass(Type benchmarkClass) {
+			TrySetField(benchmarkClass, "Iterations", Iterations);
+			TrySetField(benchmarkClass, "LoopIterations", LoopIterations);
+			_registeredBenchmarkClasses.Add(benchmarkClass);
+		}
+
+		private static void TrySetField(Type benchmarkClass, string name, int value) {
+			FieldInfo? fieldInfo = benchmarkClass.GetFields().FirstOrDefault(info => info.Name == name);
+			if (fieldInfo == null) return;
+
+			if (!fieldInfo.IsPublic)
+				throw new NotSupportedException($"Your {name} field must be public.");
+			if (!fieldInfo.IsStatic)
+				throw new NotSupportedException($"Your {name} field must be static.");
+
+			benchmarkClass.GetField(name, BindingFlags.Public | BindingFlags.Static)?.SetValue(null, value);
 		}
 
 		/// <summary>
@@ -80,7 +107,8 @@ namespace CsharpRAPL.Benchmarking {
 			MethodInfo genericAddBenchmark = addBenchmarkMethod.MakeGenericMethod(benchmark.ReturnType);
 
 			//Add it to our registry
-			_registeredAddBenchmarkVariations.Add(benchmark.ReturnType, new AddBenchmarkVariation(genericAddBenchmark, funcType));
+			_registeredAddBenchmarkVariations.Add(benchmark.ReturnType,
+				new AddBenchmarkVariation(genericAddBenchmark, funcType));
 		}
 	}
 
