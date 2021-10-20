@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using CsharpRAPL.Analysis;
+using CsharpRAPL.Plotting;
 
 namespace CsharpRAPL.Benchmarking {
 	public class BenchmarkSuite {

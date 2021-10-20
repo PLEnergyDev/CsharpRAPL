@@ -1,6 +1,6 @@
-﻿namespace CsharpRAPL.Data {
-	public enum CollectionApproach {
-		Average,
-		Difference
-	}
+﻿namespace CsharpRAPL.Data; 
+
+public enum CollectionApproach {
+	Average,
+	Difference
 }

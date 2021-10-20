@@ -4,11 +4,13 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using Accord.Statistics;
+using CsharpRAPL.Analysis;
 using CsharpRAPL.Benchmarking;
 using ScottPlot;
 using ScottPlot.Drawing;
+using DataSet = CsharpRAPL.Analysis.DataSet;
 
-namespace CsharpRAPL.Analysis;
+namespace CsharpRAPL.Plotting;
 
 public static class BenchmarkPlot {
 	
@@ -76,8 +78,8 @@ public static class BenchmarkPlot {
 
 		DateTime dateTime = DateTime.Now;
 		var time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";
-		Directory.CreateDirectory($"results/graphs/{resultType}");
-		plt.SaveFig($"results/graphs/{resultType}/{time}.png");
+		Directory.CreateDirectory($"results/_plots/{resultType}");
+		plt.SaveFig($"results/_plots/{resultType}/{time}.png");
 	}
 
 	private static double[] GetPlotData(DataSet dataSet, BenchmarkResultType resultType) {
