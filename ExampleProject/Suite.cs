@@ -1,42 +1,23 @@
 using System;
-using System.Collections.Generic;
-using CsharpRAPL.Analysis;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.CommandLine;
 
-int iterations = args.Length > 0 ? int.Parse(args[0]) : 1; 
-int loopIterations = args.Length > 1 ? int.Parse(args[1]) : 100_000_000;
+CsharpRAPLCLI.SetAnalysis(analysis => {
+	Console.WriteLine($"Min:\n{analysis.GetMin()}");
+	Console.WriteLine($"Max:\n{analysis.GetMax()}");
+	Console.WriteLine($"Average:\n{analysis.GetAverage()}");
 
-var suite = new BenchmarkCollector(iterations, loopIterations);
+	//Plots the two things in the analysis.
+	analysis.PlotAnalysis();
+});
+
+Options options = CsharpRAPLCLI.Parse(args);
+
+if (options.ShouldExit) {
+	return;
+}
+
+var suite = new BenchmarkCollector(options.Iterations, options.LoopIterations);
 
 suite.RunAll();
-
-// EXAMPLE USAGE OF ANALYSIS
-Analysis analysis = suite.AnalyseResults("ForLoop", "WhileLoop");
-// Save the p-values to a dictionary
-Dictionary<string, double> pValues = analysis.CalculatePValue();
-
-
-// Print the p-values to console
-// The lower the p-value the higher the chance for that statement to be correct
-// P-value means the chance of the null hypothesis to be true
-Console.WriteLine("Is the null hypothesis true? I.e. is the opposite of what the key implies true?");
-foreach ((string name, double value) in pValues) {
-	Console.WriteLine($"{name}:{value}");
-}
-
-Console.WriteLine("Is the alternate hypothesis true? I.e. is what the key implies true?");
-foreach ((string name, double value) in pValues) {
-	Console.WriteLine($"{name}:{1 - value}");
-}
-
-
-Console.WriteLine("Min:\n" + analysis.GetMin());
-Console.WriteLine("Max:\n" + analysis.GetMax());
-Console.WriteLine("Average:\n" + analysis.GetAverage());
-
-//Plots the two things in the analysis.
-//analysis.PlotAnalysis();
-//Plots all benchmarks in their groups (Benchmarks without a group won't be plotted)
 suite.PlotGroups();
-//Plots all benchmarks to a single plot
-//BenchmarkPlot.PlotResults(BenchmarkResultType.Temperature, suite.GetBenchmarks().ToArray());

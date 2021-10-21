@@ -6,6 +6,7 @@ using System.Linq;
 using Accord.Statistics;
 using CsharpRAPL.Analysis;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.CommandLine;
 using ScottPlot;
 using ScottPlot.Drawing;
 using DataSet = CsharpRAPL.Analysis.DataSet;
@@ -25,10 +26,12 @@ public static class BenchmarkPlot {
 	public static void PlotResultsGroupsFromFolder(BenchmarkResultType resultType, string path) {
 		var groups = new Dictionary<string, List<DataSet>>();
 
-		foreach (string file in Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories)) {
+		foreach (string file in Directory.EnumerateFiles(path, "*.csv", SearchOption.AllDirectories)) {
 			string group = Path.GetRelativePath(Directory.GetCurrentDirectory(),file).Split(Path.DirectorySeparatorChar)[1];
-			if (!groups.ContainsKey(group))
+			if (!groups.ContainsKey(group)) {
 				groups.Add(group, new List<DataSet>());
+			}
+
 			groups[group].Add(new DataSet(file));
 		}
 
@@ -45,8 +48,9 @@ public static class BenchmarkPlot {
 	}
 
 	public static void PlotResults(BenchmarkResultType resultType, params DataSet[] dataSets) {
-		if (dataSets.All(set => set.Data.Count == 0))
+		if (dataSets.All(set => set.Data.Count == 0)) {
 			throw new NotSupportedException("Plotting without data is not supported.");
+		}
 
 		var plt = new Plot(600, 450);
 
@@ -78,8 +82,8 @@ public static class BenchmarkPlot {
 
 		DateTime dateTime = DateTime.Now;
 		var time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";
-		Directory.CreateDirectory($"results/_plots/{resultType}");
-		plt.SaveFig($"results/_plots/{resultType}/{time}.png");
+		Directory.CreateDirectory($"{CsharpRAPLCLI.Options.PlotOutputPath}/{resultType}");
+		plt.SaveFig($"{CsharpRAPLCLI.Options.PlotOutputPath}/{resultType}/{time}.png");
 	}
 
 	private static double[] GetPlotData(DataSet dataSet, BenchmarkResultType resultType) {

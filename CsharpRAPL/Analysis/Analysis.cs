@@ -108,6 +108,30 @@ namespace CsharpRAPL.Analysis {
 			return (true, "");
 		}
 
+		public (bool isValid, string message) EnsureResultsMutually() {
+			List<string> first = _firstDataset.Data.Select(result => result.Result).Distinct().ToList();
+			List<string> second = _secondDataset.Data.Select(result => result.Result).Distinct().ToList();
+
+			var firstEnsure = _firstDataset.EnsureResults();
+			if (!firstEnsure.isValid)
+				return firstEnsure;
+			
+			var secondEnsure = _secondDataset.EnsureResults();
+			if (!secondEnsure.isValid)
+				return secondEnsure;
+
+			if (first.Count != second.Count)
+				return (false,
+					$"The two data sets have an unequal number of results. {_firstDataset.Name}: [{string.Join(", ", first)}], {_secondDataset.Name}: [{string.Join(", ", second)}]");
+			for (var i = 0; i < first.Count; i++) {
+				if (first[i] != second[i]) {
+					return (false, $"The to datasets differ in {first[i]} and {second[i]}");
+				}
+			}
+			
+			return (true, "");
+		}
+
 		public void PlotAnalysis() {
 			PlotAnalysis(BenchmarkResultType.ElapsedTime);
 			PlotAnalysis(BenchmarkResultType.PackagePower);
