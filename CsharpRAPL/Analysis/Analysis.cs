@@ -66,41 +66,32 @@ namespace CsharpRAPL.Analysis {
 		}
 
 		public Dictionary<string, double> CalculatePValue() {
-			double[] timesOne = _firstDataset.Data.Select(data => data.ElapsedTime).ToArray();
-			double[] timesTwo = _secondDataset.Data.Select(data => data.ElapsedTime).ToArray();
-
-			double[] packageOne = _firstDataset.Data.Select(data => data.PackagePower).ToArray();
-			double[] packageTwo = _secondDataset.Data.Select(data => data.PackagePower).ToArray();
-
-			double[] dramOne = _firstDataset.Data.Select(data => data.DramPower).ToArray();
-			double[] dramTwo = _secondDataset.Data.Select(data => data.DramPower).ToArray();
-
-
-			double firstTimeMean = timesOne.Average();
-			double firstPkgMean = packageOne.Average();
-			double firstDramMean = dramOne.Average();
-
-			double secondTimeMean = timesTwo.Average();
-			double secondPkgMean = packageTwo.Average();
-			double secondDramMean = dramTwo.Average();
+			PValueData firstDataSet = new(_firstDataset.Name,
+				_firstDataset.Data.Select(data => data.ElapsedTime).ToArray(),
+				_firstDataset.Data.Select(data => data.PackagePower).ToArray(),
+				_firstDataset.Data.Select(data => data.DramPower).ToArray());
+			PValueData secondDataSet = new(_secondDataset.Name,
+				_secondDataset.Data.Select(data => data.ElapsedTime).ToArray(),
+				_secondDataset.Data.Select(data => data.PackagePower).ToArray(),
+				_secondDataset.Data.Select(data => data.DramPower).ToArray());
 
 			// Test if first is significantly lower than second
-			var timeFirstTTest = new TTest(timesOne, secondTimeMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
-			var pkgFirstTTest = new TTest(packageOne, secondPkgMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
-			var dramFirstTTest = new TTest(dramOne, secondDramMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
+			var timeFirstTTest = new TTest(firstDataSet.Times, secondDataSet.TimeMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
+			var pkgFirstTTest = new TTest(firstDataSet.Package, secondDataSet.PackageMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
+			var dramFirstTTest = new TTest(firstDataSet.Dram, secondDataSet.DramMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
 
 			// Test if second is significantly lower than first
-			var timeSecondTTest = new TTest(timesTwo, firstTimeMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
-			var pkgSecondTTest = new TTest(packageTwo, firstPkgMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
-			var dramSecondTTest = new TTest(dramTwo, firstDramMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
+			var timeSecondTTest = new TTest(secondDataSet.Times, firstDataSet.TimeMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
+			var pkgSecondTTest = new TTest(secondDataSet.Package, firstDataSet.PackageMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
+			var dramSecondTTest = new TTest(secondDataSet.Dram, firstDataSet.DramMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
 
 			var results = new Dictionary<string, double> {
-				{ $"{_firstDataset.Name} lower than {_secondDataset.Name} Time", timeFirstTTest.PValue },
-				{ $"{_secondDataset.Name} lower than {_firstDataset.Name} Time", timeSecondTTest.PValue },
-				{ $"{_firstDataset.Name} lower than {_secondDataset.Name} Package", pkgFirstTTest.PValue },
-				{ $"{_secondDataset.Name} lower than {_firstDataset.Name} Package", pkgSecondTTest.PValue },
-				{ $"{_firstDataset.Name} lower than {_secondDataset.Name} Dram", dramFirstTTest.PValue },
-				{ $"{_secondDataset.Name} lower than {_firstDataset.Name} Dram", dramSecondTTest.PValue }
+				{ $"{firstDataSet.Name} lower than {secondDataSet.Name} Time", timeFirstTTest.PValue },
+				{ $"{secondDataSet.Name} lower than {firstDataSet.Name} Time", timeSecondTTest.PValue },
+				{ $"{firstDataSet.Name} lower than {secondDataSet.Name} Package", pkgFirstTTest.PValue },
+				{ $"{secondDataSet.Name} lower than {firstDataSet.Name} Package", pkgSecondTTest.PValue },
+				{ $"{firstDataSet.Name} lower than {secondDataSet.Name} Dram", dramFirstTTest.PValue },
+				{ $"{secondDataSet.Name} lower than {firstDataSet.Name} Dram", dramSecondTTest.PValue }
 			};
 
 			return results;
