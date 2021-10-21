@@ -109,7 +109,9 @@ public class BoxPlot : Plottable, IPlottable {
 
 		RenderBarFromRect(rect, gfx);
 
-		if (!(ErrorLineWidth > 0) || !(_errorAbove > double.Epsilon) || !(_errorBelow > double.Epsilon)) return;
+		if (!(ErrorLineWidth > 0) || !(_errorAbove > double.Epsilon) || !(_errorBelow > double.Epsilon)) {
+			return;
+		}
 
 		using var errorPen = new Pen(ErrorColor, ErrorLineWidth);
 		gfx.DrawLine(errorPen, centerPx, dims.GetPixelY(UpperQuartile), centerPx, errorCapAboveY);

@@ -6,6 +6,7 @@ using System.Linq;
 using Accord.Statistics;
 using Accord.Statistics.Distributions.Univariate;
 using CsharpRAPL.Analysis;
+using CsharpRAPL.CommandLine;
 using CsharpRAPL.Data;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -45,14 +46,12 @@ namespace CsharpRAPL.Benchmarking {
 
 			DateTime dateTime = DateTime.Now;
 			var time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";
-			if (Group != null) {
-				Directory.CreateDirectory($"results/{group}/{name}");
-				_outputFilePath = $"results/{group}/{name}/{name}-{time}.csv";
-			}
-			else {
-				Directory.CreateDirectory($"results/{name}");
-				_outputFilePath = $"results/{name}/{name}-{time}.csv";
-			}
+			string outputPath = Group != null
+				? $"{CsharpRAPLCLI.Options.OutputPath}/{group}/{name}"
+				: $"{CsharpRAPLCLI.Options.OutputPath}/{name}";
+
+			Directory.CreateDirectory(outputPath);
+			_outputFilePath = $"{outputPath}/{name}-{time}.csv";
 		}
 
 		private void Start() {
@@ -86,7 +85,8 @@ namespace CsharpRAPL.Benchmarking {
 
 			_elapsedTime = 0;
 			_resultBuffer.Clear();
-			Iterations = IterationCalculation();
+			if (CsharpRAPLCLI.Options.UseIterationCalculation)
+				Iterations = IterationCalculation();
 			for (var i = 0; i <= Iterations; i++) {
 				if (Iterations != 1)
 					Print(Console.Write, $"\r{i} of {Iterations} for {Name}");
@@ -95,8 +95,10 @@ namespace CsharpRAPL.Benchmarking {
 				Start();
 				T benchmarkOutput = _benchmark();
 				End(benchmarkOutput);
-
-				Iterations = IterationCalculation();
+				
+				if (CsharpRAPLCLI.Options.UseIterationCalculation)
+					Iterations = IterationCalculation();
+				
 				if (!(_elapsedTime >= MaxExecutionTime)) continue;
 
 				Print(Console.WriteLine, $"\rEnding for {Name} benchmark due to time constraints");
@@ -178,7 +180,8 @@ namespace CsharpRAPL.Benchmarking {
 			// 0.005 is the relative margin of error we want (0.5%)
 			// We want the ZScore at the alpha/2 number, so we get the range at that point, take the highest and 
 			// calculate from there
-			return (int)Math.Ceiling(Math.Pow((nd.ZScore(nd.GetRange(alpha/2).Max) * stdDeviation) / (0.005 * mean), 2));
+			return (int)Math.Ceiling(Math.Pow((nd.ZScore(nd.GetRange(alpha / 2).Max) * stdDeviation) / (0.005 * mean),
+				2));
 		}
 	}
 }
