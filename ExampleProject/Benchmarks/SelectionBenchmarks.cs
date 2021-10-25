@@ -10,7 +10,7 @@ public class SelectionBenchmark {
 
 	[Benchmark("Selection", "Tests if statement")]
 	public static int If() {
-		var halfLoopIteration = LoopIterations / 2;
+		int halfLoopIteration = LoopIterations / 2;
 		var count = 0;
 		for (var i = 0; i < LoopIterations; i++) {
 			if (i < halfLoopIteration) {
@@ -92,7 +92,7 @@ public class SelectionBenchmark {
 	[Benchmark("Selection", "Tests if and else statement")]
 	public static int IfElse() {
 		var count = 0;
-		var halfLoopIteration = LoopIterations / 2;
+		int halfLoopIteration = LoopIterations / 2;
 		for (var i = 0; i < LoopIterations; i++) {
 			if (i < halfLoopIteration) {
 				count++;
@@ -116,7 +116,7 @@ public class SelectionBenchmark {
 	public static int IfElseIf() //TODO IL code is equivalent with IfElse
 	{
 		var count = 0;
-		var halfLoopIteration = LoopIterations / 2;
+		int halfLoopIteration = LoopIterations / 2;
 		for (var i = 0; i < LoopIterations; i++) {
 			if (i < halfLoopIteration) {
 				count++;
@@ -180,8 +180,12 @@ public class SelectionBenchmark {
 	public static int IfElseComparableWithConditional() {
 		var count = 0;
 		for (var i = 0; i < LoopIterations; i++) {
-			if (i <= LoopIterations) count = 1;
-			else count = 2;
+			if (i <= LoopIterations) {
+				count = 1;
+			}
+			else {
+				count = 2;
+			}
 		}
 
 		return count;

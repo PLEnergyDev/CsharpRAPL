@@ -13,10 +13,12 @@ public class Options {
 		HelpText = "If plotting each benchmark group should be skipped.")]
 	public bool SkipPlotGroups { get; set; }
 
-	[Option('i', nameof(Iterations), Required = false, HelpText = "Sets the target iterations. (Disables Dynamic Iteration Calculation)", Default = -1)]
+	[Option('i', nameof(Iterations), Required = false,
+		HelpText = "Sets the target iterations. (Disables Dynamic Iteration Calculation)", Default = -1)]
 	public int Iterations { get; set; } = -1;
 
-	[Option('l', nameof(LoopIterations), Required = false, HelpText = "Sets the target loop iterations. (Disables Dynamic Loop Iteration Scaling)",Default = -1)]
+	[Option('l', nameof(LoopIterations), Required = false,
+		HelpText = "Sets the target loop iterations. (Disables Dynamic Loop Iteration Scaling)", Default = -1)]
 	public int LoopIterations { get; set; } = -1;
 
 	[Option('r', nameof(RemoveOldResults), Required = false,
@@ -39,12 +41,12 @@ public class Options {
 
 	[Option('a', nameof(BenchmarksToAnalyse), HelpText = "The names of the benchmarks to analyse.")]
 	public IEnumerable<string> BenchmarksToAnalyse { get; set; } = Array.Empty<string>();
-	
-	[Option(nameof(Verbose),HelpText = "Enables debug information.")]
+
+	[Option(nameof(Verbose), HelpText = "Enables debug information.")]
 	public bool Verbose { get; set; }
 
 	public bool UseIterationCalculation => Iterations == -1;
-	
+
 	public bool UseLoopIterationScaling => LoopIterations == -1;
 
 	public bool ShouldExit;

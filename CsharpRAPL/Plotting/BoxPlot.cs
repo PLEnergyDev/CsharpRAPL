@@ -80,7 +80,9 @@ public class BoxPlot : Plottable, IPlottable {
 		return true;
 	}
 
-	public override void Render(Settings settings) => throw new InvalidOperationException("Use new Render() method");
+	public override void Render(Settings settings) {
+		throw new InvalidOperationException("Use new Render() method");
+	}
 
 	public void Render(PlotDimensions dims, Bitmap bmp, bool lowQuality = false) {
 		using Graphics gfx = Graphics.FromImage(bmp);
@@ -130,21 +132,27 @@ public class BoxPlot : Plottable, IPlottable {
 		}
 	}
 
-	public override string ToString() =>
-		$"BoxPlot{(string.IsNullOrWhiteSpace(LegendLabel) ? (object)"" : " (" + LegendLabel + ")")} with {GetPointCount()} points";
+	public override string ToString() {
+		return
+			$"BoxPlot{(string.IsNullOrWhiteSpace(LegendLabel) ? (object)"" : " (" + LegendLabel + ")")} with {GetPointCount()} points";
+	}
 
-	public override int GetPointCount() => PlotData.Length;
+	public override int GetPointCount() {
+		return PlotData.Length;
+	}
 
-	public override LegendItem[] GetLegendItems() => new LegendItem[] {
-		new() {
-			label = LegendLabel,
-			color = FillColor,
-			lineWidth = 10.0,
-			markerShape = MarkerShape.none,
-			hatchColor = HatchColor,
-			hatchStyle = HatchStyle,
-			borderColor = BorderColor,
-			borderWith = BorderLineWidth
-		}
-	};
+	public override LegendItem[] GetLegendItems() {
+		return new LegendItem[] {
+			new() {
+				label = LegendLabel,
+				color = FillColor,
+				lineWidth = 10.0,
+				markerShape = MarkerShape.none,
+				hatchColor = HatchColor,
+				hatchStyle = HatchStyle,
+				borderColor = BorderColor,
+				borderWith = BorderLineWidth
+			}
+		};
+	}
 }

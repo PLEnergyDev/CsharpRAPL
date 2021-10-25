@@ -1,11 +1,11 @@
-﻿namespace CsharpRAPL.Tests {
-	public abstract class DummyApi {
-		public abstract double Collect();
+﻿namespace CsharpRAPL.Tests; 
 
-		public abstract string OpenRaplFile();
+public abstract class DummyApi {
+	public abstract double Collect();
 
-		public string GetSocketDirectoryName() {
-			return "/sys/class/powercap/intel-rapl/intel-rapl:0";
-		}
+	public abstract string OpenRaplFile();
+
+	public string GetSocketDirectoryName() {
+		return "/sys/class/powercap/intel-rapl/intel-rapl:0";
 	}
 }

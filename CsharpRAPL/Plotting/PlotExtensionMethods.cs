@@ -37,9 +37,11 @@ public static class PlotExtensionMethods {
 		};
 
 		plot.Add(boxPlot);
-		
-		if (!autoAxis) return boxPlot;
-		
+
+		if (!autoAxis) {
+			return boxPlot;
+		}
+
 		plot.AxisAuto(0.0, 0.0);
 		double yValue;
 		double[] numArray = plot.Axis(0, 0, 0, 0);

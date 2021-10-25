@@ -111,7 +111,8 @@ public class CLITest {
 	}
 
 
-	[Test, Order(0)]
+	[Test]
+	[Order(0)]
 	public void TestParse01() {
 		string[] args = { "--help" };
 		using var sw = new StringWriter();
@@ -131,7 +132,8 @@ public class CLITest {
 		Console.SetOut(standardOutput);
 	}
 
-	[Test, Order(1)]
+	[Test]
+	[Order(1)]
 	public void TestParse02() {
 		string[] args = { "--Help" };
 		using var sw = new StringWriter();
@@ -310,7 +312,8 @@ public class CLITest {
 		Assert.True(analysed);
 	}
 
-	[Test, Order(2)]
+	[Test]
+	[Order(2)]
 	public void TestSetAnalysis05() {
 		using var sw = new StringWriter();
 		Console.SetOut(sw);

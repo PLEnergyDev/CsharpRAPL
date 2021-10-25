@@ -4,5 +4,5 @@ public enum BenchmarkResultType {
 	ElapsedTime,
 	PackagePower,
 	DramPower,
-	Temperature,
+	Temperature
 }

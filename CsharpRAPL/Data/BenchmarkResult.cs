@@ -1,6 +1,6 @@
 using CsvHelper.Configuration.Attributes;
 
-namespace CsharpRAPL.Data; 
+namespace CsharpRAPL.Data;
 
 public record BenchmarkResult {
 	[Index(0)] public double ElapsedTime { get; init; }

@@ -13,13 +13,15 @@ public class StringBenchmarks {
 
 	[Benchmark("StringConcat", "Tests operation on simple string")]
 	public static string StringPlusSign() {
-		string str = "";
-		string hello = "hello";
-		string world = "world";
+		var str = "";
+		var hello = "hello";
+		var world = "world";
 		for (var i = 0; i < LoopIterations; i++) {
 			str += hello;
 			str += world;
-			if (i % 100 == 0) str = "";
+			if (i % 100 == 0) {
+				str = "";
+			}
 		}
 
 		return str;
@@ -27,13 +29,15 @@ public class StringBenchmarks {
 
 	[Benchmark("StringConcat", "Tests operation on stringbuilder")]
 	public static string StringBuilderConcat() {
-		StringBuilder sb = new StringBuilder();
-		string hello = "hello";
-		string world = "world";
+		var sb = new StringBuilder();
+		var hello = "hello";
+		var world = "world";
 		for (var i = 0; i < LoopIterations; i++) {
 			sb.Append(hello);
 			sb.Append(world);
-			if (i % 100 == 0) sb.Clear();
+			if (i % 100 == 0) {
+				sb.Clear();
+			}
 		}
 
 		return sb.ToString();
@@ -41,9 +45,9 @@ public class StringBenchmarks {
 
 	[Benchmark("StringConcat", "Tests string.Format")]
 	public static string StringFormat() {
-		string str = "";
-		string hello = "hello";
-		string world = "world";
+		var str = "";
+		var hello = "hello";
+		var world = "world";
 		for (var i = 0; i < LoopIterations; i++) {
 			str = string.Format("{0}{1}", hello, world);
 		}
@@ -53,9 +57,9 @@ public class StringBenchmarks {
 
 	[Benchmark("StringConcat", "Tests string interpolation")]
 	public static string StringInterpolation() {
-		string str = "";
-		string hello = "hello";
-		string world = "world";
+		var str = "";
+		var hello = "hello";
+		var world = "world";
 		for (var i = 0; i < LoopIterations; i++) {
 			str = $"{hello}{world}";
 		}

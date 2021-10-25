@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CsharpRAPL\CsharpRAPL.csproj" />
+        <ProjectReference Include="..\CsharpRAPL\CsharpRAPL.csproj"/>
     </ItemGroup>
 
 </Project>
