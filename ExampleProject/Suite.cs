@@ -17,7 +17,8 @@ if (options.ShouldExit) {
 	return;
 }
 
-var suite = new BenchmarkCollector(options.Iterations, options.LoopIterations);
+var suite = new BenchmarkCollector(options.Iterations != -1 ? options.Iterations : options.DefaultIterations,
+	options.LoopIterations != -1 ? options.LoopIterations : options.DefaultLoopIterations);
 
 suite.RunAll();
 suite.PlotGroups();

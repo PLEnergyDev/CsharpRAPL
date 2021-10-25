@@ -76,14 +76,20 @@ namespace CsharpRAPL.Analysis {
 				_secondDataset.Data.Select(data => data.DramPower).ToArray());
 
 			// Test if first is significantly lower than second
-			var timeFirstTTest = new TTest(firstDataSet.Times, secondDataSet.TimeMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
-			var pkgFirstTTest = new TTest(firstDataSet.Package, secondDataSet.PackageMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
-			var dramFirstTTest = new TTest(firstDataSet.Dram, secondDataSet.DramMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
+			var timeFirstTTest = new TTest(firstDataSet.Times, secondDataSet.TimeMean,
+				OneSampleHypothesis.ValueIsSmallerThanHypothesis);
+			var pkgFirstTTest = new TTest(firstDataSet.Package, secondDataSet.PackageMean,
+				OneSampleHypothesis.ValueIsSmallerThanHypothesis);
+			var dramFirstTTest = new TTest(firstDataSet.Dram, secondDataSet.DramMean,
+				OneSampleHypothesis.ValueIsSmallerThanHypothesis);
 
 			// Test if second is significantly lower than first
-			var timeSecondTTest = new TTest(secondDataSet.Times, firstDataSet.TimeMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
-			var pkgSecondTTest = new TTest(secondDataSet.Package, firstDataSet.PackageMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
-			var dramSecondTTest = new TTest(secondDataSet.Dram, firstDataSet.DramMean, OneSampleHypothesis.ValueIsSmallerThanHypothesis);
+			var timeSecondTTest = new TTest(secondDataSet.Times, firstDataSet.TimeMean,
+				OneSampleHypothesis.ValueIsSmallerThanHypothesis);
+			var pkgSecondTTest = new TTest(secondDataSet.Package, firstDataSet.PackageMean,
+				OneSampleHypothesis.ValueIsSmallerThanHypothesis);
+			var dramSecondTTest = new TTest(secondDataSet.Dram, firstDataSet.DramMean,
+				OneSampleHypothesis.ValueIsSmallerThanHypothesis);
 
 			var results = new Dictionary<string, double> {
 				{ $"{firstDataSet.Name} lower than {secondDataSet.Name} Time", timeFirstTTest.PValue },
@@ -115,7 +121,7 @@ namespace CsharpRAPL.Analysis {
 			var firstEnsure = _firstDataset.EnsureResults();
 			if (!firstEnsure.isValid)
 				return firstEnsure;
-			
+
 			var secondEnsure = _secondDataset.EnsureResults();
 			if (!secondEnsure.isValid)
 				return secondEnsure;
@@ -128,7 +134,7 @@ namespace CsharpRAPL.Analysis {
 					return (false, $"The to datasets differ in {first[i]} and {second[i]}");
 				}
 			}
-			
+
 			return (true, "");
 		}
 
@@ -140,7 +146,8 @@ namespace CsharpRAPL.Analysis {
 		}
 
 		public void PlotAnalysis(BenchmarkResultType resultType) {
-			BenchmarkPlot.PlotResults(resultType, _firstDataset, _secondDataset);
+			BenchmarkPlot.PlotResults(resultType, $"{_firstDataset.Name}-{_secondDataset.Name}",
+				_firstDataset, _secondDataset);
 		}
 	}
 }

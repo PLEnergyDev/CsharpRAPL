@@ -80,11 +80,12 @@ public class LoopsBenchmark {
 		if (count == 174600) return count; //TODO fix amount of loop iterations. If becomes larger the stack overflows
 		return RecursiveHelper(count + 1);
 	}
-
-	[Benchmark("Loops", "Tests a LINQ loop")]
+	
+	//TODO make it not cheat
+	[Benchmark("Loops", "Tests a LINQ loop", skip: true)]
 	public static int LinqLoop() {
 		var count = Enumerable.Range(0, LoopIterations).Count();
-
+	
 		return count;
 	}
 }

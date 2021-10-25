@@ -14,10 +14,9 @@ using DataSet = CsharpRAPL.Analysis.DataSet;
 namespace CsharpRAPL.Plotting;
 
 public static class BenchmarkPlot {
-	
-	public static void PlotResults(BenchmarkResultType resultType,
+	public static void PlotResults(BenchmarkResultType resultType, string? name = null,
 		params IBenchmark[] dataSets) {
-		PlotResults(resultType,
+		PlotResults(resultType, name,
 			dataSets.Select(benchmark => new DataSet(benchmark.Name, benchmark.GetResults())).ToArray());
 	}
 
@@ -27,7 +26,8 @@ public static class BenchmarkPlot {
 		var groups = new Dictionary<string, List<DataSet>>();
 
 		foreach (string file in Directory.EnumerateFiles(path, "*.csv", SearchOption.AllDirectories)) {
-			string group = Path.GetRelativePath(Directory.GetCurrentDirectory(),file).Split(Path.DirectorySeparatorChar)[1];
+			string group = Path.GetRelativePath(Directory.GetCurrentDirectory(), file)
+				.Split(Path.DirectorySeparatorChar)[1];
 			if (!groups.ContainsKey(group)) {
 				groups.Add(group, new List<DataSet>());
 			}
@@ -35,8 +35,8 @@ public static class BenchmarkPlot {
 			groups[group].Add(new DataSet(file));
 		}
 
-		foreach (KeyValuePair<string, List<DataSet>> keyValuePair in groups) {
-			PlotResults(resultType, keyValuePair.Value.ToArray());
+		foreach ((string? group, List<DataSet>? dataSets) in groups) {
+			PlotResults(resultType, group, dataSets.ToArray());
 		}
 	}
 
@@ -47,7 +47,7 @@ public static class BenchmarkPlot {
 		PlotResultsGroupsFromFolder(BenchmarkResultType.Temperature, path);
 	}
 
-	public static void PlotResults(BenchmarkResultType resultType, params DataSet[] dataSets) {
+	public static void PlotResults(BenchmarkResultType resultType, string? name = null, params DataSet[] dataSets) {
 		if (dataSets.All(set => set.Data.Count == 0)) {
 			throw new NotSupportedException("Plotting without data is not supported.");
 		}
@@ -78,12 +78,14 @@ public static class BenchmarkPlot {
 		plt.XTicks(Enumerable.Range(0, dataSets.Length).Select(i1 => (double)i1).ToArray(), names);
 		plt.XLabel("Benchmark");
 		plt.YLabel(GetYLabel(resultType));
-		plt.Title($"{resultType}");
+		plt.Title(name != null ? $"{name}" : $"{resultType}");
 
 		DateTime dateTime = DateTime.Now;
 		var time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";
 		Directory.CreateDirectory($"{CsharpRAPLCLI.Options.PlotOutputPath}/{resultType}");
-		plt.SaveFig($"{CsharpRAPLCLI.Options.PlotOutputPath}/{resultType}/{time}.png");
+		plt.SaveFig(name != null
+			? $"{CsharpRAPLCLI.Options.PlotOutputPath}/{resultType}/{name}-{time}.png"
+			: $"{CsharpRAPLCLI.Options.PlotOutputPath}/{resultType}/{time}.png");
 	}
 
 	private static double[] GetPlotData(DataSet dataSet, BenchmarkResultType resultType) {
@@ -114,17 +116,17 @@ public static class BenchmarkPlot {
 		return yLabel;
 	}
 
-	public static void PlotAllResults(params IBenchmark[] dataSet) {
-		PlotResults(BenchmarkResultType.ElapsedTime, dataSet);
-		PlotResults(BenchmarkResultType.PackagePower, dataSet);
-		PlotResults(BenchmarkResultType.DramPower, dataSet);
-		PlotResults(BenchmarkResultType.Temperature, dataSet);
+	public static void PlotAllResults(string? name = null, params IBenchmark[] dataSet) {
+		PlotResults(BenchmarkResultType.ElapsedTime, name, dataSet);
+		PlotResults(BenchmarkResultType.PackagePower, name, dataSet);
+		PlotResults(BenchmarkResultType.DramPower, name, dataSet);
+		PlotResults(BenchmarkResultType.Temperature, name, dataSet);
 	}
 
-	public static void PlotAllResults(params DataSet[] dataSet) {
-		PlotResults(BenchmarkResultType.ElapsedTime, dataSet);
-		PlotResults(BenchmarkResultType.PackagePower, dataSet);
-		PlotResults(BenchmarkResultType.DramPower, dataSet);
-		PlotResults(BenchmarkResultType.Temperature, dataSet);
+	public static void PlotAllResults(string? name = null, params DataSet[] dataSet) {
+		PlotResults(BenchmarkResultType.ElapsedTime, name, dataSet);
+		PlotResults(BenchmarkResultType.PackagePower, name, dataSet);
+		PlotResults(BenchmarkResultType.DramPower, name, dataSet);
+		PlotResults(BenchmarkResultType.Temperature, name, dataSet);
 	}
 }

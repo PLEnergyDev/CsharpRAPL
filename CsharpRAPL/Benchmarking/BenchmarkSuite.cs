@@ -33,7 +33,9 @@ namespace CsharpRAPL.Benchmarking {
 				timer.Start();
 				bench.Run();
 				timer.Stop();
-				Console.WriteLine($"\rFinished {bench.Name} which took {timer.ElapsedMilliseconds}ms with {bench.Iterations} iterations\n");
+				Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
+				Console.WriteLine(
+					$"\rFinished {bench.Name} in {timer.ElapsedMilliseconds}ms with {bench.GetResults().Count} iterations\n");
 				timer.Reset();
 			}
 		}
@@ -68,8 +70,8 @@ namespace CsharpRAPL.Benchmarking {
 				groups[benchmark.Group].Add(benchmark);
 			}
 
-			foreach (KeyValuePair<string, List<IBenchmark>> pair in groups) {
-				BenchmarkPlot.PlotAllResults(pair.Value.ToArray());
+			foreach ((string? group, List<IBenchmark>? benchmarks) in groups) {
+				BenchmarkPlot.PlotAllResults(group,benchmarks.ToArray());
 			}
 		}
 	}

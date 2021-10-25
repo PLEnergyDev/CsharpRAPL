@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -68,14 +68,15 @@ public class CLITest {
 
 	private static string[] _helpText = {
 		"-g, --SkipPlotGroups         If plotting each benchmark group should be skipped.",
-		"-l, --LoopIterations         Sets the target loop iterations.",
-		"-i, --Iterations             Sets the target iterations.",
+		"-i, --Iterations             (Default: -1) Sets the target iterations. (Disables Dynamic Iteration Calculation)",
+		"-l, --LoopIterations         (Default: -1) Sets the target loop iterations. (Disables Dynamic Loop Iteration Scaling)",
 		"-r, --RemoveOldResults       If set removes all files from the output folder and the plot folder.",
 		"-o, --OutputPath             (Default: results/) Set the output path for results.",
 		"-p, --PlotOutputPath         (Default: _plots/) Sets the output path for plots.",
 		"--OnlyPlot                   Plots the results in the output path.",
 		"--OnlyAnalysis               Analysis the results in the output path.",
 		"-a, --BenchmarksToAnalyse    The names of the benchmarks to analyse.",
+		"--Verbose                    Enables debug information.",
 		"--help                       Display this help screen.",
 		"--version                    Display version information."
 	};
@@ -163,7 +164,7 @@ public class CLITest {
 		string[] args = { "-l", " 1000" };
 		Options options = CsharpRAPLCLI.Parse(args, 1000);
 
-		Assert.False(options.UseLoopIterationLimit);
+		Assert.False(options.UseLoopIterationScaling);
 		Assert.AreEqual(1000, options.LoopIterations);
 	}
 
@@ -172,7 +173,7 @@ public class CLITest {
 		string[] args = { "--LoopIterations=1000" };
 		Options options = CsharpRAPLCLI.Parse(args, 1000);
 
-		Assert.False(options.UseLoopIterationLimit);
+		Assert.False(options.UseLoopIterationScaling);
 		Assert.AreEqual(1000, options.LoopIterations);
 	}
 

@@ -6,15 +6,18 @@ namespace CsharpRAPL.CommandLine;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class Options {
+	public int DefaultIterations = 50;
+	public int DefaultLoopIterations = 10000000;
+
 	[Option('g', nameof(SkipPlotGroups), Required = false,
 		HelpText = "If plotting each benchmark group should be skipped.")]
 	public bool SkipPlotGroups { get; set; }
 
-	[Option('l', nameof(LoopIterations), Required = false, HelpText = "Sets the target loop iterations.")]
-	public int LoopIterations { get; set; }
+	[Option('i', nameof(Iterations), Required = false, HelpText = "Sets the target iterations. (Disables Dynamic Iteration Calculation)", Default = -1)]
+	public int Iterations { get; set; } = -1;
 
-	[Option('i', nameof(Iterations), Required = false, HelpText = "Sets the target iterations.")]
-	public int Iterations { get; set; }
+	[Option('l', nameof(LoopIterations), Required = false, HelpText = "Sets the target loop iterations. (Disables Dynamic Loop Iteration Scaling)",Default = -1)]
+	public int LoopIterations { get; set; } = -1;
 
 	[Option('r', nameof(RemoveOldResults), Required = false,
 		HelpText = "If set removes all files from the output folder and the plot folder.")]
@@ -36,11 +39,13 @@ public class Options {
 
 	[Option('a', nameof(BenchmarksToAnalyse), HelpText = "The names of the benchmarks to analyse.")]
 	public IEnumerable<string> BenchmarksToAnalyse { get; set; } = Array.Empty<string>();
+	
+	[Option(nameof(Verbose),HelpText = "Enables debug information.")]
+	public bool Verbose { get; set; }
 
-	public bool UseIterationCalculation => Iterations == 0;
-
-//TODO:
-	public bool UseLoopIterationLimit => LoopIterations == 0;
+	public bool UseIterationCalculation => Iterations == -1;
+	
+	public bool UseLoopIterationScaling => LoopIterations == -1;
 
 	public bool ShouldExit;
 }
