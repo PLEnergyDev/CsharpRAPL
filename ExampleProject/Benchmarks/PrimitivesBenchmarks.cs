@@ -10,7 +10,7 @@ public class PrimitivesBenchmarks {
 
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive int")]
 	public static int PrimitiveInt() {
-		int primitive = 0;
+		var primitive = 0;
 		for (var i = 0; i < LoopIterations; i++) {
 			primitive++;
 			primitive *= 10;
@@ -192,10 +192,14 @@ public class PrimitivesBenchmarks {
 
 	[Benchmark("PrimitiveBool", "Tests setting bool values")]
 	public static bool Bool() {
-		bool myBool = false;
+		var myBool = false;
 		for (var i = 0; i < LoopIterations; i++) {
-			if (myBool) myBool = false;
-			else myBool = true;
+			if (myBool) {
+				myBool = false;
+			}
+			else {
+				myBool = true;
+			}
 		}
 
 		return myBool;
@@ -205,8 +209,12 @@ public class PrimitivesBenchmarks {
 	public static byte ByteAsBool() {
 		byte myBool = 0;
 		for (var i = 0; i < LoopIterations; i++) {
-			if (myBool != 0) myBool = 0;
-			else myBool = 1;
+			if (myBool != 0) {
+				myBool = 0;
+			}
+			else {
+				myBool = 1;
+			}
 		}
 
 		return myBool;

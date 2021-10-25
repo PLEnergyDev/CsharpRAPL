@@ -1,4 +1,4 @@
-﻿namespace CsharpRAPL.Data; 
+﻿namespace CsharpRAPL.Data;
 
 public enum CollectionApproach {
 	Average,

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using CsharpRAPL.Data;
 
-namespace CsharpRAPL.Benchmarking; 
+namespace CsharpRAPL.Benchmarking;
 
 public interface IBenchmark {
 	public int Iterations { get; }

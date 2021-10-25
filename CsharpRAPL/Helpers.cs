@@ -2,7 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.Linq;
 
-namespace CsharpRAPL; 
+namespace CsharpRAPL;
 
 public static class Helpers {
 	[Pure]
