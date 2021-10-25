@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Accord.Statistics;
 using Accord.Statistics.Distributions.Univariate;
 using CsharpRAPL.Analysis;
@@ -20,6 +22,7 @@ namespace CsharpRAPL.Benchmarking {
 		public bool HasRun { get; private set; }
 
 		private const int MaxExecutionTime = 2700; //In seconds
+		private const int TargetLoopIterationTime = 250; //In milliseconds
 
 		// Prints everything to a null stream similar to /dev/null
 		private readonly TextWriter _benchmarkOutputStream = new StreamWriter(Stream.Null);
@@ -27,6 +30,8 @@ namespace CsharpRAPL.Benchmarking {
 		private readonly string _outputFilePath;
 		private readonly Func<T> _benchmark;
 		private readonly List<BenchmarkResult> _resultBuffer = new();
+		private readonly List<BenchmarkResult> _normalizedResultBuffer = new();
+		private readonly FieldInfo? _loopIterationsFieldInfo;
 
 		private RAPL? _rapl;
 		private double _elapsedTime;
@@ -41,8 +46,13 @@ namespace CsharpRAPL.Benchmarking {
 			_benchmark = benchmark;
 			_stdout = Console.Out;
 
-			if (!silenceBenchmarkOutput)
+			Debug.Assert(_benchmark.Method.DeclaringType != null, "_benchmark.Method.DeclaringType != null");
+			_loopIterationsFieldInfo =
+				_benchmark.Method.DeclaringType.GetField("LoopIterations", BindingFlags.Public | BindingFlags.Static);
+
+			if (!silenceBenchmarkOutput) {
 				_benchmarkOutputStream = _stdout;
+			}
 
 			DateTime dateTime = DateTime.Now;
 			var time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";
@@ -55,23 +65,32 @@ namespace CsharpRAPL.Benchmarking {
 		}
 
 		private void Start() {
-			if (_rapl is null)
+			if (_rapl is null) {
 				throw new NotSupportedException("Rapl has not been initialized");
+			}
 
 			_rapl.Start();
 		}
 
 		private void End(T benchmarkOutput) {
-			if (_rapl is null)
+			if (_rapl is null) {
 				throw new NotSupportedException("Rapl has not been initialized");
+			}
 
 			_rapl.End();
 
 			//Result only valid if all results are valid
 			//Only then is the result added and duration is incremented
-			if (!_rapl.IsValid()) return;
+			if (!_rapl.IsValid()) {
+				return;
+			}
+
 			BenchmarkResult result = _rapl.GetResults() with { Result = benchmarkOutput?.ToString() ?? string.Empty };
+			BenchmarkResult normalizedResult = _rapl.GetNormalizedResults(GetLoopIterations()) with {
+				Result = benchmarkOutput?.ToString() ?? string.Empty
+			};
 			_resultBuffer.Add(result);
+			_normalizedResultBuffer.Add(normalizedResult);
 			_elapsedTime += _resultBuffer[^1].ElapsedTime / 1_000;
 		}
 
@@ -85,21 +104,61 @@ namespace CsharpRAPL.Benchmarking {
 
 			_elapsedTime = 0;
 			_resultBuffer.Clear();
-			if (CsharpRAPLCLI.Options.UseIterationCalculation)
+			_normalizedResultBuffer.Clear();
+			if (CsharpRAPLCLI.Options.UseIterationCalculation) {
 				Iterations = IterationCalculation();
+			}
+
 			for (var i = 0; i <= Iterations; i++) {
-				if (Iterations != 1)
-					Print(Console.Write, $"\r{i} of {Iterations} for {Name}");
+				if (Iterations != 1) {
+					if (CsharpRAPLCLI.Options.Verbose) {
+						Print(Console.Write,
+							$"\r{i} of {Iterations} for {Name}. LoopIterations: {GetLoopIterations()}. " +
+							$"Time target: {TargetLoopIterationTime}. UseLoopScaling: {CsharpRAPLCLI.Options.UseLoopIterationScaling} UseIterationCalculation: {CsharpRAPLCLI.Options.UseIterationCalculation}" +
+							$" Last took: {(_resultBuffer.Count > 0 ? _resultBuffer[^1].ElapsedTime : 0.00):##,###}ms");
+					}
+					else {
+						Print(Console.Write, $"\r{i} of {Iterations} for {Name}");
+					}
+				}
+
 
 				//Actually performing benchmark and resulting IO
 				Start();
 				T benchmarkOutput = _benchmark();
 				End(benchmarkOutput);
-				
-				if (CsharpRAPLCLI.Options.UseIterationCalculation)
+
+
+				if (_loopIterationsFieldInfo != null && CsharpRAPLCLI.Options.UseLoopIterationScaling &&
+				    _resultBuffer[^1].ElapsedTime < TargetLoopIterationTime) {
+					int currentValue = GetLoopIterations();
+
+					switch (currentValue) {
+						case int.MaxValue:
+							break;
+						case >= int.MaxValue / 2:
+							SetLoopIterations(int.MaxValue);
+							_resultBuffer.Clear();
+							_normalizedResultBuffer.Clear();
+							i = 0;
+							continue;
+						default:
+							SetLoopIterations(currentValue + currentValue);
+							_resultBuffer.Clear();
+							_normalizedResultBuffer.Clear();
+							i = 0;
+							continue;
+					}
+				}
+
+
+				if (CsharpRAPLCLI.Options.UseIterationCalculation) {
 					Iterations = IterationCalculation();
-				
-				if (!(_elapsedTime >= MaxExecutionTime)) continue;
+				}
+
+				if (!(_elapsedTime >= MaxExecutionTime)) {
+					continue;
+				}
 
 				Print(Console.WriteLine, $"\rEnding for {Name} benchmark due to time constraints");
 				break;
@@ -107,6 +166,14 @@ namespace CsharpRAPL.Benchmarking {
 
 			SaveResults();
 			HasRun = true;
+			if (_loopIterationsFieldInfo != null) {
+				if (CsharpRAPLCLI.Options.LoopIterations != -1) {
+					SetLoopIterations(CsharpRAPLCLI.Options.LoopIterations);
+				}
+				else {
+					SetLoopIterations(CsharpRAPLCLI.Options.DefaultLoopIterations);
+				}
+			}
 
 			//Resets console output
 			Console.SetOut(_stdout);
@@ -132,6 +199,12 @@ namespace CsharpRAPL.Benchmarking {
 
 		public List<BenchmarkResult> GetResults(bool ignoreFirst = true) {
 			return ignoreFirst
+				? new List<BenchmarkResult>(_normalizedResultBuffer.Skip(1))
+				: new List<BenchmarkResult>(_normalizedResultBuffer);
+		}
+
+		public List<BenchmarkResult> GetRawResults(bool ignoreFirst = true) {
+			return ignoreFirst
 				? new List<BenchmarkResult>(_resultBuffer.Skip(1))
 				: new List<BenchmarkResult>(_resultBuffer);
 		}
@@ -144,9 +217,9 @@ namespace CsharpRAPL.Benchmarking {
 		/// <returns>The amount of samples needed for the given confidence</returns>
 		private int IterationCalculation(double confidence = 0.95,
 			BenchmarkResultType resultType = BenchmarkResultType.PackagePower) {
-			// If we have less than 2 results, we return 2 so we can get a sample to calculate from
-			if (_resultBuffer.Count < 2) {
-				return 2;
+			// If we have less than 10 results, we return 10 so we can get a sample to calculate from
+			if (_resultBuffer.Count < 10) {
+				return 10;
 			}
 
 			// The alpha value is 1 - the confidence we want (Also known as p-value)
@@ -182,6 +255,20 @@ namespace CsharpRAPL.Benchmarking {
 			// calculate from there
 			return (int)Math.Ceiling(Math.Pow((nd.ZScore(nd.GetRange(alpha / 2).Max) * stdDeviation) / (0.005 * mean),
 				2));
+		}
+
+		private int GetLoopIterations() {
+			if (_loopIterationsFieldInfo != null) {
+				return (int)(_loopIterationsFieldInfo.GetValue(null) ?? throw new InvalidOperationException());
+			}
+
+			return 0;
+		}
+
+		private void SetLoopIterations(int value) {
+			if (_loopIterationsFieldInfo != null) {
+				_loopIterationsFieldInfo.SetValue(null, value);
+			}
 		}
 	}
 }

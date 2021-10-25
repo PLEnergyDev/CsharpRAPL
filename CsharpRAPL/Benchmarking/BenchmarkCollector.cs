@@ -32,8 +32,8 @@ namespace CsharpRAPL.Benchmarking {
 				//Try to get the benchmark attribute
 				var benchmarkAttribute = benchmark.GetCustomAttribute<BenchmarkAttribute>();
 				if (benchmarkAttribute == null) continue;
-				CheckMethodValidity(benchmark);
 				if (benchmarkAttribute.Skip) continue;
+				CheckMethodValidity(benchmark);
 
 				Type? benchmarkClass = _registeredBenchmarkClasses.FirstOrDefault(type => type == benchmark.DeclaringType);
 				if (benchmarkClass == null) {
