@@ -327,19 +327,13 @@ public class CLITest {
 		var expected = new[] {
 			"Results are mutually ensured!",
 			"Is the null hypothesis true? I.e. is the opposite of what the key implies true?",
-			"SubtractSet2 lower than SubtractSet Time:0.5000000000000001",
-			"SubtractSet lower than SubtractSet2 Time:0.5000000000000001",
-			"SubtractSet2 lower than SubtractSet Package:0.5000000000000001",
-			"SubtractSet lower than SubtractSet2 Package:0.5000000000000001",
-			"SubtractSet2 lower than SubtractSet Dram:0.5000000000000001",
-			"SubtractSet lower than SubtractSet2 Dram:0.5000000000000001",
+			"SubtractSet2 significantly different from SubtractSet - Time:0.9999999999999998",
+			"SubtractSet2 significantly different from SubtractSet - Package:0.9999999999999998",
+			"SubtractSet2 significantly different from SubtractSet - DRAM:0.9999999999999998",
 			"Is the alternate hypothesis true? I.e. is what the key implies true?",
-			"SubtractSet2 lower than SubtractSet Time:0.4999999999999999",
-			"SubtractSet lower than SubtractSet2 Time:0.4999999999999999",
-			"SubtractSet2 lower than SubtractSet Package:0.4999999999999999",
-			"SubtractSet lower than SubtractSet2 Package:0.4999999999999999",
-			"SubtractSet2 lower than SubtractSet Dram:0.4999999999999999",
-			"SubtractSet lower than SubtractSet2 Dram:0.4999999999999999"
+			"SubtractSet2 significantly different from SubtractSet - Time:2.220446049250313E-16",
+			"SubtractSet2 significantly different from SubtractSet - Package:2.220446049250313E-16",
+			"SubtractSet2 significantly different from SubtractSet - DRAM:2.220446049250313E-16"
 		};
 		Assert.AreEqual(expected, split);
 
