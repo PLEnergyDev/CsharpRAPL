@@ -67,6 +67,7 @@ public class Analysis {
 	}
 
 	public Dictionary<string, double> CalculatePValue() {
+		// Set up the datasets that we want to compare
 		PValueData firstDataSet = new(_firstDataset.Name,
 			_firstDataset.Data.Select(data => data.ElapsedTime).ToArray(),
 			_firstDataset.Data.Select(data => data.PackagePower).ToArray(),
@@ -76,29 +77,16 @@ public class Analysis {
 			_secondDataset.Data.Select(data => data.PackagePower).ToArray(),
 			_secondDataset.Data.Select(data => data.DramPower).ToArray());
 
-		// Test if first is significantly lower than second
-		var timeFirstTTest = new TTest(firstDataSet.Times, secondDataSet.TimeMean,
-			OneSampleHypothesis.ValueIsSmallerThanHypothesis);
-		var pkgFirstTTest = new TTest(firstDataSet.Package, secondDataSet.PackageMean,
-			OneSampleHypothesis.ValueIsSmallerThanHypothesis);
-		var dramFirstTTest = new TTest(firstDataSet.Dram, secondDataSet.DramMean,
-			OneSampleHypothesis.ValueIsSmallerThanHypothesis);
+		// Test if first is significantly different from the second
+		var timeTTest = new TwoSampleTTest(firstDataSet.Times, secondDataSet.Times);
+		var pkgTTest = new TwoSampleTTest(firstDataSet.Package, secondDataSet.Package);
+		var dramTTest = new TwoSampleTTest(firstDataSet.Dram, secondDataSet.Dram);
 
-		// Test if second is significantly lower than first
-		var timeSecondTTest = new TTest(secondDataSet.Times, firstDataSet.TimeMean,
-			OneSampleHypothesis.ValueIsSmallerThanHypothesis);
-		var pkgSecondTTest = new TTest(secondDataSet.Package, firstDataSet.PackageMean,
-			OneSampleHypothesis.ValueIsSmallerThanHypothesis);
-		var dramSecondTTest = new TTest(secondDataSet.Dram, firstDataSet.DramMean,
-			OneSampleHypothesis.ValueIsSmallerThanHypothesis);
-
+		// Save the P-values
 		var results = new Dictionary<string, double> {
-			{ $"{firstDataSet.Name} lower than {secondDataSet.Name} Time", timeFirstTTest.PValue },
-			{ $"{secondDataSet.Name} lower than {firstDataSet.Name} Time", timeSecondTTest.PValue },
-			{ $"{firstDataSet.Name} lower than {secondDataSet.Name} Package", pkgFirstTTest.PValue },
-			{ $"{secondDataSet.Name} lower than {firstDataSet.Name} Package", pkgSecondTTest.PValue },
-			{ $"{firstDataSet.Name} lower than {secondDataSet.Name} Dram", dramFirstTTest.PValue },
-			{ $"{secondDataSet.Name} lower than {firstDataSet.Name} Dram", dramSecondTTest.PValue }
+			{ $"{firstDataSet.Name} significantly different from {secondDataSet.Name} - Time", timeTTest.PValue },
+			{ $"{firstDataSet.Name} significantly different from {secondDataSet.Name} - Package", pkgTTest.PValue },
+			{ $"{firstDataSet.Name} significantly different from {secondDataSet.Name} - DRAM", dramTTest.PValue }
 		};
 
 		return results;

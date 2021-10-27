@@ -96,13 +96,10 @@ public class AnalysisTest {
 
 		Dictionary<string, double> pValues = analysis.CalculatePValue();
 
-		Assert.AreEqual(6, pValues.Count);
-		Assert.AreEqual(0.0060343042213520269d, pValues["Add lower than Subtract Time"], double.Epsilon);
-		Assert.AreEqual(0.99981711352607316d, pValues["Subtract lower than Add Time"], double.Epsilon);
-		Assert.AreEqual(0.99492199073071008d, pValues["Add lower than Subtract Package"], double.Epsilon);
-		Assert.AreEqual(0.00030370946908713393d, pValues["Subtract lower than Add Package"], double.Epsilon);
-		Assert.AreEqual(0.96480846223727446d, pValues["Add lower than Subtract Dram"], double.Epsilon);
-		Assert.AreEqual(0.017135715146229153d, pValues["Subtract lower than Add Dram"], double.Epsilon);
+		Assert.AreEqual(3, pValues.Count);
+		Assert.AreEqual(0.0056837042764399381d, pValues["Add significantly different from Subtract - Time"], double.Epsilon);
+		Assert.AreEqual(0.0052142299229074318d, pValues["Add significantly different from Subtract - Package"], double.Epsilon);
+		Assert.AreEqual(0.10275597927588676d, pValues["Add significantly different from Subtract - DRAM"], double.Epsilon);
 	}
 
 	[Test]
@@ -111,13 +108,10 @@ public class AnalysisTest {
 
 		Dictionary<string, double> pValues = analysis.CalculatePValue();
 
-		Assert.AreEqual(6, pValues.Count);
-		Assert.AreEqual(0.0060343042213520269d, pValues["Test1 lower than Test2 Time"], double.Epsilon);
-		Assert.AreEqual(0.99981711352607316d, pValues["Test2 lower than Test1 Time"], double.Epsilon);
-		Assert.AreEqual(0.99492199073071008d, pValues["Test1 lower than Test2 Package"], double.Epsilon);
-		Assert.AreEqual(0.00030370946908713393d, pValues["Test2 lower than Test1 Package"], double.Epsilon);
-		Assert.AreEqual(0.96480846223727446d, pValues["Test1 lower than Test2 Dram"], double.Epsilon);
-		Assert.AreEqual(0.017135715146229153d, pValues["Test2 lower than Test1 Dram"], double.Epsilon);
+		Assert.AreEqual(3, pValues.Count);
+		Assert.AreEqual(0.0056837042764399381d, pValues["Test1 significantly different from Test2 - Time"], double.Epsilon);
+		Assert.AreEqual(0.0052142299229074318d, pValues["Test1 significantly different from Test2 - Package"], double.Epsilon);
+		Assert.AreEqual(0.10275597927588676d, pValues["Test1 significantly different from Test2 - DRAM"], double.Epsilon);
 	}
 
 	[Test]
@@ -126,13 +120,10 @@ public class AnalysisTest {
 
 		Dictionary<string, double> pValues = analysis.CalculatePValue();
 
-		Assert.AreEqual(6, pValues.Count);
-		Assert.AreEqual(0.0060343042213520269d, pValues["AddSet lower than SubtractSet Time"], double.Epsilon);
-		Assert.AreEqual(0.99981711352607316d, pValues["SubtractSet lower than AddSet Time"], double.Epsilon);
-		Assert.AreEqual(0.99492199073071008d, pValues["AddSet lower than SubtractSet Package"], double.Epsilon);
-		Assert.AreEqual(0.00030370946908713393d, pValues["SubtractSet lower than AddSet Package"], double.Epsilon);
-		Assert.AreEqual(0.96480846223727446d, pValues["AddSet lower than SubtractSet Dram"], double.Epsilon);
-		Assert.AreEqual(0.017135715146229153d, pValues["SubtractSet lower than AddSet Dram"], double.Epsilon);
+		Assert.AreEqual(3, pValues.Count);
+		Assert.AreEqual(0.0056837042764399381d, pValues["AddSet significantly different from SubtractSet - Time"], double.Epsilon);
+		Assert.AreEqual(0.0052142299229074318d, pValues["AddSet significantly different from SubtractSet - Package"], double.Epsilon);
+		Assert.AreEqual(0.10275597927588676d, pValues["AddSet significantly different from SubtractSet - DRAM"], double.Epsilon);
 	}
 
 	[Test]
