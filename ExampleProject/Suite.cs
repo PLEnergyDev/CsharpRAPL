@@ -32,7 +32,7 @@ foreach ((string group, List<IBenchmark> benchmarks) in suite.GetBenchmarksByGro
 	Dictionary<string, double> result = Analysis.CalculatePValueForGroup(benchmarks);
 	DateTime dateTime = DateTime.Now;
 	var time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";
-	using var writer = new StreamWriter($"pvalues/{group}/{time}");
+	using var writer = new StreamWriter(Path.Join(options.OutputPath, $"_pvalues/{group}/{time}"));
 	using var csv = new CsvWriter(writer, new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" });
 	csv.WriteRecords(result);
 }
