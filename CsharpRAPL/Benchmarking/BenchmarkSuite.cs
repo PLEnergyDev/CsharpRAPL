@@ -61,7 +61,7 @@ public class BenchmarkSuite {
 		return Benchmarks.Values;
 	}
 
-	public void PlotGroups() {
+	public IReadOnlyDictionary<string, List<IBenchmark>> GetBenchmarksByGroup() {
 		Dictionary<string, List<IBenchmark>> groups = new();
 		foreach (IBenchmark benchmark in Benchmarks.Values.Where(benchmark => benchmark.Group != null)) {
 			Debug.Assert(benchmark.Group != null, "benchmark.Group != null");
@@ -72,7 +72,11 @@ public class BenchmarkSuite {
 			groups[benchmark.Group].Add(benchmark);
 		}
 
-		foreach ((string? group, List<IBenchmark>? benchmarks) in groups) {
+		return groups;
+	}
+
+	public void PlotGroups() {
+		foreach ((string? group, List<IBenchmark>? benchmarks) in GetBenchmarksByGroup()) {
 			BenchmarkPlot.PlotAllResults(group, benchmarks.ToArray());
 		}
 	}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CommandLine;
+using CsharpRAPL.Benchmarking;
 using CsharpRAPL.Plotting;
 
 namespace CsharpRAPL.CommandLine;
@@ -38,7 +39,7 @@ public static class CsharpRAPLCLI {
 		}
 
 		if (Options.OnlyAnalysis) {
-			StartAnalysis();
+			StartAnalysis(Options.BenchmarksToAnalyse.ToArray());
 			Options.ShouldExit = true;
 		}
 
@@ -81,8 +82,20 @@ public static class CsharpRAPLCLI {
 		}
 	}
 
-	private static void StartAnalysis() {
-		string[] thingsToAnalyse = Options.BenchmarksToAnalyse.ToArray();
+	public static void StartAnalysis(IReadOnlyDictionary<string, List<IBenchmark>> benchmarksWithGroups) {
+		foreach (string group in benchmarksWithGroups.Keys) {
+			for (int i = 0; i < benchmarksWithGroups.Count; i++) {
+				for (int j = i + 1; j < benchmarksWithGroups.Count; j++) {
+					var analysis =
+						new Analysis.Analysis(benchmarksWithGroups[group][i], benchmarksWithGroups[group][j]);
+					_analysis.Invoke(analysis);
+				}
+			}
+		}
+	}
+
+
+	public static void StartAnalysis(string[] thingsToAnalyse) {
 		if (thingsToAnalyse.Length == 0) {
 			throw new NotSupportedException("You have to pass at least two benchmarks to analyse.");
 		}
