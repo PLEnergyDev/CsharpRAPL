@@ -44,6 +44,8 @@ public class BenchmarkSuite {
 			timer.Reset();
 		}
 
+		PlotGroups();
+		
 		if (CsharpRAPLCLI.Options.ZipResults) {
 			ZipResults();
 		}
