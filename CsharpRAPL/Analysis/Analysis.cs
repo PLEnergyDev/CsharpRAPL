@@ -6,7 +6,7 @@ using CsharpRAPL.Benchmarking;
 using CsharpRAPL.Data;
 using CsharpRAPL.Plotting;
 
-namespace CsharpRAPL.Analysis; 
+namespace CsharpRAPL.Analysis;
 
 public class Analysis {
 	private readonly DataSet _firstDataset;
@@ -144,5 +144,19 @@ public class Analysis {
 	public void PlotAnalysis(BenchmarkResultType resultType) {
 		BenchmarkPlot.PlotResults(resultType, $"{_firstDataset.Name}-{_secondDataset.Name}",
 			_firstDataset, _secondDataset);
+	}
+
+	public static Dictionary<string, double> CalculatePValueForGroup(List<IBenchmark> dataSets) {
+		var groupToPValue = new Dictionary<string, double>();
+		for (int i = 0; i < dataSets.Count; i++) {
+			for (int j = i + 1; j < dataSets.Count; j++) {
+				var analysis = new Analysis(dataSets[i], dataSets[j]);
+				foreach ((string message, double value) in analysis.CalculatePValue()) {
+					groupToPValue.Add(message, value);
+				}
+			}
+		}
+
+		return groupToPValue;
 	}
 }
