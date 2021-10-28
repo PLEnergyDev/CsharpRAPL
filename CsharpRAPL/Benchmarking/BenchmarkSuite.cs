@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using CsharpRAPL.CommandLine;
 using CsharpRAPL.Plotting;
 
-namespace CsharpRAPL.Benchmarking; 
+namespace CsharpRAPL.Benchmarking;
 
 public class BenchmarkSuite {
 	private Dictionary<string, IBenchmark> Benchmarks { get; } = new();
@@ -39,6 +42,24 @@ public class BenchmarkSuite {
 			Console.WriteLine(
 				$"\rFinished {bench.Name} in {timer.ElapsedMilliseconds}ms with {bench.GetResults().Count} iterations\n");
 			timer.Reset();
+		}
+
+		if (CsharpRAPLCLI.Options.ZipResults) {
+			ZipResults();
+		}
+	}
+
+	private static void ZipResults() {
+		using var zipToOpen = new FileStream("results.zip", FileMode.Create);
+		using var archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update);
+		foreach (string file in Directory.EnumerateFiles(CsharpRAPLCLI.Options.OutputPath, "*.csv",
+			SearchOption.AllDirectories)) {
+			archive.CreateEntryFromFile(file, file);
+		}
+
+		foreach (string file in Directory.EnumerateFiles(CsharpRAPLCLI.Options.PlotOutputPath, "*.png",
+			SearchOption.AllDirectories)) {
+			archive.CreateEntryFromFile(file, file);
 		}
 	}
 

@@ -66,7 +66,7 @@ public class CLITest {
 		}
 	};
 
-	private static string[] _helpText = {
+	private static readonly string[] HelpText = {
 		"-g, --SkipPlotGroups         If plotting each benchmark group should be skipped.",
 		"-i, --Iterations             (Default: -1) Sets the target iterations. (Disables Dynamic Iteration Calculation)",
 		"-l, --LoopIterations         (Default: -1) Sets the target loop iterations. (Disables Dynamic Loop Iteration Scaling)",
@@ -77,6 +77,7 @@ public class CLITest {
 		"--OnlyAnalysis               Analysis the results in the output path.",
 		"-a, --BenchmarksToAnalyse    The names of the benchmarks to analyse.",
 		"--Verbose                    Enables debug information.",
+		"-z, --ZipResults             Zips the CSV results and plots into a single zip file.",
 		"--help                       Display this help screen.",
 		"--version                    Display version information."
 	};
@@ -124,7 +125,7 @@ public class CLITest {
 		//We skip the three first lines since they contain information about the test runner and not the test results
 		string[] split = result.Split("\n").Skip(3).Select(s => s.Trim()).Where(s => s != string.Empty).ToArray();
 
-		Assert.AreEqual(_helpText, split);
+		Assert.AreEqual(HelpText, split);
 
 
 		var standardOutput = new StreamWriter(Console.OpenStandardOutput());
@@ -145,7 +146,7 @@ public class CLITest {
 		//We skip the three first lines since they contain information about the test runner and not the test results
 		string[] split = result.Split("\n").Skip(3).Select(s => s.Trim()).Where(s => s != string.Empty).ToArray();
 
-		Assert.AreEqual(_helpText, split);
+		Assert.AreEqual(HelpText, split);
 
 		var standardOutput = new StreamWriter(Console.OpenStandardOutput());
 		standardOutput.AutoFlush = true;
@@ -274,8 +275,7 @@ public class CLITest {
 		Assert.True(options.OnlyPlot);
 		Assert.True(hasPlotted);
 	}
-
-
+	
 	[Test]
 	public void TestSetAnalysis01() {
 		string[] args = { "--OnlyAnalysis" };

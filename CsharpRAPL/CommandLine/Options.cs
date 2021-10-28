@@ -45,6 +45,9 @@ public class Options {
 	[Option(nameof(Verbose), HelpText = "Enables debug information.")]
 	public bool Verbose { get; set; }
 
+	[Option('z', nameof(ZipResults), HelpText = "Zips the CSV results and plots into a single zip file.")]
+	public bool ZipResults { get; set; }
+
 	public bool UseIterationCalculation => Iterations == -1;
 
 	public bool UseLoopIterationScaling => LoopIterations == -1;
