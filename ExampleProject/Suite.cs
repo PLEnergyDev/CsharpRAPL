@@ -34,7 +34,7 @@ foreach ((string group, List<IBenchmark> benchmarks) in suite.GetBenchmarksByGro
 	DateTime dateTime = DateTime.Now;
 	var time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";
 	Directory.CreateDirectory(Path.Join(options.OutputPath, $"_pvalues/{group}/"));
-	using var writer = new StreamWriter(Path.Join(options.OutputPath, $"_pvalues/{group}/{time}"));
+	using var writer = new StreamWriter(Path.Join(options.OutputPath, $"_pvalues/{group}/{time}.csv"));
 	using var csv = new CsvWriter(writer, new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" });
 	csv.WriteRecords(result);
 }
