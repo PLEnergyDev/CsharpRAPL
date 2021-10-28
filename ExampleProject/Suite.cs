@@ -21,4 +21,5 @@ var suite = new BenchmarkCollector(options.Iterations != -1 ? options.Iterations
 	options.LoopIterations != -1 ? options.LoopIterations : options.DefaultLoopIterations);
 
 suite.RunAll();
+CsharpRAPLCLI.StartAnalysis(suite.GetBenchmarksByGroup());
 suite.PlotGroups();
