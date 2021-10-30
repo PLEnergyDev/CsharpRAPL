@@ -149,7 +149,7 @@ public static class CsharpRAPLCLI {
 			Console.WriteLine("Results are mutually ensured!");
 		}
 
-		Dictionary<string, double> pValues = analysis.CalculatePValue();
+		List<(string Message, double Value)> pValues = analysis.CalculatePValue();
 
 
 		// Print the p-values to console

@@ -94,36 +94,36 @@ public class AnalysisTest {
 	public void TestAnalysisUsingResults01() {
 		Analysis.Analysis analysis = new("Add", _addSet, "Subtract", _subtractSet);
 
-		Dictionary<string, double> pValues = analysis.CalculatePValue();
+		List<(string Message, double Value)> pValues = analysis.CalculatePValue();
 
 		Assert.AreEqual(3, pValues.Count);
-		Assert.AreEqual(0.0056837042764399381d, pValues["Add significantly different from Subtract - Time"], double.Epsilon);
-		Assert.AreEqual(0.0052142299229074318d, pValues["Add significantly different from Subtract - Package"], double.Epsilon);
-		Assert.AreEqual(0.10275597927588676d, pValues["Add significantly different from Subtract - DRAM"], double.Epsilon);
+		Assert.AreEqual(0.0056837042764399381d, pValues[0].Value, double.Epsilon);
+		Assert.AreEqual(0.0052142299229074318d, pValues[1].Value, double.Epsilon);
+		Assert.AreEqual(0.10275597927588676d, pValues[2].Value, double.Epsilon);
 	}
 
 	[Test]
 	public void TestAnalysisUsingResults02() {
 		Analysis.Analysis analysis = new("Test1", _addSet, "Test2", _subtractSet);
 
-		Dictionary<string, double> pValues = analysis.CalculatePValue();
+		List<(string Message, double Value)> pValues = analysis.CalculatePValue();
 
 		Assert.AreEqual(3, pValues.Count);
-		Assert.AreEqual(0.0056837042764399381d, pValues["Test1 significantly different from Test2 - Time"], double.Epsilon);
-		Assert.AreEqual(0.0052142299229074318d, pValues["Test1 significantly different from Test2 - Package"], double.Epsilon);
-		Assert.AreEqual(0.10275597927588676d, pValues["Test1 significantly different from Test2 - DRAM"], double.Epsilon);
+		Assert.AreEqual(0.0056837042764399381d, pValues[0].Value, double.Epsilon);
+		Assert.AreEqual(0.0052142299229074318d, pValues[1].Value, double.Epsilon);
+		Assert.AreEqual(0.10275597927588676d, pValues[2].Value, double.Epsilon);
 	}
 
 	[Test]
 	public void TestAnalysisUsingCSV01() {
 		Analysis.Analysis analysis = new("AddSet.csv", "SubtractSet.csv");
 
-		Dictionary<string, double> pValues = analysis.CalculatePValue();
+		List<(string Message, double Value)> pValues = analysis.CalculatePValue();
 
 		Assert.AreEqual(3, pValues.Count);
-		Assert.AreEqual(0.0056837042764399381d, pValues["AddSet significantly different from SubtractSet - Time"], double.Epsilon);
-		Assert.AreEqual(0.0052142299229074318d, pValues["AddSet significantly different from SubtractSet - Package"], double.Epsilon);
-		Assert.AreEqual(0.10275597927588676d, pValues["AddSet significantly different from SubtractSet - DRAM"], double.Epsilon);
+		Assert.AreEqual(0.0056837042764399381d, pValues[0].Value, double.Epsilon);
+		Assert.AreEqual(0.0052142299229074318d, pValues[1].Value, double.Epsilon);
+		Assert.AreEqual(0.10275597927588676d, pValues[2].Value, double.Epsilon);
 	}
 
 	[Test]
