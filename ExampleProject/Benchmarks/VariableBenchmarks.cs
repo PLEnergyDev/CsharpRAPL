@@ -5,14 +5,14 @@ using ExampleProject.HelperObjects;
 namespace ExampleProject.Benchmarks;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
-public class VariablesBenchmark {
+public class VariablesBenchmarks {
 	public static int Iterations;
 	public static int LoopIterations;
 
 	[Benchmark("Variables", "Tests local variables")]
 	public static int LocalVariable() {
 		int localA = 0, localB = 1;
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			localA += localB;
 		}
 
@@ -21,7 +21,7 @@ public class VariablesBenchmark {
 
 	[Benchmark("Variables", "Tests static variables")]
 	public static int StaticVariable() {
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			VariableObject.StaticA += VariableObject.StaticB;
 		}
 
@@ -30,9 +30,9 @@ public class VariablesBenchmark {
 
 	[Benchmark("Variables", "Tests instance variables")]
 	public static int InstanceVariable() {
-		var obj = new VariableObject();
+		VariableObject obj = new VariableObject();
 
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			obj.LocalA += obj.LocalB;
 		}
 

@@ -13,15 +13,23 @@ public class StringBenchmarks {
 
 	[Benchmark("StringConcat", "Tests operation on simple string")]
 	public static string StringPlusSign() {
-		var str = "";
-		var hello = "hello";
-		var world = "world";
-		for (var i = 0; i < LoopIterations; i++) {
-			str += hello;
-			str += world;
-			if (i % 100 == 0) {
-				str = "";
-			}
+		string str = "";
+		string iStr = "I ";
+		string am = "am ";
+		string a = "a ";
+		string stringStr = "string ";
+		string with = "with ";
+		string integer = "integer ";
+		int myInt = 42;
+		for (int i = 0; i < LoopIterations; i++) {
+			str = "";
+			str += iStr;
+			str += am;
+			str += a;
+			str += stringStr;
+			str += with;
+			str += integer;
+			str += myInt;
 		}
 
 		return str;
@@ -29,15 +37,23 @@ public class StringBenchmarks {
 
 	[Benchmark("StringConcat", "Tests operation on stringbuilder")]
 	public static string StringBuilderConcat() {
-		var sb = new StringBuilder();
-		var hello = "hello";
-		var world = "world";
-		for (var i = 0; i < LoopIterations; i++) {
-			sb.Append(hello);
-			sb.Append(world);
-			if (i % 100 == 0) {
-				sb.Clear();
-			}
+		StringBuilder sb = new StringBuilder();
+		string iStr = "I ";
+		string am = "am ";
+		string a = "a ";
+		string stringStr = "string ";
+		string with = "with ";
+		string integer = "integer ";
+		int myInt = 42;
+		for (int i = 0; i < LoopIterations; i++) {
+			sb.Clear();
+			sb.Append(iStr);
+			sb.Append(am);
+			sb.Append(a);
+			sb.Append(stringStr);
+			sb.Append(with);
+			sb.Append(integer);
+			sb.Append(myInt);
 		}
 
 		return sb.ToString();
@@ -45,11 +61,16 @@ public class StringBenchmarks {
 
 	[Benchmark("StringConcat", "Tests string.Format")]
 	public static string StringFormat() {
-		var str = "";
-		var hello = "hello";
-		var world = "world";
-		for (var i = 0; i < LoopIterations; i++) {
-			str = string.Format("{0}{1}", hello, world);
+		string str = "";
+		string iStr = "I ";
+		string am = "am ";
+		string a = "a ";
+		string stringStr = "string ";
+		string with = "with ";
+		string integer = "integer ";
+		int myInt = 42;
+		for (int i = 0; i < LoopIterations; i++) {
+			str = string.Format("{0}{1}{2}{3}{4}{5}{6}", iStr, am, a, stringStr, with, integer, myInt);
 		}
 
 		return str;
@@ -57,11 +78,16 @@ public class StringBenchmarks {
 
 	[Benchmark("StringConcat", "Tests string interpolation")]
 	public static string StringInterpolation() {
-		var str = "";
-		var hello = "hello";
-		var world = "world";
-		for (var i = 0; i < LoopIterations; i++) {
-			str = $"{hello}{world}";
+		string str = "";
+		string iStr = "I ";
+		string am = "am ";
+		string a = "a ";
+		string stringStr = "string ";
+		string with = "with ";
+		string integer = "integer ";
+		int myInt = 42;
+		for (int i = 0; i < LoopIterations; i++) {
+			str = $"{iStr}{am}{a}{stringStr}{with}{integer}{myInt}";
 		}
 
 		return str;

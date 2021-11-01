@@ -4,15 +4,15 @@ using CsharpRAPL.Benchmarking;
 namespace ExampleProject.Benchmarks;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
-public class SelectionBenchmark {
+public class SelectionBenchmarks {
 	public static int Iterations;
 	public static int LoopIterations;
 
 	[Benchmark("Selection", "Tests if statement")]
 	public static int If() {
 		int halfLoopIteration = LoopIterations / 2;
-		var count = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int count = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			if (i < halfLoopIteration) {
 				count++;
 				continue;
@@ -36,8 +36,8 @@ public class SelectionBenchmark {
 
 	[Benchmark("Selection", "Tests if statement compared to switch")]
 	public static int IfComparableWithSwitch() {
-		var count = 1;
-		for (var i = 0; i < LoopIterations; i++) {
+		int count = 1;
+		for (int i = 0; i < LoopIterations; i++) {
 			if (count == 1) {
 				count = 2;
 				continue;
@@ -91,9 +91,9 @@ public class SelectionBenchmark {
 
 	[Benchmark("Selection", "Tests if and else statement")]
 	public static int IfElse() {
-		var count = 0;
+		int count = 0;
 		int halfLoopIteration = LoopIterations / 2;
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			if (i < halfLoopIteration) {
 				count++;
 				continue;
@@ -115,9 +115,9 @@ public class SelectionBenchmark {
 	[Benchmark("Selection", "Tests if and if else statement")]
 	public static int IfElseIf() //TODO IL code is equivalent with IfElse
 	{
-		var count = 0;
+		int count = 0;
 		int halfLoopIteration = LoopIterations / 2;
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			if (i < halfLoopIteration) {
 				count++;
 				continue;
@@ -137,8 +137,8 @@ public class SelectionBenchmark {
 
 	[Benchmark("Selection", "Tests switch statement")]
 	public static int Switch() {
-		var count = 1;
-		for (var i = 0; i < LoopIterations; i++) {
+		int count = 1;
+		for (int i = 0; i < LoopIterations; i++) {
 			switch (count) {
 				case 1:
 					count = 2;
@@ -178,8 +178,8 @@ public class SelectionBenchmark {
 
 	[Benchmark("Selection", "Tests if else comparable with conditional operator")]
 	public static int IfElseComparableWithConditional() {
-		var count = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int count = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			if (i <= LoopIterations) {
 				count = 1;
 			}
@@ -194,8 +194,8 @@ public class SelectionBenchmark {
 
 	[Benchmark("Selection", "Tests if conditional operator")]
 	public static int ConditionalOperator() {
-		var count = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int count = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			count = i <= LoopIterations ? 1 : 2;
 		}
 
