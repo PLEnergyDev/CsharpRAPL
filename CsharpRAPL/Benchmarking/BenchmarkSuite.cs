@@ -103,7 +103,7 @@ public class BenchmarkSuite {
 
 	public void PlotGroups() {
 		foreach ((string? group, List<IBenchmark>? benchmarks) in GetBenchmarksByGroup()) {
-			BenchmarkPlot.PlotAllResults(group, benchmarks.ToArray());
+			BenchmarkPlot.PlotAllResults(benchmarks.ToArray(), new PlotOptions { Name = group });
 		}
 	}
 }

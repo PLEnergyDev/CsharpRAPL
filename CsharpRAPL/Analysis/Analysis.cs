@@ -140,8 +140,9 @@ public class Analysis {
 	}
 
 	public void PlotAnalysis(BenchmarkResultType resultType) {
-		BenchmarkPlot.PlotResults(resultType, $"{_firstDataset.Name}-{_secondDataset.Name}",
-			_firstDataset, _secondDataset);
+		BenchmarkPlot.PlotResults(resultType, new[] { _firstDataset, _secondDataset }, new PlotOptions {
+			Name = $"{_firstDataset.Name}-{_secondDataset.Name}"
+		});
 	}
 
 	public static Dictionary<string, double> CalculatePValueForGroup(List<IBenchmark> dataSets) {

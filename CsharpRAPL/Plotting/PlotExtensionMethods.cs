@@ -21,19 +21,23 @@ public static class PlotExtensionMethods {
 		bool autoAxis = true,
 		HatchStyle hatchStyle = HatchStyle.None,
 		Color? hatchColor = null,
-		bool useMinSize = true) {
+		bool useMinSize = true,
+		bool rotateText = true) {
 		var boxPlot = new BoxPlot(position, data, errorBelow, errorAbove) {
-			LegendLabel = label,
-			BarWidth = barWidth,
-			FillColor = fillColor ?? plot.GetSettings().GetNextColor(),
-			ErrorLineWidth = (float)errorLineWidth,
-			ErrorCapSize = errorCapSize,
-			ErrorColor = errorColor ?? Color.Black,
-			BorderLineWidth = (float)outlineWidth,
-			BorderColor = outlineColor ?? Color.Black,
-			HatchStyle = hatchStyle,
-			HatchColor = hatchColor ?? Color.Gray,
-			UseMinSize = useMinSize
+			PlotOptions = new PlotOptions {
+				LegendLabel = label,
+				BarWidth = barWidth,
+				FillColor = fillColor ?? plot.GetSettings().GetNextColor(),
+				ErrorLineWidth = (float)errorLineWidth,
+				ErrorCapSize = errorCapSize,
+				ErrorColor = errorColor ?? Color.Black,
+				BorderLineWidth = (float)outlineWidth,
+				BorderColor = outlineColor ?? Color.Black,
+				HatchStyle = hatchStyle,
+				HatchColor = hatchColor ?? Color.Gray,
+				UseMinSize = useMinSize,
+				RotateText = rotateText
+			}
 		};
 
 		plot.Add(boxPlot);
@@ -42,20 +46,7 @@ public static class PlotExtensionMethods {
 			return boxPlot;
 		}
 
-		plot.AxisAuto(0.0, 0.0);
-		double yValue;
-		double[] numArray = plot.Axis(0, 0, 0, 0);
 		plot.AxisAuto();
-
-		if (numArray[2] == 0.0) {
-			yValue = 0.0;
-			plot.Axis(y1: yValue);
-		}
-		else if (numArray[3] == 0.0) {
-			yValue = 0.0;
-			plot.Axis(y2: yValue);
-		}
-
 		return boxPlot;
 	}
 }

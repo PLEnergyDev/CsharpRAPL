@@ -7,6 +7,7 @@ using Accord.Statistics;
 using CsharpRAPL.Analysis;
 using CsharpRAPL.Benchmarking;
 using CsharpRAPL.CommandLine;
+using Humanizer;
 using ScottPlot;
 using ScottPlot.Drawing;
 using DataSet = CsharpRAPL.Analysis.DataSet;
@@ -14,18 +15,13 @@ using DataSet = CsharpRAPL.Analysis.DataSet;
 namespace CsharpRAPL.Plotting;
 
 public static class BenchmarkPlot {
-	public static void PlotResults(BenchmarkResultType resultType, string? name = null,
-		params IBenchmark[] dataSets) {
-		PlotResults(resultType, name,
-			dataSets.Select(benchmark => new DataSet(benchmark.Name, benchmark.GetResults())).ToArray());
-	}
-
 	//TODO: Note that this expect the path is the root of the groups e.g.
 	// Data/ would be a root that contained Data/Loops and Data/Control
-	public static void PlotResultsGroupsFromFolder(BenchmarkResultType resultType, string path) {
+	public static void PlotResultsGroupsFromFolder(BenchmarkResultType resultType, string path,
+		PlotOptions plotOptions = default) {
 		var groups = new Dictionary<string, List<DataSet>>();
 
-		foreach (string file in Helpers.GetAllCSVFilesFromOutputPath()) {
+		foreach (string file in Helpers.GetAllCSVFilesFromPath(path)) {
 			//TODO: what if there is no group?
 			string group = Path.GetRelativePath(Directory.GetCurrentDirectory(), file)
 				.Split(Path.DirectorySeparatorChar)[1];
@@ -37,20 +33,28 @@ public static class BenchmarkPlot {
 		}
 
 		foreach ((string? group, List<DataSet>? dataSets) in groups) {
-			PlotResults(resultType, group, dataSets.ToArray());
+			plotOptions.Name = group;
+			PlotResults(resultType, dataSets.ToArray(), plotOptions);
 		}
 	}
 
-	public static void PlotAllResultsGroupsFromFolder(string path) {
-		PlotResultsGroupsFromFolder(BenchmarkResultType.ElapsedTime, path);
-		PlotResultsGroupsFromFolder(BenchmarkResultType.PackagePower, path);
-		PlotResultsGroupsFromFolder(BenchmarkResultType.DramPower, path);
-		PlotResultsGroupsFromFolder(BenchmarkResultType.Temperature, path);
+	public static void PlotAllResultsGroupsFromFolder(string path, PlotOptions plotOptions = default) {
+		PlotResultsGroupsFromFolder(BenchmarkResultType.ElapsedTime, path, plotOptions);
+		PlotResultsGroupsFromFolder(BenchmarkResultType.PackagePower, path, plotOptions);
+		PlotResultsGroupsFromFolder(BenchmarkResultType.DramPower, path, plotOptions);
+		PlotResultsGroupsFromFolder(BenchmarkResultType.Temperature, path, plotOptions);
 	}
 
-	public static void PlotResults(BenchmarkResultType resultType, string? name = null, params DataSet[] dataSets) {
-		if (dataSets.All(set => set.Data.Count == 0)) {
-			throw new NotSupportedException("Plotting without data is not supported.");
+	public static void PlotResults(BenchmarkResultType resultType, IBenchmark[] dataSets,
+		PlotOptions plotOptions = default) {
+		DataSet[] data = dataSets.Select(benchmark => new DataSet(benchmark.Name, benchmark.GetResults())).ToArray();
+		PlotResults(resultType, data, plotOptions);
+	}
+
+	public static void PlotResults(BenchmarkResultType resultType, DataSet[] dataSets,
+		PlotOptions plotOptions = default) {
+		if (!ValidateData(ref dataSets)) {
+			return;
 		}
 
 		var plt = new Plot(600, 450);
@@ -64,29 +68,60 @@ public static class BenchmarkPlot {
 			double max = plotData.Max();
 
 			BoxPlot bar = plt.PlotBoxPlot(index, plotData, min, max,
-				$"{dataSet.Name}\nMax: {max:F4} Min: {min:F4}\nLowerQ: {plotData.LowerQuartile():F4} UpperQ: {plotData.UpperQuartile():F4}");
+				$"{dataSet.Name}\nMax: {max:F4} Min: {min:F4}\nLowerQ: {plotData.LowerQuartile():F4} UpperQ: {plotData.UpperQuartile():F4}",
+				useMinSize: false);
 
 			if (hatchIndex > 9) {
 				hatchIndex = 0;
 			}
 
-			bar.HatchStyle = (HatchStyle)hatchIndex;
-			bar.HatchColor = Color.Gray;
+			bar.PlotOptions.HatchStyle = (HatchStyle)hatchIndex;
+			bar.PlotOptions.HatchColor = Color.Gray;
 			hatchIndex++;
 		}
 
-		//plt.Legend(location: legendLocation.upperRight);
+		if (plotOptions.RotateText && names.Max(s => s.Length) > 10 && dataSets.Length > 6) {
+			plt.XAxis.TickLabelStyle(rotation: 45);
+		}
+
 		plt.XTicks(Enumerable.Range(0, dataSets.Length).Select(i1 => (double)i1).ToArray(), names);
 		plt.XLabel("Benchmark");
 		plt.YLabel(GetYLabel(resultType));
-		plt.Title(name != null ? $"{name}" : $"{resultType}");
+		plt.Title(string.IsNullOrEmpty(plotOptions.Name)
+			? $"{resultType}"
+			: $"{plotOptions.Name.Humanize(LetterCasing.Title)}");
 
 		DateTime dateTime = DateTime.Now;
 		var time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";
 		Directory.CreateDirectory($"{CsharpRAPLCLI.Options.PlotOutputPath}/{resultType}");
-		plt.SaveFig(name != null
-			? $"{CsharpRAPLCLI.Options.PlotOutputPath}/{resultType}/{name}-{time}.png"
-			: $"{CsharpRAPLCLI.Options.PlotOutputPath}/{resultType}/{time}.png");
+		plt.SaveFig(string.IsNullOrEmpty(plotOptions.Name)
+			? $"{CsharpRAPLCLI.Options.PlotOutputPath}/{resultType}/{time}.png"
+			: $"{CsharpRAPLCLI.Options.PlotOutputPath}/{resultType}/{plotOptions.Name}-{time}.png");
+	}
+
+	private static bool ValidateData(ref DataSet[] dataSets) {
+		if (dataSets.Length == 0) {
+			throw new NotSupportedException("Plotting without data is not supported.");
+		}
+
+		List<DataSet> dataWhereZero = dataSets.Where(set => set.Data.Count == 0).ToList();
+		if (dataWhereZero.Count == dataSets.Length) {
+			throw new NotSupportedException("Plotting without data is not supported.");
+		}
+
+		if (dataWhereZero.Count == 0) {
+			return true;
+		}
+
+		List<DataSet> newDatasets = dataSets.ToList();
+		foreach (DataSet dataSet in dataWhereZero) {
+			Console.Error.WriteLine($"Skipping plotting {dataSet.Name} since it contains no data.");
+			newDatasets.Remove(dataSet);
+		}
+
+		dataSets = newDatasets.ToArray();
+
+		return true;
 	}
 
 	private static double[] GetPlotData(DataSet dataSet, BenchmarkResultType resultType) {
@@ -117,17 +152,17 @@ public static class BenchmarkPlot {
 		return yLabel;
 	}
 
-	public static void PlotAllResults(string? name = null, params IBenchmark[] dataSet) {
-		PlotResults(BenchmarkResultType.ElapsedTime, name, dataSet);
-		PlotResults(BenchmarkResultType.PackagePower, name, dataSet);
-		PlotResults(BenchmarkResultType.DramPower, name, dataSet);
-		PlotResults(BenchmarkResultType.Temperature, name, dataSet);
+	public static void PlotAllResults(IBenchmark[] dataSet, PlotOptions plotOptions = default) {
+		PlotResults(BenchmarkResultType.ElapsedTime, dataSet, plotOptions);
+		PlotResults(BenchmarkResultType.PackagePower, dataSet, plotOptions);
+		PlotResults(BenchmarkResultType.DramPower, dataSet, plotOptions);
+		PlotResults(BenchmarkResultType.Temperature, dataSet, plotOptions);
 	}
 
-	public static void PlotAllResults(string? name = null, params DataSet[] dataSet) {
-		PlotResults(BenchmarkResultType.ElapsedTime, name, dataSet);
-		PlotResults(BenchmarkResultType.PackagePower, name, dataSet);
-		PlotResults(BenchmarkResultType.DramPower, name, dataSet);
-		PlotResults(BenchmarkResultType.Temperature, name, dataSet);
+	public static void PlotAllResults(DataSet[] dataSet, PlotOptions plotOptions = default) {
+		PlotResults(BenchmarkResultType.ElapsedTime, dataSet, plotOptions);
+		PlotResults(BenchmarkResultType.PackagePower, dataSet, plotOptions);
+		PlotResults(BenchmarkResultType.DramPower, dataSet, plotOptions);
+		PlotResults(BenchmarkResultType.Temperature, dataSet, plotOptions);
 	}
 }

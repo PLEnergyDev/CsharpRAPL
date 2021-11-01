@@ -130,6 +130,6 @@ public class BenchmarkCollector : BenchmarkSuite {
 /// <summary>
 /// A container class for a variation of the AddBenchmark method
 /// </summary>
-/// <param name="GenericAddBenchmark">The generic AddBenchmark method <see cref="BenchmarkSuite.AddBenchmark{T}(string?,int,System.Func{T},int)"/></param>
+/// <param name="GenericAddBenchmark">The generic AddBenchmark method <see cref="BenchmarkSuite.RegisterBenchmark{T}(string?,int,System.Func{T},int)"/></param>
 /// <param name="FuncType">The Func Type using the return type as generic argument</param>
 internal sealed record AddBenchmarkVariation(MethodInfo GenericAddBenchmark, Type FuncType);

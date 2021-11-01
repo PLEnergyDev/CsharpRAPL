@@ -14,11 +14,15 @@ public static class Helpers {
 
 
 	public static List<string> GetAllCSVFilesFromOutputPath() {
-		if (!Directory.Exists(CsharpRAPLCLI.Options.OutputPath)) {
+		return GetAllCSVFilesFromPath(CsharpRAPLCLI.Options.OutputPath);
+	}
+
+	public static List<string> GetAllCSVFilesFromPath(string path) {
+		if (!Directory.Exists(path)) {
 			return new List<string>();
 		}
 
-		return Directory.EnumerateFiles(CsharpRAPLCLI.Options.OutputPath, "*.csv", SearchOption.AllDirectories)
+		return Directory.EnumerateFiles(path, "*.csv", SearchOption.AllDirectories)
 			.Where(s => !s.Contains("_pvalues")).ToList();
 	}
 
