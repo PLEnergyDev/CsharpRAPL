@@ -46,5 +46,7 @@ foreach (string file in Directory.EnumerateFiles(Path.Join(options.OutputPath, "
 	SearchOption.AllDirectories)) {
 	archive.CreateEntryFromFile(file, file);
 }
+archive.Dispose();
+zipToOpen.Dispose();
 
 CsharpRAPLCLI.StartAnalysis(suite.GetBenchmarksByGroup());
