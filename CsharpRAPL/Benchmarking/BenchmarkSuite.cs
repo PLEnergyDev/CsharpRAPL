@@ -54,13 +54,11 @@ public class BenchmarkSuite {
 	private static void ZipResults() {
 		using var zipToOpen = new FileStream("results.zip", FileMode.Create);
 		using var archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update);
-		foreach (string file in Directory.EnumerateFiles(CsharpRAPLCLI.Options.OutputPath, "*.csv",
-			SearchOption.AllDirectories)) {
+		foreach (string file in Helpers.GetAllCSVFilesFromOutputPath()) {
 			archive.CreateEntryFromFile(file, file);
 		}
-
-		foreach (string file in Directory.EnumerateFiles(CsharpRAPLCLI.Options.PlotOutputPath, "*.png",
-			SearchOption.AllDirectories)) {
+		
+		foreach (string file in Helpers.GetAllPlotFiles()) {
 			archive.CreateEntryFromFile(file, file);
 		}
 	}

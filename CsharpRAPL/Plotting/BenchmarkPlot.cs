@@ -25,7 +25,8 @@ public static class BenchmarkPlot {
 	public static void PlotResultsGroupsFromFolder(BenchmarkResultType resultType, string path) {
 		var groups = new Dictionary<string, List<DataSet>>();
 
-		foreach (string file in Directory.EnumerateFiles(path, "*.csv", SearchOption.AllDirectories)) {
+		foreach (string file in Helpers.GetAllCSVFilesFromOutputPath()) {
+			//TODO: what if there is no group?
 			string group = Path.GetRelativePath(Directory.GetCurrentDirectory(), file)
 				.Split(Path.DirectorySeparatorChar)[1];
 			if (!groups.ContainsKey(group)) {
