@@ -18,7 +18,7 @@ public static class BenchmarkPlot {
 	//TODO: Note that this expect the path is the root of the groups e.g.
 	// Data/ would be a root that contained Data/Loops and Data/Control
 	public static void PlotResultsGroupsFromFolder(BenchmarkResultType resultType, string path,
-		PlotOptions plotOptions = default) {
+		PlotOptions? plotOptions = null) {
 		var groups = new Dictionary<string, List<DataSet>>();
 
 		foreach (string file in Helpers.GetAllCSVFilesFromPath(path)) {
@@ -32,13 +32,14 @@ public static class BenchmarkPlot {
 			groups[group].Add(new DataSet(file));
 		}
 
+		plotOptions ??= new PlotOptions();
+
 		foreach ((string? group, List<DataSet>? dataSets) in groups) {
-			plotOptions.Name = group;
-			PlotResults(resultType, dataSets.ToArray(), plotOptions);
+			PlotResults(resultType, dataSets.ToArray(), new PlotOptions {Name = group});
 		}
 	}
 
-	public static void PlotAllResultsGroupsFromFolder(string path, PlotOptions plotOptions = default) {
+	public static void PlotAllResultsGroupsFromFolder(string path, PlotOptions? plotOptions = null) {
 		PlotResultsGroupsFromFolder(BenchmarkResultType.ElapsedTime, path, plotOptions);
 		PlotResultsGroupsFromFolder(BenchmarkResultType.PackagePower, path, plotOptions);
 		PlotResultsGroupsFromFolder(BenchmarkResultType.DramPower, path, plotOptions);
@@ -46,30 +47,33 @@ public static class BenchmarkPlot {
 	}
 
 	public static void PlotResults(BenchmarkResultType resultType, IBenchmark[] dataSets,
-		PlotOptions plotOptions = default) {
+		PlotOptions? plotOptions = null) {
 		DataSet[] data = dataSets.Select(benchmark => new DataSet(benchmark.Name, benchmark.GetResults())).ToArray();
 		PlotResults(resultType, data, plotOptions);
 	}
 
 	public static void PlotResults(BenchmarkResultType resultType, DataSet[] dataSets,
-		PlotOptions plotOptions = default) {
+		PlotOptions? plotOptions = null) {
 		if (!ValidateData(ref dataSets)) {
 			return;
 		}
 
-		var plt = new Plot(600, 450);
+		plotOptions ??= new PlotOptions();
+
+		var plt = new Plot(plotOptions.Width,plotOptions.Height);
 
 		string[] names = dataSets.Select(set => set.Name).ToArray();
+
 
 		var hatchIndex = 3;
 		foreach ((int index, DataSet dataSet) in dataSets.WithIndex()) {
 			double[] plotData = GetPlotData(dataSet, resultType);
 			double min = plotData.Min();
 			double max = plotData.Max();
-
-			BoxPlot bar = plt.PlotBoxPlot(index, plotData, min, max,
-				$"{dataSet.Name}\nMax: {max:F4} Min: {min:F4}\nLowerQ: {plotData.LowerQuartile():F4} UpperQ: {plotData.UpperQuartile():F4}",
-				useMinSize: false);
+			plotOptions.LegendLabel =
+				$"{dataSet.Name}\nMax: {max:F4} Min: {min:F4}\nLowerQ: {plotData.LowerQuartile():F4} UpperQ: {plotData.UpperQuartile():F4}";
+			
+			BoxPlot bar = plt.PlotBoxPlot(index, plotData, min, max, plotOptions: plotOptions);
 
 			if (hatchIndex > 9) {
 				hatchIndex = 0;
@@ -152,14 +156,14 @@ public static class BenchmarkPlot {
 		return yLabel;
 	}
 
-	public static void PlotAllResults(IBenchmark[] dataSet, PlotOptions plotOptions = default) {
+	public static void PlotAllResults(IBenchmark[] dataSet, PlotOptions? plotOptions = null) {
 		PlotResults(BenchmarkResultType.ElapsedTime, dataSet, plotOptions);
 		PlotResults(BenchmarkResultType.PackagePower, dataSet, plotOptions);
 		PlotResults(BenchmarkResultType.DramPower, dataSet, plotOptions);
 		PlotResults(BenchmarkResultType.Temperature, dataSet, plotOptions);
 	}
 
-	public static void PlotAllResults(DataSet[] dataSet, PlotOptions plotOptions = default) {
+	public static void PlotAllResults(DataSet[] dataSet, PlotOptions? plotOptions = null) {
 		PlotResults(BenchmarkResultType.ElapsedTime, dataSet, plotOptions);
 		PlotResults(BenchmarkResultType.PackagePower, dataSet, plotOptions);
 		PlotResults(BenchmarkResultType.DramPower, dataSet, plotOptions);

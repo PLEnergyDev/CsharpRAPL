@@ -9,14 +9,7 @@ using CsharpRAPL.CommandLine;
 using CsvHelper;
 using CsvHelper.Configuration;
 
-CsharpRAPLCLI.SetAnalysis(analysis => {
-	Console.WriteLine($"Min:\n{analysis.GetMin()}");
-	Console.WriteLine($"Max:\n{analysis.GetMax()}");
-	Console.WriteLine($"Average:\n{analysis.GetAverage()}");
-
-	//Plots the two things in the analysis.
-	analysis.PlotAnalysis();
-});
+CsharpRAPLCLI.SetAnalysis(_ => { });
 
 Options options = CsharpRAPLCLI.Parse(args);
 
