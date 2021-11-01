@@ -116,7 +116,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 		//Get the correct version of add benchmark method
 		MethodInfo addBenchmarkMethod = GetType()
 			.GetMethods(flags)
-			.First(info => info.Name == "AddBenchmark" && info.GetParameters().Length == 4);
+			.First(info => info.Name == "RegisterBenchmark" && info.GetParameters().Length == 4);
 
 		//Make a generic using the benchmark return type
 		MethodInfo genericAddBenchmark = addBenchmarkMethod.MakeGenericMethod(benchmark.ReturnType);

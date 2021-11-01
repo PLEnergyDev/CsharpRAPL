@@ -12,7 +12,7 @@ namespace CsharpRAPL.Benchmarking;
 public class BenchmarkSuite {
 	private Dictionary<string, IBenchmark> Benchmarks { get; } = new();
 
-	public void AddBenchmark<T>(string? group, int iterations, Func<T> benchmark, int order = 0) {
+	public void RegisterBenchmark<T>(string? group, int iterations, Func<T> benchmark, int order = 0) {
 		string benchmarkName = benchmark.Method.Name;
 		if (Benchmarks.ContainsKey(benchmarkName)) {
 			throw new Exception($"Trying to add a benchmark with the same name twice. Name is: {benchmarkName}");
@@ -21,8 +21,8 @@ public class BenchmarkSuite {
 		Benchmarks.Add(benchmarkName, new Benchmark<T>(benchmarkName, iterations, benchmark, false, group, order));
 	}
 
-	public void AddBenchmark<T>(int iterations, Func<T> benchmark) {
-		AddBenchmark(null, iterations, benchmark);
+	public void RegisterBenchmark<T>(int iterations, Func<T> benchmark) {
+		RegisterBenchmark(null, iterations, benchmark);
 	}
 
 	public void RunAll(int skipAmount = 0) {
@@ -31,7 +31,7 @@ public class BenchmarkSuite {
 		if (Environment.OSVersion.Platform != PlatformID.Unix) {
 			throw new NotSupportedException("Running the benchmarks is only supported on Unix.");
 		}
-
+		
 		int warmup = 0;
 		Console.WriteLine("Warmup commencing");
 		for (int i = 0; i < 10; i++) {
@@ -75,7 +75,7 @@ public class BenchmarkSuite {
 		foreach (string file in Helpers.GetAllCSVFilesFromOutputPath()) {
 			archive.CreateEntryFromFile(file, file);
 		}
-		
+
 		foreach (string file in Helpers.GetAllPlotFiles()) {
 			archive.CreateEntryFromFile(file, file);
 		}
