@@ -32,6 +32,24 @@ public class BenchmarkSuite {
 			throw new NotSupportedException("Running the benchmarks is only supported on Unix.");
 		}
 
+		int warmup = 0;
+		Console.WriteLine("Warmup commencing");
+		for (int i = 0; i < 10; i++) {
+			while (warmup < int.MaxValue) {
+				warmup++;
+				if (warmup % 1000000 == 0) {
+					int percentage = (int)((double)warmup / int.MaxValue * 10.0 + 10.0 * i);
+					Console.SetCursorPosition(0, Console.CursorTop);
+					Console.Write($"{percentage}%");
+					Console.Out.Flush();
+				}
+			}
+
+			warmup = 0;
+		}
+
+		Console.Write("\n");
+
 		var timer = new Stopwatch();
 		foreach ((int index, IBenchmark bench) in benchmarks.WithIndex()) {
 			Console.WriteLine($"Starting {bench.Name} which is the {index + 1} out of {benchmarks.Count} tests");

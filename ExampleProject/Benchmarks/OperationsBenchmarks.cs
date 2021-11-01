@@ -4,16 +4,16 @@ using CsharpRAPL.Benchmarking;
 namespace ExampleProject.Benchmarks;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
-public static class OperationsBenchmark {
+public static class OperationsBenchmarks {
 	public static int Iterations;
 	public static int LoopIterations;
 
 	[Benchmark("Addition", "Tests simple addition")]
 	public static int Add() {
-		var a = 10;
-		var b = 2;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int a = 10;
+		int b = 2;
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res = a + b;
 		}
 
@@ -24,8 +24,8 @@ public static class OperationsBenchmark {
 	public static int AddConst() {
 		const int a = 10;
 		const int b = 2;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res = a + b;
 		}
 
@@ -34,9 +34,9 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Addition", "Tests addition using compound assignment")]
 	public static int AddComp() {
-		var a = 10;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int a = 10;
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res += a;
 		}
 
@@ -45,9 +45,9 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Addition", "Tests addition without compound assignment")]
 	public static int AddAssign() {
-		var a = 10;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int a = 10;
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res = res + a;
 		}
 
@@ -57,10 +57,10 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Subtraction", "Tests simple subtraction")]
 	public static int Minus() {
-		var a = 10;
-		var b = 2;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int a = 10;
+		int b = 2;
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res = a - b;
 		}
 
@@ -72,8 +72,8 @@ public static class OperationsBenchmark {
 	public static int MinusConst() {
 		const int a = 10;
 		const int b = 2;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res = a - b;
 		}
 
@@ -82,9 +82,9 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Subtraction", "Tests subtraction using compound assignment")]
 	public static int MinusComp() {
-		var a = 10;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int a = 10;
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res -= a;
 		}
 
@@ -94,9 +94,9 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Subtraction", "Tests subtraction without compound assignment")]
 	public static int MinusAssign() {
-		var a = 10;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int a = 10;
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res = res - a;
 		}
 
@@ -105,10 +105,10 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Multiplication", "Tests simple multiplication")]
 	public static int Multiply() {
-		var a = 5;
-		var b = 1;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int a = 5;
+		int b = 1;
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res = a * b;
 		}
 
@@ -119,8 +119,8 @@ public static class OperationsBenchmark {
 	public static int MultiplyConst() {
 		const int a = 5;
 		const int b = 1;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res = a * b;
 		}
 
@@ -129,9 +129,9 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Multiplication", "Tests multiplication using compound assignment")]
 	public static int MultiplyComp() {
-		var a = 5;
-		var res = 1;
-		for (var i = 0; i < LoopIterations; i++) {
+		int a = 5;
+		int res = 1;
+		for (int i = 0; i < LoopIterations; i++) {
 			res *= a;
 		}
 
@@ -140,9 +140,9 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Multiplication", "Tests multiplication without compound assignment")]
 	public static int MultiplyAssign() {
-		var a = 5;
-		var res = 1;
-		for (var i = 0; i < LoopIterations; i++) {
+		int a = 5;
+		int res = 1;
+		for (int i = 0; i < LoopIterations; i++) {
 			res = res * a;
 		}
 
@@ -152,10 +152,10 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Division", "Tests simple division")]
 	public static int Divide() {
-		var a = 10;
-		var b = 2;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int a = 10;
+		int b = 2;
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res = a / b;
 		}
 
@@ -167,8 +167,8 @@ public static class OperationsBenchmark {
 	public static int DivideConst() {
 		const int a = 10;
 		const int b = 2;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res = a / b;
 		}
 
@@ -178,9 +178,9 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Division", "Tests division using compound assignment")]
 	public static int DivideComp() {
-		var a = 10;
-		var res = 1;
-		for (var i = 0; i < LoopIterations; i++) {
+		int a = 10;
+		int res = 1;
+		for (int i = 0; i < LoopIterations; i++) {
 			res /= a;
 		}
 
@@ -189,10 +189,98 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Division", "Tests division without compound assignment")]
 	public static int DivideAssign() {
-		var a = 10;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int a = 10;
+		int res = 1;
+		for (int i = 0; i < LoopIterations; i++) {
 			res = res / a;
+		}
+
+		return res;
+	}
+	
+	[Benchmark("Division", "Tests Simple Division with forced double")]
+	public static double DivideForcedDouble() {
+		double a = 10;
+		double b = 3;
+		double res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			res = a / b;
+		}
+
+		return res;
+	}
+	
+	[Benchmark("Division", "Tests Simple Division with consts and forced double")]
+	public static double DivideForcedDoubleConst() {
+		const double a = 10;
+		const double b = 3;
+		double res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			res = a / b;
+		}
+
+		return res;
+	}
+	
+	[Benchmark("Division", "Tests division using compound assignment and with forced double")]
+	public static double DivideForcedDoubleComp() {
+		double a = 10;
+		double res = 1;
+		for (int i = 0; i < LoopIterations; i++) {
+			res /= a;
+		}
+
+		return res;
+	}
+
+	[Benchmark("Division", "Tests division without compound assignment and with forced double")]
+	public static double DivideForcedDoubleAssign() {
+		double a = 10;
+		double res = 1;
+		for (int i = 0; i < LoopIterations; i++) {
+			res = res / a;
+		}
+
+		return res;
+	}
+	
+	[Benchmark("Division", "Tests Simple Division with forced double and non-constant denominator")]
+	public static double DivideForcedDoubleNonConstDenom() {
+		double a = 10;
+		double res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			res = a / (i+1);
+		}
+
+		return res;
+	}
+	
+	[Benchmark("Division", "Tests Simple Division with consts and forced double and non-constant denominator")]
+	public static double DivideForcedDoubleConstNonConstDenom() {
+		const double a = 10;
+		double res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			res = a / (i+1);
+		}
+
+		return res;
+	}
+	
+	[Benchmark("Division", "Tests division using compound assignment and with forced double and non-constant denominator")]
+	public static double DivideForcedDoubleCompNonConstDenom() {
+		double res = 1;
+		for (int i = 0; i < LoopIterations; i++) {
+			res /= (i+1);
+		}
+
+		return res;
+	}
+
+	[Benchmark("Division", "Tests division without compound assignment and with forced double and non-constant denominator")]
+	public static double DivideForcedDoubleAssignNonConstDenom() {
+		double res = 1;
+		for (int i = 0; i < LoopIterations; i++) {
+			res = res / (i+1);
 		}
 
 		return res;
@@ -200,10 +288,10 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Modulo", "Tests simple modulo")]
 	public static int Modulo() {
-		var a = 10;
-		var b = 2;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int a = 10;
+		int b = 2;
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res = a % b;
 		}
 
@@ -215,8 +303,8 @@ public static class OperationsBenchmark {
 	public static int ModuloConst() {
 		const int a = 10;
 		const int b = 2;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res = a % b;
 		}
 
@@ -225,9 +313,9 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Modulo", "Tests modulo using compound assignment")]
 	public static int ModuloComp() {
-		var a = 10;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int a = 10;
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res %= a;
 		}
 
@@ -236,9 +324,9 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Modulo", "Tests modulo without compound assignment")]
 	public static int ModuloAssign() {
-		var a = 10;
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int a = 10;
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res = res % a;
 		}
 
@@ -247,8 +335,8 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Operations", "Tests post increment using ++")]
 	public static int PostIncrement() {
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res++;
 		}
 
@@ -257,8 +345,8 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Operations", "Tests post decrement using --")]
 	public static int PostDecrement() {
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			res--;
 		}
 
@@ -267,8 +355,8 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Operations", "Tests pre increment using ++")]
 	public static int PreIncrement() {
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			++res;
 		}
 
@@ -277,8 +365,8 @@ public static class OperationsBenchmark {
 
 	[Benchmark("Operations", "Tests pre decrement using --")]
 	public static int PreDecrement() {
-		var res = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int res = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			--res;
 		}
 

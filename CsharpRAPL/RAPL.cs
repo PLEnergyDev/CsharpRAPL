@@ -47,7 +47,7 @@ public sealed class RAPL {
 	public BenchmarkResult GetNormalizedResults(int loopIterations, int normalizedIterations = 1000000) {
 		BenchmarkResult result = new() {
 			DramPower = _dramApi.Delta / ((double)loopIterations / normalizedIterations),
-			Temperature = _tempApi.Delta / ((double)loopIterations / normalizedIterations),
+			Temperature = _tempApi.Delta / 1000,
 			ElapsedTime = _timerApi.Delta / ((double)loopIterations / normalizedIterations),
 			PackagePower = _packageApi.Delta / ((double)loopIterations / normalizedIterations)
 		};

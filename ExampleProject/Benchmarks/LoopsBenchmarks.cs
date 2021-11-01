@@ -5,17 +5,17 @@ using CsharpRAPL.Benchmarking;
 namespace ExampleProject.Benchmarks;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
-public class LoopsBenchmark {
+public class LoopsBenchmarks {
 	public static int Iterations;
 	public static int LoopIterations;
 
 
 	[Benchmark("Loops", "Tests a do-while loop")]
 	public static int DoWhileLoop() {
-		var count = 0;
+		int count = 0;
 
 		do {
-			count = count + 1;
+			count += 1;
 		} while (count < LoopIterations);
 
 		return count;
@@ -23,10 +23,10 @@ public class LoopsBenchmark {
 
 	[Benchmark("Loops", "Tests a while loop")]
 	public static int WhileLoop() {
-		var count = 0;
+		int count = 0;
 
 		while (count < LoopIterations) {
-			count = count + 1;
+			count += 1;
 		}
 
 		return count;
@@ -34,10 +34,10 @@ public class LoopsBenchmark {
 
 	[Benchmark("Loops", "Tests a for loop")]
 	public static int ForLoop() {
-		var count = 0;
+		int count = 0;
 
-		for (var i = 0; i < LoopIterations; i++) {
-			count = count + 1;
+		for (int i = 0; i < LoopIterations; i++) {
+			count += 1;
 		}
 
 
@@ -46,22 +46,22 @@ public class LoopsBenchmark {
 
 	[Benchmark("Loops", "Tests a foreach loop")]
 	public static int ForEachLoop() {
-		var count = 0;
+		int count = 0;
 
 		foreach (int unused in Enumerable.Range(0, LoopIterations)) {
-			count = count + 1;
+			count += 1;
 		}
 
 		return count;
 	}
 
-	[Benchmark("Loops", "Tests a goto based loop")]
-	public static int GotoLoop() {
-		var count = 0;
+	[Benchmark("Loops", "Tests a goto based loop, in style of do-while loop")]
+	public static int GotoDoWhileLoop() {
+		int count = 0;
 
 
 		Iterate:
-		count = count + 1;
+		count += 1;
 		if (count < LoopIterations) {
 			goto Iterate;
 		}
@@ -69,9 +69,24 @@ public class LoopsBenchmark {
 		return count;
 	}
 
-	[Benchmark("Loops", "Tests a recursive loop")]
+	[Benchmark("Loops", "Tests a goto based loop in style of while loop")]
+	public static int GotoWhileLoop() {
+		int count = 0;
+
+
+		Iterate:
+		if (count < LoopIterations) {
+			count += 1;
+			goto Iterate;
+		}
+
+		return count;
+	}
+
+	//TODO unusable if depth cannot go deeper than 174601
+	[Benchmark("Loops", "Tests a recursive loop", skip: true)]
 	public static int RecursiveLoop() {
-		var count = 0;
+		int count = 0;
 
 		return RecursiveHelper(count);
 	}

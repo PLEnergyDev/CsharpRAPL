@@ -98,7 +98,7 @@ public static class BenchmarkPlot {
 			BenchmarkResultType.DramPower => dataSet.Data.Where(result => result.DramPower > double.Epsilon)
 				.Select(result => result.DramPower).ToList(),
 			BenchmarkResultType.Temperature => dataSet.Data.Where(result => result.Temperature > double.Epsilon)
-				.Select(result => result.Temperature / 1000).ToList(),
+				.Select(result => result.Temperature).ToList(),
 			_ => throw new ArgumentOutOfRangeException(nameof(resultType), resultType, null)
 		};
 

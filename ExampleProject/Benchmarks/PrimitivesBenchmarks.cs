@@ -10,8 +10,8 @@ public class PrimitivesBenchmarks {
 
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive int")]
 	public static int PrimitiveInt() {
-		var primitive = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		int primitive = 0;
+		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
 			primitive *= 10;
 			primitive /= 2;
@@ -25,7 +25,7 @@ public class PrimitivesBenchmarks {
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive uint")]
 	public static int PrimitiveUint() {
 		uint primitive = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
 			primitive *= 10;
 			primitive /= 2;
@@ -39,7 +39,7 @@ public class PrimitivesBenchmarks {
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive nint")]
 	public static int PrimitiveNint() {
 		nint primitive = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
 			primitive *= 10;
 			primitive /= 2;
@@ -53,7 +53,7 @@ public class PrimitivesBenchmarks {
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive nuint")]
 	public static int PrimitiveNuint() {
 		nuint primitive = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
 			primitive *= 10;
 			primitive /= 2;
@@ -67,7 +67,7 @@ public class PrimitivesBenchmarks {
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive long")]
 	public static int PrimitiveLong() {
 		long primitive = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
 			primitive *= 10;
 			primitive /= 2;
@@ -81,7 +81,7 @@ public class PrimitivesBenchmarks {
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive ulong")]
 	public static int PrimitiveUlong() {
 		ulong primitive = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
 			primitive *= 10;
 			primitive /= 2;
@@ -95,7 +95,7 @@ public class PrimitivesBenchmarks {
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive short")]
 	public static int PrimitiveShort() {
 		short primitive = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
 			primitive *= 10;
 			primitive /= 2;
@@ -109,7 +109,7 @@ public class PrimitivesBenchmarks {
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive ushort")]
 	public static int PrimitiveUshort() {
 		ushort primitive = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
 			primitive *= 10;
 			primitive /= 2;
@@ -123,7 +123,7 @@ public class PrimitivesBenchmarks {
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive byte")]
 	public static int PrimitiveByte() {
 		byte primitive = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
 			primitive *= 10;
 			primitive /= 2;
@@ -137,7 +137,7 @@ public class PrimitivesBenchmarks {
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive sbyte")]
 	public static int PrimitiveSbyte() {
 		sbyte primitive = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
 			primitive *= 10;
 			primitive /= 2;
@@ -151,7 +151,7 @@ public class PrimitivesBenchmarks {
 	[Benchmark("PrimitiveDecimal", "Tests operation on primitive float")]
 	public static int PrimitiveFloat() {
 		float primitive = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
 			primitive *= 10;
 			primitive /= 2;
@@ -165,7 +165,7 @@ public class PrimitivesBenchmarks {
 	[Benchmark("PrimitiveDecimal", "Tests operation on primitive double")]
 	public static int PrimitiveDouble() {
 		double primitive = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
 			primitive *= 10;
 			primitive /= 2;
@@ -179,7 +179,7 @@ public class PrimitivesBenchmarks {
 	[Benchmark("PrimitiveDecimal", "Tests operation on primitive decimal")]
 	public static int PrimitiveDecimal() {
 		decimal primitive = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
 			primitive *= 10;
 			primitive /= 2;
@@ -192,8 +192,8 @@ public class PrimitivesBenchmarks {
 
 	[Benchmark("PrimitiveBool", "Tests setting bool values")]
 	public static bool Bool() {
-		var myBool = false;
-		for (var i = 0; i < LoopIterations; i++) {
+		bool myBool = false;
+		for (int i = 0; i < LoopIterations; i++) {
 			if (myBool) {
 				myBool = false;
 			}
@@ -208,7 +208,7 @@ public class PrimitivesBenchmarks {
 	[Benchmark("PrimitiveBool", "Tests using byte as boolean values")]
 	public static byte ByteAsBool() {
 		byte myBool = 0;
-		for (var i = 0; i < LoopIterations; i++) {
+		for (int i = 0; i < LoopIterations; i++) {
 			if (myBool != 0) {
 				myBool = 0;
 			}
