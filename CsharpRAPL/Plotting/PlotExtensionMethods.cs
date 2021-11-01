@@ -8,14 +8,11 @@ public static class PlotExtensionMethods {
 		double[] data,
 		double errorBelow,
 		double errorAbove,
-		bool autoAxis = true,
-		PlotOptions? plotOptions = null) {
-		var boxPlot = new BoxPlot(position, data, errorBelow, errorAbove) {
-			PlotOptions = plotOptions ?? new PlotOptions()
-		};
+		PlotOptions? plotOptions = null,
+		bool autoAxis = true) {
+		var boxPlot = new BoxPlot(position, data, errorBelow, errorAbove, plotOptions ?? new PlotOptions());
 
 		plot.Add(boxPlot);
-
 		if (!autoAxis) {
 			return boxPlot;
 		}
