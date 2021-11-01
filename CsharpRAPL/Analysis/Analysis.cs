@@ -66,7 +66,7 @@ public class Analysis {
 			(_secondDataset.Name, _secondDataset.GetMinBy(resultType)));
 	}
 
-	public Dictionary<string, double> CalculatePValue() {
+	public List<(string Message, double Value)> CalculatePValue() {
 		// Set up the datasets that we want to compare
 		PValueData firstDataSet = new(_firstDataset.Name,
 			_firstDataset.Data.Select(data => data.ElapsedTime).ToArray(),
@@ -83,13 +83,11 @@ public class Analysis {
 		var dramTTest = new TwoSampleTTest(firstDataSet.Dram, secondDataSet.Dram);
 
 		// Save the P-values
-		var results = new Dictionary<string, double> {
-			{ $"{firstDataSet.Name} significantly different from {secondDataSet.Name} - Time", timeTTest.PValue },
-			{ $"{firstDataSet.Name} significantly different from {secondDataSet.Name} - Package", pkgTTest.PValue },
-			{ $"{firstDataSet.Name} significantly different from {secondDataSet.Name} - DRAM", dramTTest.PValue }
+		return new List<(string Message, double Value)> {
+			($"{firstDataSet.Name} significantly different from {secondDataSet.Name} - Time", timeTTest.PValue),
+			($"{firstDataSet.Name} significantly different from {secondDataSet.Name} - Package", pkgTTest.PValue),
+			($"{firstDataSet.Name} significantly different from {secondDataSet.Name} - DRAM", dramTTest.PValue)
 		};
-
-		return results;
 	}
 
 	public (bool isValid, string message) EnsureResults() {
