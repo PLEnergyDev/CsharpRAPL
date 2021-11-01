@@ -17,16 +17,36 @@ public class VariablesBenchmarks {
 			localA += localB;
 		}
 
-		return localA + localB;
+		return localA;
 	}
 
+	[Benchmark("Variables", "Tests static property")]
+	public static int StaticProperty() {
+		for (int i = 0; i < LoopIterations; i++) {
+			VariableObject.StaticPropertyA += VariableObject.StaticPropertyB;
+		}
+
+		return VariableObject.StaticPropertyA;
+	}
+
+	[Benchmark("Variables", "Tests instance property")]
+	public static int InstanceProperty() {
+		VariableObject obj = new VariableObject();
+
+		for (int i = 0; i < LoopIterations; i++) {
+			obj.InstancePropertyA += obj.InstancePropertyB;
+		}
+
+		return obj.InstancePropertyA;
+	}
+	
 	[Benchmark("Variables", "Tests static variables")]
 	public static int StaticVariable() {
 		for (int i = 0; i < LoopIterations; i++) {
-			VariableObject.StaticA += VariableObject.StaticB;
+			VariableObject.StaticVariableA += VariableObject.StaticVariableB;
 		}
 
-		return VariableObject.StaticA + VariableObject.StaticB;
+		return VariableObject.StaticVariableA;
 	}
 
 	[Benchmark("Variables", "Tests instance variables")]
@@ -34,9 +54,9 @@ public class VariablesBenchmarks {
 		VariableObject obj = new VariableObject();
 
 		for (int i = 0; i < LoopIterations; i++) {
-			obj.LocalA += obj.LocalB;
+			obj.InstanceVariableA += obj.InstanceVariableB;
 		}
 
-		return obj.LocalA + obj.LocalB;
+		return obj.InstanceVariableA;
 	}
 }
