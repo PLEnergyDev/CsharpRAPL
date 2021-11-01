@@ -7,6 +7,7 @@ using ExampleProject.HelperObjects;
 namespace ExampleProject.Benchmarks;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public static unsafe class InvocationBenchmarks {
 	public static int Iterations;
 	public static int LoopIterations;

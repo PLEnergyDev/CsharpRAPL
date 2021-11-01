@@ -5,13 +5,14 @@ using CsharpRAPL.Benchmarking;
 namespace ExampleProject.Benchmarks;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class LoopsBenchmarks {
 	public static int Iterations;
 	public static int LoopIterations;
 
 
 	[Benchmark("Loops", "Tests a do-while loop")]
-	public static int DoWhileLoop() {
+	public static int DoWhile() {
 		int count = 0;
 
 		do {
@@ -22,7 +23,7 @@ public class LoopsBenchmarks {
 	}
 
 	[Benchmark("Loops", "Tests a while loop")]
-	public static int WhileLoop() {
+	public static int While() {
 		int count = 0;
 
 		while (count < LoopIterations) {
@@ -33,7 +34,7 @@ public class LoopsBenchmarks {
 	}
 
 	[Benchmark("Loops", "Tests a for loop")]
-	public static int ForLoop() {
+	public static int For() {
 		int count = 0;
 
 		for (int i = 0; i < LoopIterations; i++) {
@@ -45,7 +46,7 @@ public class LoopsBenchmarks {
 	}
 
 	[Benchmark("Loops", "Tests a foreach loop")]
-	public static int ForEachLoop() {
+	public static int ForEach() {
 		int count = 0;
 
 		foreach (int unused in Enumerable.Range(0, LoopIterations)) {
@@ -56,7 +57,7 @@ public class LoopsBenchmarks {
 	}
 
 	[Benchmark("Loops", "Tests a goto based loop, in style of do-while loop")]
-	public static int GotoDoWhileLoop() {
+	public static int GotoDoWhile() {
 		int count = 0;
 
 
@@ -70,7 +71,7 @@ public class LoopsBenchmarks {
 	}
 
 	[Benchmark("Loops", "Tests a goto based loop in style of while loop")]
-	public static int GotoWhileLoop() {
+	public static int GotoWhile() {
 		int count = 0;
 
 
@@ -85,7 +86,7 @@ public class LoopsBenchmarks {
 
 	//TODO unusable if depth cannot go deeper than 174601
 	[Benchmark("Loops", "Tests a recursive loop", skip: true)]
-	public static int RecursiveLoop() {
+	public static int Recursive() {
 		int count = 0;
 
 		return RecursiveHelper(count);
@@ -101,7 +102,7 @@ public class LoopsBenchmarks {
 
 	//TODO make it not cheat
 	[Benchmark("Loops", "Tests a LINQ loop", skip: true)]
-	public static int LinqLoop() {
+	public static int Linq() {
 		int count = Enumerable.Range(0, LoopIterations).Count();
 
 		return count;

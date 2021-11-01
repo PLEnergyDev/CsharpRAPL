@@ -10,45 +10,25 @@ using CsharpRAPL.Plotting;
 namespace CsharpRAPL.Benchmarking;
 
 public class BenchmarkSuite {
-	private Dictionary<string, IBenchmark> Benchmarks { get; } = new();
+	private List<IBenchmark> Benchmarks { get; } = new();
 
 	public void RegisterBenchmark<T>(string? group, int iterations, Func<T> benchmark, int order = 0) {
 		string benchmarkName = benchmark.Method.Name;
-		if (Benchmarks.ContainsKey(benchmarkName)) {
-			throw new Exception($"Trying to add a benchmark with the same name twice. Name is: {benchmarkName}");
-		}
-
-		Benchmarks.Add(benchmarkName, new Benchmark<T>(benchmarkName, iterations, benchmark, false, group, order));
+		Benchmarks.Add(new Benchmark<T>(benchmarkName, iterations, benchmark, false, group, order));
 	}
 
 	public void RegisterBenchmark<T>(int iterations, Func<T> benchmark) {
 		RegisterBenchmark(null, iterations, benchmark);
 	}
 
-	public void RunAll(int skipAmount = 0) {
-		List<IBenchmark> benchmarks = Benchmarks.OrderBy(pair => pair.Value.Order).Skip(skipAmount)
-			.Select(pair => pair.Value).ToList();
+	public void RunAll() {
+		List<IBenchmark> benchmarks = Benchmarks.OrderBy(pair => pair.Order).ToList();
+
 		if (Environment.OSVersion.Platform != PlatformID.Unix) {
 			throw new NotSupportedException("Running the benchmarks is only supported on Unix.");
 		}
-		
-		int warmup = 0;
-		Console.WriteLine("Warmup commencing");
-		for (int i = 0; i < 10; i++) {
-			while (warmup < int.MaxValue) {
-				warmup++;
-				if (warmup % 1000000 == 0) {
-					int percentage = (int)((double)warmup / int.MaxValue * 10.0 + 10.0 * i);
-					Console.SetCursorPosition(0, Console.CursorTop);
-					Console.Write($"{percentage}%");
-					Console.Out.Flush();
-				}
-			}
 
-			warmup = 0;
-		}
-
-		Console.Write("\n");
+		Warmup();
 
 		var timer = new Stopwatch();
 		foreach ((int index, IBenchmark bench) in benchmarks.WithIndex()) {
@@ -63,10 +43,32 @@ public class BenchmarkSuite {
 		}
 
 		PlotGroups();
-		
+
 		if (CsharpRAPLCLI.Options.ZipResults) {
 			ZipResults();
 		}
+	}
+
+	private static void Warmup() {
+		int warmup = 0;
+		Console.WriteLine("Warmup commencing");
+		for (int i = 0; i < 10; i++) {
+			while (warmup < int.MaxValue) {
+				warmup++;
+				if (warmup % 1000000 != 0) {
+					continue;
+				}
+
+				int percentage = (int)((double)warmup / int.MaxValue * 10.0 + 10.0 * i);
+				Console.SetCursorPosition(0, Console.CursorTop);
+				Console.Write($"{percentage}%");
+				Console.Out.Flush();
+			}
+
+			warmup = 0;
+		}
+
+		Console.Write("\n");
 	}
 
 	private static void ZipResults() {
@@ -81,28 +83,13 @@ public class BenchmarkSuite {
 		}
 	}
 
-	public Analysis.Analysis AnalyseResults(string firstBenchmarkName, string secondBenchmarkName) {
-		if (!Benchmarks.ContainsKey(firstBenchmarkName)) {
-			throw new KeyNotFoundException($"No benchmark with the name {firstBenchmarkName} has been registered.");
-		}
-
-		if (!Benchmarks.ContainsKey(secondBenchmarkName)) {
-			throw new KeyNotFoundException(
-				$"No benchmark with the name {secondBenchmarkName} has been registered.");
-		}
-
-		IBenchmark firstBenchmark = Benchmarks[firstBenchmarkName];
-		IBenchmark secondBenchmark = Benchmarks[secondBenchmarkName];
-		return new Analysis.Analysis(firstBenchmark, secondBenchmark);
-	}
-
 	public IReadOnlyCollection<IBenchmark> GetBenchmarks() {
-		return Benchmarks.Values;
+		return Benchmarks;
 	}
 
 	public IReadOnlyDictionary<string, List<IBenchmark>> GetBenchmarksByGroup() {
 		Dictionary<string, List<IBenchmark>> groups = new();
-		foreach (IBenchmark benchmark in Benchmarks.Values.Where(benchmark => benchmark.Group != null)) {
+		foreach (IBenchmark benchmark in Benchmarks.Where(benchmark => benchmark.Group != null)) {
 			Debug.Assert(benchmark.Group != null, "benchmark.Group != null");
 			if (!groups.ContainsKey(benchmark.Group)) {
 				groups.Add(benchmark.Group, new List<IBenchmark>());
