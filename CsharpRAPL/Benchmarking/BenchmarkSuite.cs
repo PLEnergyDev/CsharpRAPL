@@ -87,7 +87,7 @@ public class BenchmarkSuite {
 		return Benchmarks;
 	}
 
-	public IReadOnlyDictionary<string, List<IBenchmark>> GetBenchmarksByGroup() {
+	public Dictionary<string, List<IBenchmark>> GetBenchmarksByGroup() {
 		Dictionary<string, List<IBenchmark>> groups = new();
 		foreach (IBenchmark benchmark in Benchmarks.Where(benchmark => benchmark.Group != null)) {
 			Debug.Assert(benchmark.Group != null, "benchmark.Group != null");

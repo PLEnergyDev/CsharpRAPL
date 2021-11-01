@@ -82,7 +82,7 @@ public static class CsharpRAPLCLI {
 		}
 	}
 
-	public static void StartAnalysis(IReadOnlyDictionary<string, List<IBenchmark>> benchmarksWithGroups) {
+	public static void StartAnalysis(Dictionary<string, List<IBenchmark>> benchmarksWithGroups) {
 		foreach (string group in benchmarksWithGroups.Keys) {
 			for (int i = 0; i < benchmarksWithGroups.Count; i++) {
 				for (int j = i + 1; j < benchmarksWithGroups.Count; j++) {

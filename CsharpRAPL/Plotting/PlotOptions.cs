@@ -1,10 +1,9 @@
-﻿using System.Drawing;
-using ScottPlot;
+using System.Drawing;
 using ScottPlot.Drawing;
 
 namespace CsharpRAPL.Plotting;
 
-public struct PlotOptions {
+public class PlotOptions {
 	public string Name { get; set; } = "";
 	public int Width { get; set; } = 600;
 	public int Height { get; set; } = 450;
