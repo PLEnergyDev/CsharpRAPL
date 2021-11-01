@@ -1,18 +1,18 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text;
 using CsharpRAPL.Benchmarking;
 
 namespace ExampleProject.Benchmarks;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class StringBenchmarks {
 	public static int Iterations;
 	public static int LoopIterations;
 
 
 	[Benchmark("StringConcat", "Tests operation on simple string")]
-	public static string StringPlusSign() {
+	public static string PlusSign() {
 		string str = "";
 		string iStr = "I ";
 		string am = "am ";
@@ -36,7 +36,7 @@ public class StringBenchmarks {
 	}
 
 	[Benchmark("StringConcat", "Tests operation on stringbuilder")]
-	public static string StringBuilderConcat() {
+	public static string StringBuilder() {
 		StringBuilder sb = new StringBuilder();
 		string iStr = "I ";
 		string am = "am ";
@@ -60,7 +60,7 @@ public class StringBenchmarks {
 	}
 
 	[Benchmark("StringConcat", "Tests string.Format")]
-	public static string StringFormat() {
+	public static string Format() {
 		string str = "";
 		string iStr = "I ";
 		string am = "am ";
@@ -77,7 +77,7 @@ public class StringBenchmarks {
 	}
 
 	[Benchmark("StringConcat", "Tests string interpolation")]
-	public static string StringInterpolation() {
+	public static string Interpolation() {
 		string str = "";
 		string iStr = "I ";
 		string am = "am ";

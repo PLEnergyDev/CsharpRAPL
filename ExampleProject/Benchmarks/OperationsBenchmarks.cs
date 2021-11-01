@@ -4,6 +4,7 @@ using CsharpRAPL.Benchmarking;
 namespace ExampleProject.Benchmarks;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public static class OperationsBenchmarks {
 	public static int Iterations;
 	public static int LoopIterations;
