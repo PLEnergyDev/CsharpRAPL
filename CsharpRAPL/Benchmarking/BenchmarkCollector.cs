@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace CsharpRAPL.Benchmarking; 
+namespace CsharpRAPL.Benchmarking;
 
 public class BenchmarkCollector : BenchmarkSuite {
 	public int Iterations { get; }
@@ -12,7 +12,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 	/// <summary>
 	/// A map of a return type and a variation of the benchmark method using the return type as the generic argument
 	/// </summary>
-	private readonly Dictionary<Type, AddBenchmarkVariation> _registeredAddBenchmarkVariations = new();
+	private readonly Dictionary<Type, RegisterBenchmarkVariation> _registeredAddBenchmarkVariations = new();
 
 	private readonly List<Type> _registeredBenchmarkClasses = new();
 
@@ -72,14 +72,11 @@ public class BenchmarkCollector : BenchmarkSuite {
 		_registeredBenchmarkClasses.Add(benchmarkClass);
 	}
 
-	private static void TrySetField(Type benchmarkClass, string name, int value) {
-		FieldInfo? fieldInfo = benchmarkClass.GetFields().FirstOrDefault(info => info.Name == name);
+	public static bool TrySetField(Type benchmarkClass, string name, int value) {
+		FieldInfo? fieldInfo = benchmarkClass.GetFields()
+			.FirstOrDefault(info => info.Name == name);
 		if (fieldInfo == null) {
-			return;
-		}
-
-		if (!fieldInfo.IsPublic) {
-			throw new NotSupportedException($"Your {name} field must be public.");
+			return false;
 		}
 
 		if (!fieldInfo.IsStatic) {
@@ -87,6 +84,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 		}
 
 		benchmarkClass.GetField(name, BindingFlags.Public | BindingFlags.Static)?.SetValue(null, value);
+		return true;
 	}
 
 	/// <summary>
@@ -94,7 +92,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 	/// </summary>
 	/// <param name="benchmark"></param>
 	/// <exception cref="NotSupportedException">Throws NotSupportedException if the method isn't public or if the method returns void</exception>
-	private static void CheckMethodValidity(MethodInfo benchmark) {
+	public static void CheckMethodValidity(MethodInfo benchmark) {
 		if (!benchmark.IsPublic) {
 			throw new NotSupportedException(
 				"The benchmark attribute is only supported and supposed to be used on public methods.");
@@ -123,7 +121,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 
 		//Add it to our registry
 		_registeredAddBenchmarkVariations.Add(benchmark.ReturnType,
-			new AddBenchmarkVariation(genericAddBenchmark, funcType));
+			new RegisterBenchmarkVariation(genericAddBenchmark, funcType));
 	}
 }
 
@@ -132,4 +130,4 @@ public class BenchmarkCollector : BenchmarkSuite {
 /// </summary>
 /// <param name="GenericAddBenchmark">The generic AddBenchmark method <see cref="BenchmarkSuite.RegisterBenchmark{T}(string?,int,System.Func{T},int)"/></param>
 /// <param name="FuncType">The Func Type using the return type as generic argument</param>
-internal sealed record AddBenchmarkVariation(MethodInfo GenericAddBenchmark, Type FuncType);
+internal sealed record RegisterBenchmarkVariation(MethodInfo GenericAddBenchmark, Type FuncType);
