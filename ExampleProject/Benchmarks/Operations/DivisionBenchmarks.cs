@@ -1,13 +1,14 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using CsharpRAPL.Benchmarking;
 
-namespace ExampleProject.Benchmarks.Operations; 
+namespace ExampleProject.Benchmarks.Operations;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class DivisionBenchmarks {
 	public static int Iterations;
 	public static int LoopIterations;
+
 	[Benchmark("Division", "Tests simple division")]
 	public static int Divide() {
 		int a = 10;
@@ -35,7 +36,7 @@ public class DivisionBenchmarks {
 
 
 	[Benchmark("Division", "Tests division using compound assignment")]
-	public static int DivideAssign() {
+	public static int CompAssign() {
 		int a = 10;
 		int res = 1;
 		for (int i = 0; i < LoopIterations; i++) {
@@ -55,7 +56,7 @@ public class DivisionBenchmarks {
 
 		return res;
 	}
-	
+
 	[Benchmark("Division", "Tests Simple Division with forced double")]
 	public static double ForcedDouble() {
 		double a = 10;
@@ -67,7 +68,7 @@ public class DivisionBenchmarks {
 
 		return res;
 	}
-	
+
 	[Benchmark("Division", "Tests Simple Division with consts and forced double")]
 	public static double ForcedDoubleConst() {
 		const double a = 10;
@@ -79,7 +80,7 @@ public class DivisionBenchmarks {
 
 		return res;
 	}
-	
+
 	[Benchmark("Division", "Tests division using compound assignment and with forced double")]
 	public static double ForcedDoubleComp() {
 		double a = 10;
@@ -91,8 +92,8 @@ public class DivisionBenchmarks {
 		return res;
 	}
 
-	[Benchmark("Division", "Tests division without compound assignment and with forced double")]
-	public static double ForcedDoubleAssign() {
+	[Benchmark("Division", "Tests division without compound assignment and with forced double ForcedDoubleAssign")]
+	public static double FDA() {
 		double a = 10;
 		double res = 1;
 		for (int i = 0; i < LoopIterations; i++) {
@@ -101,44 +102,48 @@ public class DivisionBenchmarks {
 
 		return res;
 	}
-	
-	[Benchmark("Division", "Tests Simple Division with forced double and non-constant denominator")]
-	public static double ForcedDoubleNonConstDenom() {
+
+	[Benchmark("Division",
+		"Tests Simple Division with forced double and non-constant denominator ForcedDoubleNonConstDenom")]
+	public static double FDNCD() {
 		double a = 10;
 		double res = 0;
 		for (int i = 0; i < LoopIterations; i++) {
-			res = a / (i+1);
+			res = a / (i + 1);
 		}
 
 		return res;
 	}
-	
-	[Benchmark("Division", "Tests Simple Division with consts and forced double and non-constant denominator")]
-	public static double ForcedDoubleConstNonConstDenom() {
+
+	[Benchmark("Division",
+		"Tests Simple Division with consts and forced double and non-constant denominator ForcedDoubleConstNonConstDenom")]
+	public static double FDCNCD() {
 		const double a = 10;
 		double res = 0;
 		for (int i = 0; i < LoopIterations; i++) {
-			res = a / (i+1);
-		}
-
-		return res;
-	}
-	
-	[Benchmark("Division", "Tests division using compound assignment and with forced double and non-constant denominator")]
-	public static double ForcedDoubleCompNonConstDenom() {
-		double res = 1;
-		for (int i = 0; i < LoopIterations; i++) {
-			res /= (i+1);
+			res = a / (i + 1);
 		}
 
 		return res;
 	}
 
-	[Benchmark("Division", "Tests division without compound assignment and with forced double and non-constant denominator")]
-	public static double ForcedDoubleAssignNonConstDenom() {
+	[Benchmark("Division",
+		"Tests division using compound assignment and with forced double and non-constant denominator ForcedDoubleCompNonConstDenom")]
+	public static double FDCmpNCD() {
 		double res = 1;
 		for (int i = 0; i < LoopIterations; i++) {
-			res = res / (i+1);
+			res /= (i + 1);
+		}
+
+		return res;
+	}
+
+	[Benchmark("Division",
+		"Tests division without compound assignment and with forced double and non-constant denominator ForcedDoubleAssignNonConstDenom")]
+	public static double FDANCD() {
+		double res = 1;
+		for (int i = 0; i < LoopIterations; i++) {
+			res = res / (i + 1);
 		}
 
 		return res;

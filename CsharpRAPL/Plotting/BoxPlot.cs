@@ -5,35 +5,26 @@ using System.Drawing.Text;
 using System.Linq;
 using Accord.Statistics;
 using ScottPlot;
-using ScottPlot.Config;
 using ScottPlot.Drawing;
-using HatchStyle = ScottPlot.Drawing.HatchStyle;
+using ScottPlot.Plottable;
 
 namespace CsharpRAPL.Plotting;
 
-public class BoxPlot : Plottable, IPlottable {
-	public readonly double Position;
-	public readonly double[] PlotData;
-	public readonly double MaxValue;
-	public readonly double MinValue;
-	public readonly double UpperQuartile;
-	public readonly double LowerQuartile;
+public class BoxPlot : IPlottable {
+	public double Position { get; }
+	public double[] PlotData { get; }
+	public double MaxValue { get; }
+	public double MinValue { get; }
+	public double UpperQuartile { get; }
+	public double LowerQuartile { get; }
 
-	public Color FillColor { get; set; } = Color.Green;
-	public Color HatchColor { get; set; } = Color.Blue;
-	public Color BorderColor { get; set; } = Color.Black;
-	public Color ErrorColor { get; set; } = Color.Black;
-	public float BorderLineWidth { get; set; } = 1f;
-	public float ErrorLineWidth { get; set; } = 1f;
-	public string LegendLabel { get; set; } = "";
-	public double ErrorCapSize { get; set; } = 0.4;
-	public double BarWidth { get; set; } = 0.8;
-	public HatchStyle HatchStyle { get; set; } = HatchStyle.None;
+	public bool IsVisible { get; set; } = true;
+	public int XAxisIndex { get; set; }
+	public int YAxisIndex { get; set; }
 
-	public bool UseMinSize { get; init; } = true;
-
-	private readonly double _errorBelow;
-	private readonly double _errorAbove;
+	public PlotOptions PlotOptions;
+	private double _errorBelow;
+	private double _errorAbove;
 
 
 	public BoxPlot(double position, double[] plotData, double errorBelow, double errorAbove) {
@@ -47,41 +38,27 @@ public class BoxPlot : Plottable, IPlottable {
 		MinValue = plotData.Min();
 		_errorBelow = errorBelow;
 		_errorAbove = errorAbove;
+		PlotOptions = new PlotOptions();
 	}
 
-	public override AxisLimits2D GetLimits() {
+	public AxisLimits GetAxisLimits() {
 		double minSize = Math.Min(_errorBelow, LowerQuartile);
 		double maxSize = Math.Max(_errorAbove, UpperQuartile);
 
-		if (UseMinSize) {
+		if (PlotOptions.UseMinSize) {
 			minSize = 0.0;
 		}
 
-		double startPosition = Position - BarWidth / 2.0;
-		double endPosition = Position + BarWidth / 2.0;
-		return new AxisLimits2D(startPosition, endPosition, minSize, maxSize);
+		double startPosition = Position - PlotOptions.BarWidth / 2.0;
+		double endPosition = Position + PlotOptions.BarWidth / 2.0;
+		return new AxisLimits(startPosition, endPosition, minSize, maxSize);
 	}
 
-	public string? ValidationErrorMessage { get; private set; }
-
-	public bool IsValidData(bool deepValidation = false) {
-		try {
-			Validate.AssertHasElements("PlotData", PlotData);
-			if (deepValidation) {
-				Validate.AssertAllReal("PlotData", PlotData);
-			}
+	public void ValidateData(bool deep = false) {
+		Validate.AssertHasElements("PlotData", PlotData);
+		if (deep) {
+			Validate.AssertAllReal("PlotData", PlotData);
 		}
-		catch (ArgumentException ex) {
-			ValidationErrorMessage = ex.Message;
-			return false;
-		}
-
-		ValidationErrorMessage = null;
-		return true;
-	}
-
-	public override void Render(Settings settings) {
-		throw new InvalidOperationException("Use new Render() method");
 	}
 
 	public void Render(PlotDimensions dims, Bitmap bmp, bool lowQuality = false) {
@@ -95,27 +72,27 @@ public class BoxPlot : Plottable, IPlottable {
 	private void RenderBarVertical(PlotDimensions dims, Graphics gfx, double position) {
 		// bar body
 		float centerPx = dims.GetPixelX(position);
-		double edge1 = position - BarWidth / 2;
+		double edge1 = position - PlotOptions.BarWidth / 2;
 		double valueSpan = UpperQuartile - LowerQuartile;
 
 		var rect = new RectangleF(dims.GetPixelX(edge1),
 			dims.GetPixelY(UpperQuartile),
-			(float)(BarWidth * dims.PxPerUnitX),
+			(float)(PlotOptions.BarWidth * dims.PxPerUnitX),
 			(float)(valueSpan * dims.PxPerUnitY));
 
 		// errorbar
-		float errorCapStartX = dims.GetPixelX(position - ErrorCapSize * BarWidth / 2);
-		float errorCapEndX = dims.GetPixelX(position + ErrorCapSize * BarWidth / 2);
+		float errorCapStartX = dims.GetPixelX(position - PlotOptions.ErrorCapSize * PlotOptions.BarWidth / 2);
+		float errorCapEndX = dims.GetPixelX(position + PlotOptions.ErrorCapSize * PlotOptions.BarWidth / 2);
 		float errorCapAboveY = dims.GetPixelY(_errorAbove);
 		float errorCapBelowY = dims.GetPixelY(_errorBelow);
 
 		RenderBarFromRect(rect, gfx);
 
-		if (!(ErrorLineWidth > 0) || !(_errorAbove > double.Epsilon) || !(_errorBelow > double.Epsilon)) {
+		if (!(PlotOptions.ErrorLineWidth > 0) || !(_errorAbove > double.Epsilon) || !(_errorBelow > double.Epsilon)) {
 			return;
 		}
 
-		using var errorPen = new Pen(ErrorColor, ErrorLineWidth);
+		using var errorPen = new Pen(PlotOptions.ErrorColor, PlotOptions.ErrorLineWidth);
 		gfx.DrawLine(errorPen, centerPx, dims.GetPixelY(UpperQuartile), centerPx, errorCapAboveY);
 		gfx.DrawLine(errorPen, centerPx, dims.GetPixelY(UpperQuartile), centerPx, errorCapBelowY);
 
@@ -124,34 +101,34 @@ public class BoxPlot : Plottable, IPlottable {
 	}
 
 	private void RenderBarFromRect(RectangleF rect, Graphics gfx) {
-		using var outlinePen = new Pen(BorderColor, BorderLineWidth);
-		using Brush fillBrush = GDI.Brush(FillColor, HatchColor, HatchStyle);
+		using var outlinePen = new Pen(PlotOptions.BorderColor, PlotOptions.BorderLineWidth);
+		using Brush fillBrush = GDI.Brush(PlotOptions.FillColor, PlotOptions.HatchColor, PlotOptions.HatchStyle);
 		gfx.FillRectangle(fillBrush, rect.X, rect.Y, rect.Width, rect.Height);
-		if (BorderLineWidth > 0) {
+		if (PlotOptions.BorderLineWidth > 0) {
 			gfx.DrawRectangle(outlinePen, rect.X, rect.Y, rect.Width, rect.Height);
 		}
 	}
 
 	public override string ToString() {
 		return
-			$"BoxPlot{(string.IsNullOrWhiteSpace(LegendLabel) ? (object)"" : " (" + LegendLabel + ")")} with {GetPointCount()} points";
+			$"BoxPlot{(string.IsNullOrWhiteSpace(PlotOptions.LegendLabel) ? (object)"" : $" ({PlotOptions.LegendLabel})")} with {GetPointCount()} points";
 	}
 
-	public override int GetPointCount() {
+	public int GetPointCount() {
 		return PlotData.Length;
 	}
 
-	public override LegendItem[] GetLegendItems() {
+	public LegendItem[] GetLegendItems() {
 		return new LegendItem[] {
 			new() {
-				label = LegendLabel,
-				color = FillColor,
+				label = PlotOptions.LegendLabel,
+				color = PlotOptions.FillColor,
 				lineWidth = 10.0,
 				markerShape = MarkerShape.none,
-				hatchColor = HatchColor,
-				hatchStyle = HatchStyle,
-				borderColor = BorderColor,
-				borderWith = BorderLineWidth
+				hatchColor = PlotOptions.HatchColor,
+				hatchStyle = PlotOptions.HatchStyle,
+				borderColor = PlotOptions.BorderColor,
+				borderWith = PlotOptions.BorderLineWidth
 			}
 		};
 	}
