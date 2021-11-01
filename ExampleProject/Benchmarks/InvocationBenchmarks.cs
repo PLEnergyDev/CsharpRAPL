@@ -7,7 +7,7 @@ using ExampleProject.HelperObjects;
 namespace ExampleProject.Benchmarks;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
-public unsafe class InvocationBenchmarks {
+public static unsafe class InvocationBenchmarks {
 	public static int Iterations;
 	public static int LoopIterations;
 
@@ -18,28 +18,26 @@ public unsafe class InvocationBenchmarks {
 	private static readonly MethodInfo MethodReflectionFlags;
 
 	private static readonly InvocationHelper InstanceObject;
-	private static readonly Func<int> Func;
+	private static readonly Func<int> FuncInt;
 
-	private static readonly Func<int> StaticFunc;
+	private static readonly Func<int> StaticFuncInt;
 
-	//private static readonly Action Action;
-	//private static readonly Action StaticAction;
-	private static readonly delegate*<int> FunctionPointer;
+	private static readonly delegate*<int> FunctionPointerInt;
 
-	private static readonly MethodInfo MethodReflectionFlagsDelegate =
+	private static readonly MethodInfo MethodReflectionDelegate =
 		typeof(InvocationHelper).GetMethod(nameof(InvocationHelper.Calculate),
 			BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod);
-	
-	private static readonly MethodInfo MethodReflectionFlagsDelegateStatic =
+
+	private static readonly MethodInfo MethodReflectionDelegateStatic =
 		typeof(InvocationHelper).GetMethod(nameof(InvocationHelper.CalculateStatic),
 			BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod);
 
-	private static readonly Func<InvocationHelper, int> ReflectionDelegate =
+	private static readonly Func<InvocationHelper, int> ReflectionDelegateInt =
 		(Func<InvocationHelper, int>)Delegate.CreateDelegate(typeof(Func<InvocationHelper, int>),
-			MethodReflectionFlagsDelegate);
+			MethodReflectionDelegate);
 
-	private static readonly Func<int> StaticReflectionDelegate =
-		(Func<int>)Delegate.CreateDelegate(typeof(Func<int>), MethodReflectionFlagsDelegateStatic);
+	private static readonly Func<int> StaticReflectionDelegateInt =
+		(Func<int>)Delegate.CreateDelegate(typeof(Func<int>), MethodReflectionDelegateStatic);
 
 	static InvocationBenchmarks() {
 		MethodReflection = typeof(InvocationHelper).GetMethod(nameof(InvocationHelper.Calculate));
@@ -50,16 +48,14 @@ public unsafe class InvocationBenchmarks {
 		StaticMethodReflectionFlags = typeof(InvocationHelper).GetMethod(nameof(InvocationHelper.CalculateStatic),
 			BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod);
 		InstanceObject = new InvocationHelper();
-		Func = InstanceObject.Calculate;
-		StaticFunc = InvocationHelper.CalculateStatic;
-		//Action = () => InstanceObject.Calculate();
-		//StaticAction = () => StaticMethod.Calculate();
-		FunctionPointer = &InvocationHelper.CalculateStatic;
+		FuncInt = InstanceObject.Calculate;
+		StaticFuncInt = InvocationHelper.CalculateStatic;
+		FunctionPointerInt = &InvocationHelper.CalculateStatic;
 	}
 
 
 	[Benchmark("Invocation", "Tests invocation using an instance")]
-	public static int InstanceInvocation() {
+	public static int Instance() {
 		int result = 0;
 
 		for (int i = 0; i < LoopIterations; i++) {
@@ -70,7 +66,7 @@ public unsafe class InvocationBenchmarks {
 	}
 
 	[Benchmark("Invocation", "Tests invocation using a static method")]
-	public static int StaticInvocation() {
+	public static int Static() {
 		int result = 0;
 
 		for (int i = 0; i < LoopIterations; i++) {
@@ -81,53 +77,80 @@ public unsafe class InvocationBenchmarks {
 	}
 
 	[Benchmark("Invocation", "Tests invocation using a func")]
-	public static int FuncInvocation() {
+	public static int Func() {
 		int result = 0;
 
 		for (int i = 0; i < LoopIterations; i++) {
-			result += Func();
+			result += FuncInt();
 		}
 
 		return result;
 	}
 
 	[Benchmark("Invocation", "Tests invocation using a static func")]
-	public static int StaticFuncInvocation() {
+	public static int StaticFunc() {
 		int result = 0;
 
 		for (int i = 0; i < LoopIterations; i++) {
-			result += StaticFunc();
+			result += StaticFuncInt();
 		}
 
 		return result;
 	}
 
 	[Benchmark("Invocation", "Tests invocation using an local function")]
-	public static int LocalFunctionInvocation() {
-		int Action() => InstanceObject.Calculate();
+	public static int LocalFunction() {
+		//TODO: Make non const maybe?
+		int Calc() => 1 + 1;
 		int result = 0;
 
 		for (int i = 0; i < LoopIterations; i++) {
-			result += Action();
+			result += Calc();
 		}
 
 		return result;
 	}
 
 	[Benchmark("Invocation", "Tests invocation using a static local function")]
-	public static int StaticLocalFunctionInvocation() {
-		static int Action() => InvocationHelper.CalculateStatic();
+	public static int StaticLocalFunction() {
+		//TODO: Make non const maybe?
+		static int Calc() => 1 + 1;
 		int result = 0;
 
 		for (int i = 0; i < LoopIterations; i++) {
-			result += Action();
+			result += Calc();
+		}
+
+		return result;
+	}
+	
+	[Benchmark("Invocation", "Tests invocation using an local function by calling instance method")]
+	public static int LocalFunctionInstance() {
+		//TODO: Make non const maybe?
+		int Calc() => InstanceObject.Calculate();
+		int result = 0;
+
+		for (int i = 0; i < LoopIterations; i++) {
+			result += Calc();
+		}
+
+		return result;
+	}
+
+	[Benchmark("Invocation", "Tests invocation using a static local function by calling static method")]
+	public static int StaticLocalFunctionClass() {
+		static int Calc() => InvocationHelper.CalculateStatic();
+		int result = 0;
+
+		for (int i = 0; i < LoopIterations; i++) {
+			result += Calc();
 		}
 
 		return result;
 	}
 
 	[Benchmark("Invocation", "Tests invocation using a reflection on an instance method")]
-	public static int ReflectionInvocation() {
+	public static int Reflection() {
 		int result = 0;
 
 		for (int i = 0; i < LoopIterations; i++) {
@@ -138,7 +161,7 @@ public unsafe class InvocationBenchmarks {
 	}
 
 	[Benchmark("Invocation", "Tests invocation using a reflection on a static method")]
-	public static int StaticReflectionInvocation() {
+	public static int StaticReflection() {
 		int result = 0;
 
 		for (int i = 0; i < LoopIterations; i++) {
@@ -149,7 +172,7 @@ public unsafe class InvocationBenchmarks {
 	}
 
 	[Benchmark("Invocation", "Tests invocation using a reflection on an instance method")]
-	public static int ReflectionInvocationFlags() {
+	public static int ReflectionFlags() {
 		int result = 0;
 
 		for (int i = 0; i < LoopIterations; i++) {
@@ -160,7 +183,7 @@ public unsafe class InvocationBenchmarks {
 	}
 
 	[Benchmark("Invocation", "Tests invocation using a reflection on a static method")]
-	public static int StaticReflectionInvocationFlags() {
+	public static int StaticReflectionFlags() {
 		int result = 0;
 
 		for (int i = 0; i < LoopIterations; i++) {
@@ -170,23 +193,23 @@ public unsafe class InvocationBenchmarks {
 		return result;
 	}
 
-	[Benchmark("Invocation", "Tests invocation using a reflection on an instance method")]
-	public static int ReflectionInvocationFlagsDelegate() {
+	[Benchmark("Invocation", "Tests invocation using a reflection on an instance method using delegate")]
+	public static int ReflectionDelegate() {
 		int result = 0;
 
 		for (int i = 0; i < LoopIterations; i++) {
-			result += ReflectionDelegate(InstanceObject);
+			result += ReflectionDelegateInt(InstanceObject);
 		}
 
 		return result;
 	}
 
-	[Benchmark("Invocation", "Tests invocation using a reflection on a static method")]
-	public static int StaticReflectionInvocationFlagsDelegate() {
+	[Benchmark("Invocation", "Tests invocation using a reflection on a static method using delegate")]
+	public static int StaticReflectionDelegate() {
 		int result = 0;
 
 		for (int i = 0; i < LoopIterations; i++) {
-			result += StaticReflectionDelegate();
+			result += StaticReflectionDelegateInt();
 		}
 
 		return result;
@@ -194,28 +217,28 @@ public unsafe class InvocationBenchmarks {
 
 
 	[Benchmark("Invocation", "Tests invocation using a function pointer")]
-	public static int FunctionPointerInvocation() {
+	public static int FunctionPointer() {
 		int result = 0;
 
 		for (int i = 0; i < LoopIterations; i++) {
-			result += FunctionPointer();
+			result += FunctionPointerInt();
 		}
 
 		return result;
 	}
 
 	//TODO: Figure out how to do this
-	public static int LambdaInvocation() {
+	public static int Lambda() {
 		return 1;
 	}
 
 	//TODO: This has no return type how do we compared?
-	public static int ActionInvocation() {
+	public static int Action() {
 		return 1;
 	}
 
 	//TODO: This has no return type how do we compared?
-	public static int StaticActionInvocation() {
+	public static int StaticAction() {
 		return 1;
 	}
 }
