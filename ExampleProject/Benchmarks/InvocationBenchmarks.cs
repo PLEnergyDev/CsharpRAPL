@@ -125,31 +125,6 @@ public static unsafe class InvocationBenchmarks {
 		return result;
 	}
 	
-	[Benchmark("Invocation", "Tests invocation using an local function by calling instance method")]
-	public static int LocalFunctionInstance() {
-		//TODO: Make non const maybe?
-		int Calc() => InstanceObject.Calculate();
-		int result = 0;
-
-		for (int i = 0; i < LoopIterations; i++) {
-			result += Calc();
-		}
-
-		return result;
-	}
-
-	[Benchmark("Invocation", "Tests invocation using a static local function by calling static method")]
-	public static int StaticLocalFunctionClass() {
-		static int Calc() => InvocationHelper.CalculateStatic();
-		int result = 0;
-
-		for (int i = 0; i < LoopIterations; i++) {
-			result += Calc();
-		}
-
-		return result;
-	}
-
 	[Benchmark("Invocation", "Tests invocation using a reflection on an instance method")]
 	public static int Reflection() {
 		int result = 0;
