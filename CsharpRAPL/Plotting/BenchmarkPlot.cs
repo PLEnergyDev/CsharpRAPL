@@ -42,8 +42,8 @@ public static class BenchmarkPlot {
 
 	public static void PlotAllResultsGroupsFromFolder(string path, PlotOptions? plotOptions = null) {
 		PlotResultsGroupsFromFolder(BenchmarkResultType.ElapsedTime, path, plotOptions);
-		PlotResultsGroupsFromFolder(BenchmarkResultType.PackagePower, path, plotOptions);
-		PlotResultsGroupsFromFolder(BenchmarkResultType.DramPower, path, plotOptions);
+		PlotResultsGroupsFromFolder(BenchmarkResultType.PackageEnergy, path, plotOptions);
+		PlotResultsGroupsFromFolder(BenchmarkResultType.DramEnergy, path, plotOptions);
 		PlotResultsGroupsFromFolder(BenchmarkResultType.Temperature, path, plotOptions);
 	}
 
@@ -136,10 +136,10 @@ public static class BenchmarkPlot {
 		List<double> data = resultType switch {
 			BenchmarkResultType.ElapsedTime => dataSet.Data.Where(result => result.ElapsedTime > double.Epsilon)
 				.Select(result => result.ElapsedTime).ToList(),
-			BenchmarkResultType.PackagePower => dataSet.Data.Where(result => result.PackagePower > double.Epsilon)
-				.Select(result => result.PackagePower).ToList(),
-			BenchmarkResultType.DramPower => dataSet.Data.Where(result => result.DramPower > double.Epsilon)
-				.Select(result => result.DramPower).ToList(),
+			BenchmarkResultType.PackageEnergy => dataSet.Data.Where(result => result.PackageEnergy > double.Epsilon)
+				.Select(result => result.PackageEnergy).ToList(),
+			BenchmarkResultType.DramEnergy => dataSet.Data.Where(result => result.DramEnergy > double.Epsilon)
+				.Select(result => result.DramEnergy).ToList(),
 			BenchmarkResultType.Temperature => dataSet.Data.Where(result => result.Temperature > double.Epsilon)
 				.Select(result => result.Temperature).ToList(),
 			_ => throw new ArgumentOutOfRangeException(nameof(resultType), resultType, null)
@@ -151,8 +151,8 @@ public static class BenchmarkPlot {
 	private static string GetYLabel(BenchmarkResultType resultType) {
 		string yLabel = resultType switch {
 			BenchmarkResultType.ElapsedTime => "Elapsed Time (ms)",
-			BenchmarkResultType.PackagePower => "Package Power (µJ)",
-			BenchmarkResultType.DramPower => "Dram Power (µJ)",
+			BenchmarkResultType.PackageEnergy => "Package Energy (µJ)",
+			BenchmarkResultType.DramEnergy => "Dram Energy (µJ)",
 			BenchmarkResultType.Temperature => "Temperature (C°)",
 			_ => throw new ArgumentOutOfRangeException(nameof(resultType), resultType, null)
 		};
@@ -162,15 +162,15 @@ public static class BenchmarkPlot {
 
 	public static void PlotAllResults(IBenchmark[] dataSet, PlotOptions? plotOptions = null) {
 		PlotResults(BenchmarkResultType.ElapsedTime, dataSet, plotOptions);
-		PlotResults(BenchmarkResultType.PackagePower, dataSet, plotOptions);
-		PlotResults(BenchmarkResultType.DramPower, dataSet, plotOptions);
+		PlotResults(BenchmarkResultType.PackageEnergy, dataSet, plotOptions);
+		PlotResults(BenchmarkResultType.DramEnergy, dataSet, plotOptions);
 		PlotResults(BenchmarkResultType.Temperature, dataSet, plotOptions);
 	}
 
 	public static void PlotAllResults(DataSet[] dataSet, PlotOptions? plotOptions = null) {
 		PlotResults(BenchmarkResultType.ElapsedTime, dataSet, plotOptions);
-		PlotResults(BenchmarkResultType.PackagePower, dataSet, plotOptions);
-		PlotResults(BenchmarkResultType.DramPower, dataSet, plotOptions);
+		PlotResults(BenchmarkResultType.PackageEnergy, dataSet, plotOptions);
+		PlotResults(BenchmarkResultType.DramEnergy, dataSet, plotOptions);
 		PlotResults(BenchmarkResultType.Temperature, dataSet, plotOptions);
 	}
 }

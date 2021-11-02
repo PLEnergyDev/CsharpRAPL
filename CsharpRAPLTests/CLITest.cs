@@ -14,55 +14,55 @@ namespace CsharpRAPL.Tests;
 public class CLITest {
 	private readonly List<BenchmarkResult> _addSet = new() {
 		new BenchmarkResult {
-			ElapsedTime = 0.05249999999999977, PackagePower = 29236, DramPower = 672, Temperature = 43000,
-			Result = "10"
+			ElapsedTime = 0.05249999999999977, PackageEnergy = 29236, DramEnergy = 672, Temperature = 43000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.05039999999999978, PackagePower = 30823, DramPower = 672, Temperature = 43000,
-			Result = "10"
+			ElapsedTime = 0.05039999999999978, PackageEnergy = 30823, DramEnergy = 672, Temperature = 43000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.044800000000000395, PackagePower = 31494, DramPower = 1098, Temperature = 42000,
-			Result = "10"
+			ElapsedTime = 0.044800000000000395, PackageEnergy = 31494, DramEnergy = 1098, Temperature = 42000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.04449999999999932, PackagePower = 39368, DramPower = 977, Temperature = 42000,
-			Result = "10"
+			ElapsedTime = 0.04449999999999932, PackageEnergy = 39368, DramEnergy = 977, Temperature = 42000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.04420000000000002, PackagePower = 39917, DramPower = 976, Temperature = 43000,
-			Result = "10"
+			ElapsedTime = 0.04420000000000002, PackageEnergy = 39917, DramEnergy = 976, Temperature = 43000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.04460000000000086, PackagePower = 33508, DramPower = 733, Temperature = 43000,
-			Result = "10"
+			ElapsedTime = 0.04460000000000086, PackageEnergy = 33508, DramEnergy = 733, Temperature = 43000,
+			BenchmarkReturnValue = "10"
 		}
 	};
 
 	private readonly List<BenchmarkResult> _subtractSet = new() {
 		new BenchmarkResult {
-			ElapsedTime = 0.05210000000000026, PackagePower = 26122, DramPower = 611, Temperature = 44000,
-			Result = "10"
+			ElapsedTime = 0.05210000000000026, PackageEnergy = 26122, DramEnergy = 611, Temperature = 44000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.05370000000000008, PackagePower = 24720, DramPower = 610, Temperature = 44000,
-			Result = "10"
+			ElapsedTime = 0.05370000000000008, PackageEnergy = 24720, DramEnergy = 610, Temperature = 44000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.054999999999999716, PackagePower = 30884, DramPower = 977, Temperature = 44000,
-			Result = "10"
+			ElapsedTime = 0.054999999999999716, PackageEnergy = 30884, DramEnergy = 977, Temperature = 44000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.05240000000000222, PackagePower = 27709, DramPower = 671, Temperature = 44000,
-			Result = "10"
+			ElapsedTime = 0.05240000000000222, PackageEnergy = 27709, DramEnergy = 671, Temperature = 44000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.05190000000000339, PackagePower = 25696, DramPower = 611, Temperature = 44000,
-			Result = "10"
+			ElapsedTime = 0.05190000000000339, PackageEnergy = 25696, DramEnergy = 611, Temperature = 44000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.050200000000000244, PackagePower = 24536, DramPower = 611, Temperature = 44000,
-			Result = "10"
+			ElapsedTime = 0.050200000000000244, PackageEnergy = 24536, DramEnergy = 611, Temperature = 44000,
+			BenchmarkReturnValue = "10"
 		}
 	};
 
