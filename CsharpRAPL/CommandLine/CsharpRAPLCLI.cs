@@ -11,9 +11,9 @@ namespace CsharpRAPL.CommandLine;
 public static class CsharpRAPLCLI {
 	public static Options Options { get; private set; } = new();
 
-	private static Action<Analysis.Analysis> _analysis = Analyse;
+	private static Action<Analysis.Analysis> _analysisCallback = Analyse;
 
-	private static Action<string>? _plot;
+	private static Action<string>? _plotCallback;
 
 
 	public static Options Parse(string[] args, int maximumTerminalWidth = 0) {
@@ -27,11 +27,11 @@ public static class CsharpRAPLCLI {
 		parser.ParseArguments<Options>(args).WithParsed(RunOptions).WithNotParsed(HandleParseError);
 
 		if (Options.OnlyPlot) {
-			if (_plot == null) {
+			if (_plotCallback == null) {
 				BenchmarkPlot.PlotAllResultsGroupsFromFolder(Options.OutputPath);
 			}
 			else {
-				_plot.Invoke(Options.OutputPath);
+				_plotCallback.Invoke(Options.OutputPath);
 			}
 
 			Options.ShouldExit = true;
@@ -88,7 +88,7 @@ public static class CsharpRAPLCLI {
 				for (int j = i + 1; j < benchmarksWithGroups.Count; j++) {
 					var analysis =
 						new Analysis.Analysis(benchmarksWithGroups[group][i], benchmarksWithGroups[group][j]);
-					_analysis.Invoke(analysis);
+					_analysisCallback.Invoke(analysis);
 				}
 			}
 		}
@@ -128,16 +128,16 @@ public static class CsharpRAPLCLI {
 			}
 
 			var analysis = new Analysis.Analysis(firstPath, secondPath);
-			_analysis.Invoke(analysis);
+			_analysisCallback.Invoke(analysis);
 		}
 	}
 
-	public static void SetAnalysis(Action<Analysis.Analysis> action) {
-		_analysis = action;
+	public static void SetAnalysisCallback(Action<Analysis.Analysis> action) {
+		_analysisCallback = action;
 	}
 
-	public static void SetPlotting(Action<string> action) {
-		_plot = action;
+	public static void SetPlottingCallback(Action<string> action) {
+		_plotCallback = action;
 	}
 
 	private static void Analyse(Analysis.Analysis analysis) {

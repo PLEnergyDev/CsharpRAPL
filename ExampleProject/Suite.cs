@@ -9,7 +9,7 @@ using CsharpRAPL.CommandLine;
 using CsvHelper;
 using CsvHelper.Configuration;
 
-CsharpRAPLCLI.SetAnalysis(_ => { });
+CsharpRAPLCLI.SetAnalysisCallback(_ => { });
 
 Options options = CsharpRAPLCLI.Parse(args);
 

@@ -268,7 +268,7 @@ public class CLITest {
 	[Test]
 	public void TestParse16() {
 		var hasPlotted = false;
-		CsharpRAPLCLI.SetPlotting(_ => hasPlotted = true);
+		CsharpRAPLCLI.SetPlottingCallback(_ => hasPlotted = true);
 		string[] args = { "--OnlyPlot" };
 		Options options = CsharpRAPLCLI.Parse(args, 1000);
 
@@ -298,7 +298,7 @@ public class CLITest {
 	public void TestSetAnalysis03() {
 		string[] args = { "-o", "TestData", "--OnlyAnalysis", "-a", "AddSet.csv", "SubtractSet.csv" };
 		var analysed = false;
-		CsharpRAPLCLI.SetAnalysis(_ => analysed = true);
+		CsharpRAPLCLI.SetAnalysisCallback(_ => analysed = true);
 		CsharpRAPLCLI.Parse(args);
 		Assert.True(analysed);
 	}
@@ -307,7 +307,7 @@ public class CLITest {
 	public void TestSetAnalysis04() {
 		string[] args = { "-o", "TestData", "--OnlyAnalysis", "-a", "Test/", "SubtractSet.csv" };
 		var analysed = false;
-		CsharpRAPLCLI.SetAnalysis(_ => analysed = true);
+		CsharpRAPLCLI.SetAnalysisCallback(_ => analysed = true);
 		CsharpRAPLCLI.Parse(args);
 		Assert.True(analysed);
 	}
