@@ -11,6 +11,7 @@ using ScottPlot.Plottable;
 namespace CsharpRAPL.Plotting;
 
 public class BoxPlot : IPlottable {
+	
 	public double Position { get; }
 	public double[] PlotData { get; }
 	public double MaxValue { get; }
@@ -27,7 +28,7 @@ public class BoxPlot : IPlottable {
 	private double _errorAbove;
 
 
-	public BoxPlot(double position, double[] plotData, double errorBelow, double errorAbove) {
+	public BoxPlot(double position, double[] plotData, double errorBelow, double errorAbove, PlotOptions plotOptions) {
 		PlotData = plotData.Length != 0
 			? plotData
 			: throw new ArgumentException("plotData must be an array that contains elements");
@@ -38,7 +39,7 @@ public class BoxPlot : IPlottable {
 		MinValue = plotData.Min();
 		_errorBelow = errorBelow;
 		_errorAbove = errorAbove;
-		PlotOptions = new PlotOptions();
+		PlotOptions = plotOptions;
 	}
 
 	public AxisLimits GetAxisLimits() {
@@ -102,7 +103,7 @@ public class BoxPlot : IPlottable {
 
 	private void RenderBarFromRect(RectangleF rect, Graphics gfx) {
 		using var outlinePen = new Pen(PlotOptions.BorderColor, PlotOptions.BorderLineWidth);
-		using Brush fillBrush = GDI.Brush(PlotOptions.FillColor, PlotOptions.HatchColor, PlotOptions.HatchStyle);
+		using Brush fillBrush = GDI.Brush(PlotOptions.FillColor ?? Color.Green, PlotOptions.HatchColor, PlotOptions.HatchStyle);
 		gfx.FillRectangle(fillBrush, rect.X, rect.Y, rect.Width, rect.Height);
 		if (PlotOptions.BorderLineWidth > 0) {
 			gfx.DrawRectangle(outlinePen, rect.X, rect.Y, rect.Width, rect.Height);
@@ -122,7 +123,7 @@ public class BoxPlot : IPlottable {
 		return new LegendItem[] {
 			new() {
 				label = PlotOptions.LegendLabel,
-				color = PlotOptions.FillColor,
+				color = PlotOptions.FillColor ?? Color.Green,
 				lineWidth = 10.0,
 				markerShape = MarkerShape.none,
 				hatchColor = PlotOptions.HatchColor,

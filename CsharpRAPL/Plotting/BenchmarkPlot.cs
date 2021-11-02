@@ -35,7 +35,8 @@ public static class BenchmarkPlot {
 		plotOptions ??= new PlotOptions();
 
 		foreach ((string? group, List<DataSet>? dataSets) in groups) {
-			PlotResults(resultType, dataSets.ToArray(), new PlotOptions {Name = group});
+			var options = new PlotOptions(plotOptions){Name = group};
+			PlotResults(resultType, dataSets.ToArray(), options);
 		}
 	}
 
@@ -60,20 +61,22 @@ public static class BenchmarkPlot {
 
 		plotOptions ??= new PlotOptions();
 
-		var plt = new Plot(plotOptions.Width,plotOptions.Height);
+		var plt = new Plot(plotOptions.Width, plotOptions.Height);
 
 		string[] names = dataSets.Select(set => set.Name).ToArray();
 
 
 		var hatchIndex = 3;
 		foreach ((int index, DataSet dataSet) in dataSets.WithIndex()) {
+			var options = new PlotOptions(plotOptions);
 			double[] plotData = GetPlotData(dataSet, resultType);
 			double min = plotData.Min();
 			double max = plotData.Max();
-			plotOptions.LegendLabel =
+			options.LegendLabel =
 				$"{dataSet.Name}\nMax: {max:F4} Min: {min:F4}\nLowerQ: {plotData.LowerQuartile():F4} UpperQ: {plotData.UpperQuartile():F4}";
+			options.FillColor ??= plt.GetSettings().GetNextColor();
 			
-			BoxPlot bar = plt.PlotBoxPlot(index, plotData, min, max, plotOptions: plotOptions);
+			BoxPlot bar = plt.PlotBoxPlot(index, plotData, min, max, options);
 
 			if (hatchIndex > 9) {
 				hatchIndex = 0;
@@ -81,6 +84,7 @@ public static class BenchmarkPlot {
 
 			bar.PlotOptions.HatchStyle = (HatchStyle)hatchIndex;
 			bar.PlotOptions.HatchColor = Color.Gray;
+			
 			hatchIndex++;
 		}
 
