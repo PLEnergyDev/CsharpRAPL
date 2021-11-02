@@ -48,26 +48,26 @@ public static class CsharpRAPLCLI {
 
 	private static void RunOptions(Options opts) {
 		Options = opts;
-		opts.OutputPath = opts.OutputPath.Replace("\\", "/");
-		if (!opts.OutputPath.EndsWith("/")) {
-			opts.OutputPath += "/";
+		Options.OutputPath = Options.OutputPath.Replace("\\", "/");
+		if (!Options.OutputPath.EndsWith("/")) {
+			Options.OutputPath += "/";
 		}
 
-		opts.PlotOutputPath = opts.PlotOutputPath.Replace("\\", "/");
-		if (!opts.PlotOutputPath.EndsWith("/")) {
-			opts.PlotOutputPath += "/";
+		Options.PlotOutputPath = Options.PlotOutputPath.Replace("\\", "/");
+		if (!Options.PlotOutputPath.EndsWith("/")) {
+			Options.PlotOutputPath += "/";
 		}
 
 		if (!Options.RemoveOldResults) {
 			return;
 		}
 
-		if (Directory.Exists(opts.PlotOutputPath)) {
-			Directory.Delete(opts.PlotOutputPath, true);
+		if (Directory.Exists(Options.PlotOutputPath)) {
+			Directory.Delete(Options.PlotOutputPath, true);
 		}
 
-		if (Directory.Exists(opts.OutputPath)) {
-			Directory.Delete(opts.OutputPath, true);
+		if (Directory.Exists(Options.OutputPath)) {
+			Directory.Delete(Options.OutputPath, true);
 		}
 	}
 
