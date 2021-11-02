@@ -2,6 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using CsharpRAPL.CommandLine;
 
 namespace CsharpRAPL;
@@ -34,4 +35,15 @@ public static class Helpers {
 		return Directory.EnumerateFiles(CsharpRAPLCLI.Options.PlotOutputPath, "*.png", SearchOption.AllDirectories)
 			.ToList();
 	}
+	
+	/// <summary>
+	/// Checks if a method is anonymous.
+	/// </summary>
+	/// <param name="method">The method we want to check.</param>
+	/// <returns>Returns true if it is anonymous otherwise false</returns>
+	public static bool IsAnonymous(this MemberInfo method) {
+		var invalidChars = new[] {'<', '>'};
+		return method.Name.Any(invalidChars.Contains);
+	}
+
 }

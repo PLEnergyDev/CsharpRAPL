@@ -14,6 +14,11 @@ public class BenchmarkSuite {
 
 	public void RegisterBenchmark<T>(string? group, int iterations, Func<T> benchmark, int order = 0) {
 		string benchmarkName = benchmark.Method.Name;
+
+		if (benchmark.Method.IsAnonymous()) {
+			throw new NotSupportedException("Adding benchmarks through anonymous methods is not supported");
+		}
+		
 		Benchmarks.Add(new Benchmark<T>(benchmarkName, iterations, benchmark, false, group, order));
 	}
 
@@ -83,7 +88,7 @@ public class BenchmarkSuite {
 		}
 	}
 
-	public IReadOnlyCollection<IBenchmark> GetBenchmarks() {
+	public IReadOnlyList<IBenchmark> GetBenchmarks() {
 		return Benchmarks;
 	}
 
