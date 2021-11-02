@@ -86,9 +86,9 @@ public class Benchmark<T> : IBenchmark {
 			return;
 		}
 
-		BenchmarkResult result = _rapl.GetResults() with { Result = benchmarkOutput?.ToString() ?? string.Empty };
+		BenchmarkResult result = _rapl.GetResults() with { BenchmarkReturnValue = benchmarkOutput?.ToString() ?? string.Empty };
 		BenchmarkResult normalizedResult = _rapl.GetNormalizedResults(GetLoopIterations()) with {
-			Result = benchmarkOutput?.ToString() ?? string.Empty
+			BenchmarkReturnValue = benchmarkOutput?.ToString() ?? string.Empty
 		};
 		_resultBuffer.Add(result);
 		_normalizedResultBuffer.Add(normalizedResult);
@@ -217,7 +217,7 @@ public class Benchmark<T> : IBenchmark {
 	/// <param name="resultType">The result type we should look for</param>
 	/// <returns>The amount of samples needed for the given confidence</returns>
 	private int IterationCalculation(double confidence = 0.95,
-		BenchmarkResultType resultType = BenchmarkResultType.PackagePower) {
+		BenchmarkResultType resultType = BenchmarkResultType.PackageEnergy) {
 		// If we have less than 10 results, we return 10 so we can get a sample to calculate from
 		if (_resultBuffer.Count < 10) {
 			return 10;
@@ -233,9 +233,9 @@ public class Benchmark<T> : IBenchmark {
 		for (var i = 0; i < _resultBuffer.Count; i++) {
 			values[i] = resultType switch {
 				BenchmarkResultType.Temperature => _resultBuffer[i].Temperature,
-				BenchmarkResultType.DramPower => _resultBuffer[i].DramPower,
+				BenchmarkResultType.DramEnergy => _resultBuffer[i].DramEnergy,
 				BenchmarkResultType.ElapsedTime => _resultBuffer[i].ElapsedTime,
-				BenchmarkResultType.PackagePower => _resultBuffer[i].PackagePower,
+				BenchmarkResultType.PackageEnergy => _resultBuffer[i].PackageEnergy,
 				_ => throw new ArgumentOutOfRangeException(nameof(resultType),
 					$"The benchmark result, {resultType}, has not been implemented in IterationCalculation")
 			};

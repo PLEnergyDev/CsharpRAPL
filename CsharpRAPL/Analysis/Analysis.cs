@@ -70,12 +70,12 @@ public class Analysis {
 		// Set up the datasets that we want to compare
 		PValueData firstDataSet = new(_firstDataset.Name,
 			_firstDataset.Data.Select(data => data.ElapsedTime).ToArray(),
-			_firstDataset.Data.Select(data => data.PackagePower).ToArray(),
-			_firstDataset.Data.Select(data => data.DramPower).ToArray());
+			_firstDataset.Data.Select(data => data.PackageEnergy).ToArray(),
+			_firstDataset.Data.Select(data => data.DramEnergy).ToArray());
 		PValueData secondDataSet = new(_secondDataset.Name,
 			_secondDataset.Data.Select(data => data.ElapsedTime).ToArray(),
-			_secondDataset.Data.Select(data => data.PackagePower).ToArray(),
-			_secondDataset.Data.Select(data => data.DramPower).ToArray());
+			_secondDataset.Data.Select(data => data.PackageEnergy).ToArray(),
+			_secondDataset.Data.Select(data => data.DramEnergy).ToArray());
 
 		// Test if first is significantly different from the second
 		var timeTTest = new TwoSampleTTest(firstDataSet.Times, secondDataSet.Times);
@@ -105,8 +105,8 @@ public class Analysis {
 	}
 
 	public (bool isValid, string message) EnsureResultsMutually() {
-		List<string> first = _firstDataset.Data.Select(result => result.Result).Distinct().ToList();
-		List<string> second = _secondDataset.Data.Select(result => result.Result).Distinct().ToList();
+		List<string> first = _firstDataset.Data.Select(result => result.BenchmarkReturnValue).Distinct().ToList();
+		List<string> second = _secondDataset.Data.Select(result => result.BenchmarkReturnValue).Distinct().ToList();
 
 		(bool isValid, string message) firstEnsure = _firstDataset.EnsureResults();
 		if (!firstEnsure.isValid) {
@@ -134,8 +134,8 @@ public class Analysis {
 
 	public void PlotAnalysis() {
 		PlotAnalysis(BenchmarkResultType.ElapsedTime);
-		PlotAnalysis(BenchmarkResultType.PackagePower);
-		PlotAnalysis(BenchmarkResultType.DramPower);
+		PlotAnalysis(BenchmarkResultType.PackageEnergy);
+		PlotAnalysis(BenchmarkResultType.DramEnergy);
 		PlotAnalysis(BenchmarkResultType.Temperature);
 	}
 

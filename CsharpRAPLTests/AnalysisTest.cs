@@ -11,55 +11,55 @@ namespace CsharpRAPL.Tests;
 public class AnalysisTest {
 	private readonly List<BenchmarkResult> _addSet = new() {
 		new BenchmarkResult {
-			ElapsedTime = 0.05249999999999977, PackagePower = 29236, DramPower = 672, Temperature = 43000,
-			Result = "10"
+			ElapsedTime = 0.05249999999999977, PackageEnergy = 29236, DramEnergy = 672, Temperature = 43000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.05039999999999978, PackagePower = 30823, DramPower = 672, Temperature = 43000,
-			Result = "10"
+			ElapsedTime = 0.05039999999999978, PackageEnergy = 30823, DramEnergy = 672, Temperature = 43000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.044800000000000395, PackagePower = 31494, DramPower = 1098, Temperature = 42000,
-			Result = "10"
+			ElapsedTime = 0.044800000000000395, PackageEnergy = 31494, DramEnergy = 1098, Temperature = 42000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.04449999999999932, PackagePower = 39368, DramPower = 977, Temperature = 42000,
-			Result = "10"
+			ElapsedTime = 0.04449999999999932, PackageEnergy = 39368, DramEnergy = 977, Temperature = 42000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.04420000000000002, PackagePower = 39917, DramPower = 976, Temperature = 43000,
-			Result = "10"
+			ElapsedTime = 0.04420000000000002, PackageEnergy = 39917, DramEnergy = 976, Temperature = 43000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.04460000000000086, PackagePower = 33508, DramPower = 733, Temperature = 43000,
-			Result = "10"
+			ElapsedTime = 0.04460000000000086, PackageEnergy = 33508, DramEnergy = 733, Temperature = 43000,
+			BenchmarkReturnValue = "10"
 		}
 	};
 
 	private readonly List<BenchmarkResult> _subtractSet = new() {
 		new BenchmarkResult {
-			ElapsedTime = 0.05210000000000026, PackagePower = 26122, DramPower = 611, Temperature = 44000,
-			Result = "10"
+			ElapsedTime = 0.05210000000000026, PackageEnergy = 26122, DramEnergy = 611, Temperature = 44000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.05370000000000008, PackagePower = 24720, DramPower = 610, Temperature = 44000,
-			Result = "10"
+			ElapsedTime = 0.05370000000000008, PackageEnergy = 24720, DramEnergy = 610, Temperature = 44000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.054999999999999716, PackagePower = 30884, DramPower = 977, Temperature = 44000,
-			Result = "10"
+			ElapsedTime = 0.054999999999999716, PackageEnergy = 30884, DramEnergy = 977, Temperature = 44000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.05240000000000222, PackagePower = 27709, DramPower = 671, Temperature = 44000,
-			Result = "10"
+			ElapsedTime = 0.05240000000000222, PackageEnergy = 27709, DramEnergy = 671, Temperature = 44000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.05190000000000339, PackagePower = 25696, DramPower = 611, Temperature = 44000,
-			Result = "10"
+			ElapsedTime = 0.05190000000000339, PackageEnergy = 25696, DramEnergy = 611, Temperature = 44000,
+			BenchmarkReturnValue = "10"
 		},
 		new BenchmarkResult {
-			ElapsedTime = 0.050200000000000244, PackagePower = 24536, DramPower = 611, Temperature = 44000,
-			Result = "10"
+			ElapsedTime = 0.050200000000000244, PackageEnergy = 24536, DramEnergy = 611, Temperature = 44000,
+			BenchmarkReturnValue = "10"
 		}
 	};
 
@@ -134,11 +134,11 @@ public class AnalysisTest {
 		Assert.AreEqual("AddSet", firstName);
 		Assert.AreEqual("SubtractSet", secondName);
 
-		Assert.AreEqual(672.0d, firstData.DramPower, double.Epsilon);
-		Assert.AreEqual(610.0d, secondData.DramPower, double.Epsilon);
+		Assert.AreEqual(672.0d, firstData.DramEnergy, double.Epsilon);
+		Assert.AreEqual(610.0d, secondData.DramEnergy, double.Epsilon);
 
-		Assert.AreEqual(29236.0d, firstData.PackagePower, double.Epsilon);
-		Assert.AreEqual(24536.0d, secondData.PackagePower, double.Epsilon);
+		Assert.AreEqual(29236.0d, firstData.PackageEnergy, double.Epsilon);
+		Assert.AreEqual(24536.0d, secondData.PackageEnergy, double.Epsilon);
 
 		Assert.AreEqual(0.044200000000000017d, firstData.ElapsedTime, double.Epsilon);
 		Assert.AreEqual(0.050200000000000244d, secondData.ElapsedTime, double.Epsilon);
@@ -155,11 +155,11 @@ public class AnalysisTest {
 		Assert.AreEqual("AddSet", firstName);
 		Assert.AreEqual("SubtractSet", secondName);
 
-		Assert.AreEqual(1098.0d, firstData.DramPower, double.Epsilon);
-		Assert.AreEqual(977.0d, secondData.DramPower, double.Epsilon);
+		Assert.AreEqual(1098.0d, firstData.DramEnergy, double.Epsilon);
+		Assert.AreEqual(977.0d, secondData.DramEnergy, double.Epsilon);
 
-		Assert.AreEqual(39917.0d, firstData.PackagePower, double.Epsilon);
-		Assert.AreEqual(30884.0d, secondData.PackagePower, double.Epsilon);
+		Assert.AreEqual(39917.0d, firstData.PackageEnergy, double.Epsilon);
+		Assert.AreEqual(30884.0d, secondData.PackageEnergy, double.Epsilon);
 
 		Assert.AreEqual(0.052499999999999769d, firstData.ElapsedTime, double.Epsilon);
 		Assert.AreEqual(0.054999999999999716d, secondData.ElapsedTime, double.Epsilon);
@@ -176,11 +176,11 @@ public class AnalysisTest {
 		Assert.AreEqual("AddSet", firstName);
 		Assert.AreEqual("SubtractSet", secondName);
 
-		Assert.AreEqual(854.66666666666663d, firstData.DramPower, double.Epsilon);
-		Assert.AreEqual(681.83333333333337d, secondData.DramPower, double.Epsilon);
+		Assert.AreEqual(854.66666666666663d, firstData.DramEnergy, double.Epsilon);
+		Assert.AreEqual(681.83333333333337d, secondData.DramEnergy, double.Epsilon);
 
-		Assert.AreEqual(34057.666666666664d, firstData.PackagePower, double.Epsilon);
-		Assert.AreEqual(26611.166666666668d, secondData.PackagePower, double.Epsilon);
+		Assert.AreEqual(34057.666666666664d, firstData.PackageEnergy, double.Epsilon);
+		Assert.AreEqual(26611.166666666668d, secondData.PackageEnergy, double.Epsilon);
 
 		Assert.AreEqual(0.046833333333333359d, firstData.ElapsedTime, double.Epsilon);
 		Assert.AreEqual(0.052550000000000985d, secondData.ElapsedTime, double.Epsilon);
@@ -201,28 +201,28 @@ public class AnalysisTest {
 	public void TestEnsure02() {
 		List<BenchmarkResult> badSet = new() {
 			new BenchmarkResult {
-				ElapsedTime = 0.05210000000000026, PackagePower = 26122, DramPower = 611, Temperature = 44000,
-				Result = "10"
+				ElapsedTime = 0.05210000000000026, PackageEnergy = 26122, DramEnergy = 611, Temperature = 44000,
+				BenchmarkReturnValue = "10"
 			},
 			new BenchmarkResult {
-				ElapsedTime = 0.05370000000000008, PackagePower = 24720, DramPower = 610, Temperature = 44000,
-				Result = "10"
+				ElapsedTime = 0.05370000000000008, PackageEnergy = 24720, DramEnergy = 610, Temperature = 44000,
+				BenchmarkReturnValue = "10"
 			},
 			new BenchmarkResult {
-				ElapsedTime = 0.054999999999999716, PackagePower = 30884, DramPower = 977, Temperature = 44000,
-				Result = "10"
+				ElapsedTime = 0.054999999999999716, PackageEnergy = 30884, DramEnergy = 977, Temperature = 44000,
+				BenchmarkReturnValue = "10"
 			},
 			new BenchmarkResult {
-				ElapsedTime = 0.05240000000000222, PackagePower = 27709, DramPower = 671, Temperature = 44000,
-				Result = "10"
+				ElapsedTime = 0.05240000000000222, PackageEnergy = 27709, DramEnergy = 671, Temperature = 44000,
+				BenchmarkReturnValue = "10"
 			},
 			new BenchmarkResult {
-				ElapsedTime = 0.05190000000000339, PackagePower = 25696, DramPower = 611, Temperature = 44000,
-				Result = "10"
+				ElapsedTime = 0.05190000000000339, PackageEnergy = 25696, DramEnergy = 611, Temperature = 44000,
+				BenchmarkReturnValue = "10"
 			},
 			new BenchmarkResult {
-				ElapsedTime = 0.050200000000000244, PackagePower = 24536, DramPower = 611, Temperature = 44000,
-				Result = "11"
+				ElapsedTime = 0.050200000000000244, PackageEnergy = 24536, DramEnergy = 611, Temperature = 44000,
+				BenchmarkReturnValue = "11"
 			}
 		};
 		Analysis.Analysis analysis = new("BadSet", badSet, "AddSet", _addSet);
