@@ -1,23 +1,18 @@
 ﻿using System.Linq;
+using CsharpRAPL.Analysis;
 
-namespace CsharpRAPL.Data; 
+namespace CsharpRAPL.Data;
 
 public class PValueData {
-	public string Name;
-	public double[] Times;
-	public double[] Package;
-	public double[] Dram;
-	public double TimeMean;
-	public double PackageMean;
-	public double DramMean;
+	public readonly string Name;
+	public readonly double[] TimesValues;
+	public readonly double[] PackageValues;
+	public readonly double[] DramValues;
 
-	public PValueData(string n, double[] t, double[] p, double[] d) {
-		Name = n;
-		Times = t;
-		Package = p;
-		Dram = d;
-		TimeMean = t.Average();
-		PackageMean = p.Average();
-		DramMean = d.Average();
+	public PValueData(DataSet dataSet) {
+		Name = dataSet.Name;
+		TimesValues = dataSet.Data.Select(data => data.ElapsedTime).ToArray();
+		PackageValues = dataSet.Data.Select(data => data.PackageEnergy).ToArray();
+		DramValues = dataSet.Data.Select(data => data.DramEnergy).ToArray();
 	}
 }

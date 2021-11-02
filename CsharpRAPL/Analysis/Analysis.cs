@@ -68,19 +68,13 @@ public class Analysis {
 
 	public List<(string Message, double Value)> CalculatePValue() {
 		// Set up the datasets that we want to compare
-		PValueData firstDataSet = new(_firstDataset.Name,
-			_firstDataset.Data.Select(data => data.ElapsedTime).ToArray(),
-			_firstDataset.Data.Select(data => data.PackageEnergy).ToArray(),
-			_firstDataset.Data.Select(data => data.DramEnergy).ToArray());
-		PValueData secondDataSet = new(_secondDataset.Name,
-			_secondDataset.Data.Select(data => data.ElapsedTime).ToArray(),
-			_secondDataset.Data.Select(data => data.PackageEnergy).ToArray(),
-			_secondDataset.Data.Select(data => data.DramEnergy).ToArray());
+		PValueData firstDataSet = new(_firstDataset);
+		PValueData secondDataSet = new(_secondDataset);
 
 		// Test if first is significantly different from the second
-		var timeTTest = new TwoSampleTTest(firstDataSet.Times, secondDataSet.Times);
-		var pkgTTest = new TwoSampleTTest(firstDataSet.Package, secondDataSet.Package);
-		var dramTTest = new TwoSampleTTest(firstDataSet.Dram, secondDataSet.Dram);
+		var timeTTest = new TwoSampleTTest(firstDataSet.TimesValues, secondDataSet.TimesValues);
+		var pkgTTest = new TwoSampleTTest(firstDataSet.PackageValues, secondDataSet.PackageValues);
+		var dramTTest = new TwoSampleTTest(firstDataSet.DramValues, secondDataSet.DramValues);
 
 		// Save the P-values
 		return new List<(string Message, double Value)> {
