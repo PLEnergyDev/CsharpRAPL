@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsharpRAPL", "CsharpRAPL\CsharpRAPL.csproj", "{7481982D-85DF-47C7-898B-7C1BDF39F357}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleProject", "ExampleProject\ExampleProject.csproj", "{366870B2-21CB-4310-8193-5C266B132B28}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{366870B2-21CB-4310-8193-5C266B132B28}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsharpRAPLTests", "CsharpRAPLTests\CsharpRAPLTests.csproj", "{14484447-20C0-4938-9E40-B92E2CC39AAE}"
 EndProject
