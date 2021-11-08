@@ -9,7 +9,10 @@ public class DummyBenchmarks {
 	public static int Iterations;
 	public static int TestField1;
 	public int TestField2;
-	private static int TestField3;
+#pragma warning disable CS0169
+	//Used via reflection
+	private static int _testField3;
+#pragma warning restore CS0169
 	public static int LoopIterations;
 
 

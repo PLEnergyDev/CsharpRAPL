@@ -4,26 +4,67 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using CsharpRAPL.CommandLine;
 using CsharpRAPL.Plotting;
 
 namespace CsharpRAPL.Benchmarking;
 
 public class BenchmarkSuite {
+	public int Iterations { get; }
+	public int LoopIterations { get; }
 	private List<IBenchmark> Benchmarks { get; } = new();
 
-	public void RegisterBenchmark<T>(string? group, int iterations, Func<T> benchmark, int order = 0) {
-		string benchmarkName = benchmark.Method.Name;
+	private readonly HashSet<Type> _registeredBenchmarkClasses = new();
 
+	private const string LoopIterationsName = nameof(LoopIterations);
+	private const string IterationsName = nameof(Iterations);
+
+	public BenchmarkSuite() {
+		Iterations = CsharpRAPLCLI.Options.DefaultIterations;
+		LoopIterations = CsharpRAPLCLI.Options.LoopIterations;
+	}
+
+	public BenchmarkSuite(int iterations, int loopIterations) {
+		Iterations = iterations;
+		LoopIterations = loopIterations;
+	}
+
+	public void RegisterBenchmark<T>(Func<T> benchmark, int order = 0) {
+		RegisterBenchmark(null, benchmark, order);
+	}
+
+	public void RegisterBenchmark<T>(string? group, Func<T> benchmark, int order = 0) {
 		if (benchmark.Method.IsAnonymous()) {
 			throw new NotSupportedException("Adding benchmarks through anonymous methods is not supported");
 		}
-		
-		Benchmarks.Add(new Benchmark<T>(benchmarkName, iterations, benchmark, false, group, order));
+
+		if (!_registeredBenchmarkClasses.Contains(benchmark.Method.DeclaringType!)) {
+			RegisterBenchmarkClass(benchmark.Method.DeclaringType!);
+		}
+
+		Benchmarks.Add(new Benchmark<T>(benchmark.Method.Name, Iterations, benchmark, false, group, order));
 	}
 
-	public void RegisterBenchmark<T>(int iterations, Func<T> benchmark) {
-		RegisterBenchmark(null, iterations, benchmark);
+	private void RegisterBenchmarkClass(Type benchmarkClass) {
+		TrySetField(benchmarkClass, IterationsName, Iterations);
+		TrySetField(benchmarkClass, LoopIterationsName, LoopIterations);
+		_registeredBenchmarkClasses.Add(benchmarkClass);
+	}
+
+	public static bool TrySetField(Type benchmarkClass, string name, int value) {
+		FieldInfo? fieldInfo = benchmarkClass.GetFields()
+			.FirstOrDefault(info => info.Name == name);
+		if (fieldInfo == null) {
+			return false;
+		}
+
+		if (!fieldInfo.IsStatic) {
+			throw new NotSupportedException($"Your {name} field must be static.");
+		}
+
+		benchmarkClass.GetField(name, BindingFlags.Public | BindingFlags.Static)?.SetValue(null, value);
+		return true;
 	}
 
 	public void RunAll() {
@@ -34,17 +75,13 @@ public class BenchmarkSuite {
 		}
 
 		Warmup();
-
-		var timer = new Stopwatch();
+		
 		foreach ((int index, IBenchmark bench) in benchmarks.WithIndex()) {
 			Console.WriteLine($"Starting {bench.Name} which is the {index + 1} out of {benchmarks.Count} tests");
-			timer.Start();
 			bench.Run();
-			timer.Stop();
 			Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
 			Console.WriteLine(
-				$"\rFinished {bench.Name} in {timer.ElapsedMilliseconds}ms with {bench.GetResults().Count} iterations\n");
-			timer.Reset();
+				$"\rFinished {bench.Name} in {bench.ElapsedTime}ms with {bench.GetResults().Count} iterations\n");
 		}
 
 		PlotGroups();

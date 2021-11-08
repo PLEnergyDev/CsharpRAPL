@@ -17,8 +17,7 @@ if (options.ShouldExit) {
 	return;
 }
 
-var suite = new BenchmarkCollector(options.Iterations != -1 ? options.Iterations : options.DefaultIterations,
-	options.LoopIterations != -1 ? options.LoopIterations : options.DefaultLoopIterations);
+var suite = new BenchmarkCollector(options.Iterations, options.LoopIterations);
 
 suite.RunAll();
 
@@ -39,6 +38,7 @@ foreach (string file in Directory.EnumerateFiles(Path.Join(options.OutputPath, "
 	SearchOption.AllDirectories)) {
 	archive.CreateEntryFromFile(file, file);
 }
+
 archive.Dispose();
 zipToOpen.Dispose();
 

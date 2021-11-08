@@ -84,8 +84,13 @@ public static class CsharpRAPLCLI {
 
 	public static void StartAnalysis(Dictionary<string, List<IBenchmark>> benchmarksWithGroups) {
 		foreach (string group in benchmarksWithGroups.Keys) {
-			for (int i = 0; i < benchmarksWithGroups.Count; i++) {
-				for (int j = i + 1; j < benchmarksWithGroups.Count; j++) {
+			if (benchmarksWithGroups[group].Count < 2) {
+				Console.WriteLine($"Not enough benchmarks in the group {group} minimum of two is required. Skipping.");
+				continue;
+			}
+
+			for (int i = 0; i < benchmarksWithGroups[group].Count; i++) {
+				for (int j = i + 1; j < benchmarksWithGroups[group].Count; j++) {
 					var analysis =
 						new Analysis.Analysis(benchmarksWithGroups[group][i], benchmarksWithGroups[group][j]);
 					_analysisCallback.Invoke(analysis);
