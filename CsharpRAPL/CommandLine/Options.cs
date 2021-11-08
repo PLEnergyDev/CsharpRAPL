@@ -9,17 +9,26 @@ public class Options {
 	public int DefaultIterations = 50;
 	public int DefaultLoopIterations = 10000000;
 
+	private int _iterations = -1;
+	private int _loopIterations = -1;
+
 	[Option('g', nameof(SkipPlotGroups), Required = false,
 		HelpText = "If plotting each benchmark group should be skipped.")]
 	public bool SkipPlotGroups { get; set; }
 
 	[Option('i', nameof(Iterations), Required = false,
 		HelpText = "Sets the target iterations. (Disables Dynamic Iteration Calculation)", Default = -1)]
-	public int Iterations { get; set; } = -1;
+	public int Iterations {
+		get => _iterations == -1 ? DefaultIterations : _iterations;
+		set => _iterations = value;
+	}
 
 	[Option('l', nameof(LoopIterations), Required = false,
 		HelpText = "Sets the target loop iterations. (Disables Dynamic Loop Iteration Scaling)", Default = -1)]
-	public int LoopIterations { get; set; } = -1;
+	public int LoopIterations {
+		get => _loopIterations == -1 ? DefaultIterations : _loopIterations;
+		set => _loopIterations = value;
+	}
 
 	[Option('r', nameof(RemoveOldResults), Required = false,
 		HelpText = "If set removes all files from the output folder and the plot folder.")]
@@ -48,9 +57,9 @@ public class Options {
 	[Option('z', nameof(ZipResults), HelpText = "Zips the CSV results and plots into a single zip file.")]
 	public bool ZipResults { get; set; }
 
-	public bool UseIterationCalculation => Iterations == -1;
+	public bool UseIterationCalculation => _iterations == -1;
 
-	public bool UseLoopIterationScaling => LoopIterations == -1;
+	public bool UseLoopIterationScaling => _loopIterations == -1;
 
 	public bool ShouldExit;
 }

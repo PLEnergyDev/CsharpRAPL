@@ -6,20 +6,23 @@ using System.Reflection;
 namespace CsharpRAPL.Benchmarking;
 
 public class BenchmarkCollector : BenchmarkSuite {
-	public int Iterations { get; }
-	public int LoopIterations { get; }
-
 	/// <summary>
 	/// A map of a return type and a variation of the benchmark method using the return type as the generic argument
 	/// </summary>
-	private readonly Dictionary<Type, RegisterBenchmarkVariation> _registeredAddBenchmarkVariations = new();
+	private readonly Dictionary<Type, RegisterBenchmarkVariation> _registeredBenchmarkVariations = new();
 
-	private readonly List<Type> _registeredBenchmarkClasses = new();
+	//Create some flags we use for binding see: https://docs.microsoft.com/en-us/dotnet/api/system.reflection.bindingflags
+	private const BindingFlags RegisterBenchmarkFlags =
+		BindingFlags.Instance | BindingFlags.Public | BindingFlags.InvokeMethod;
 
-	public BenchmarkCollector(int iterations, int loopIterations, bool onlyCalling = true) {
-		Iterations = iterations;
-		LoopIterations = loopIterations;
-		if (onlyCalling) {
+	//Get the correct version of add benchmark method
+	private static readonly MethodInfo RegisterBenchmarkGenericMethod = typeof(BenchmarkSuite)
+		.GetMethods(RegisterBenchmarkFlags)
+		.First(info => info.Name == nameof(RegisterBenchmark) && info.GetParameters().Length == 3);
+
+	public BenchmarkCollector(int iterations, int loopIterations, bool onlyCallingAssembly = true) :
+		base(iterations, loopIterations) {
+		if (onlyCallingAssembly) {
 			CollectBenchmarks(Assembly.GetCallingAssembly());
 		}
 		else {
@@ -30,12 +33,10 @@ public class BenchmarkCollector : BenchmarkSuite {
 	}
 
 	private void CollectBenchmarks(Assembly assembly) {
-		foreach (MethodInfo benchmark in assembly.GetTypes().SelectMany(type => type.GetMethods())) {
+		foreach (MethodInfo benchmark in assembly.GetTypes().SelectMany(type =>
+			type.GetMethods().Where(info => info.GetCustomAttribute<BenchmarkAttribute>() != null))) {
 			//Try to get the benchmark attribute
-			var benchmarkAttribute = benchmark.GetCustomAttribute<BenchmarkAttribute>();
-			if (benchmarkAttribute == null) {
-				continue;
-			}
+			var benchmarkAttribute = benchmark.GetCustomAttribute<BenchmarkAttribute>()!;
 
 			if (benchmarkAttribute.Skip) {
 				continue;
@@ -43,48 +44,20 @@ public class BenchmarkCollector : BenchmarkSuite {
 
 			CheckMethodValidity(benchmark);
 
-			Type? benchmarkClass = _registeredBenchmarkClasses.FirstOrDefault(type => type == benchmark.DeclaringType);
-			if (benchmarkClass == null) {
-				RegisterBenchmarkClass(benchmark.DeclaringType!);
-			}
-
-			if (!_registeredAddBenchmarkVariations.ContainsKey(benchmark.ReturnType)) {
+			if (!_registeredBenchmarkVariations.ContainsKey(benchmark.ReturnType)) {
 				//If we haven't registered this return type yet, register it.
 				RegisterAddBenchmarkVariation(benchmark);
 			}
 
-
-			(MethodInfo genericAddBenchmark, Type funcType) =
-				_registeredAddBenchmarkVariations[benchmark.ReturnType];
+			(MethodInfo genericRegisterBenchmark, Type funcType) = _registeredBenchmarkVariations[benchmark.ReturnType];
 
 			//Then add the benchmark using the correct generic add benchmark method.
-			genericAddBenchmark.Invoke(this, new object[] {
-				benchmarkAttribute.Group!, Iterations,
+			genericRegisterBenchmark.Invoke(this, new object[] {
+				benchmarkAttribute.Group!,
 				benchmark.CreateDelegate(funcType),
 				benchmarkAttribute.Order
 			});
 		}
-	}
-
-	private void RegisterBenchmarkClass(Type benchmarkClass) {
-		TrySetField(benchmarkClass, "Iterations", Iterations);
-		TrySetField(benchmarkClass, "LoopIterations", LoopIterations);
-		_registeredBenchmarkClasses.Add(benchmarkClass);
-	}
-
-	public static bool TrySetField(Type benchmarkClass, string name, int value) {
-		FieldInfo? fieldInfo = benchmarkClass.GetFields()
-			.FirstOrDefault(info => info.Name == name);
-		if (fieldInfo == null) {
-			return false;
-		}
-
-		if (!fieldInfo.IsStatic) {
-			throw new NotSupportedException($"Your {name} field must be static.");
-		}
-
-		benchmarkClass.GetField(name, BindingFlags.Public | BindingFlags.Static)?.SetValue(null, value);
-		return true;
 	}
 
 	/// <summary>
@@ -108,19 +81,11 @@ public class BenchmarkCollector : BenchmarkSuite {
 		//Create a generic type of func using the methods return type
 		Type funcType = typeof(Func<>).MakeGenericType(benchmark.ReturnType);
 
-		//Create some flags we use for binding see: https://docs.microsoft.com/en-us/dotnet/api/system.reflection.bindingflags
-		const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.InvokeMethod;
-
-		//Get the correct version of add benchmark method
-		MethodInfo addBenchmarkMethod = GetType()
-			.GetMethods(flags)
-			.First(info => info.Name == "RegisterBenchmark" && info.GetParameters().Length == 4);
-
 		//Make a generic using the benchmark return type
-		MethodInfo genericAddBenchmark = addBenchmarkMethod.MakeGenericMethod(benchmark.ReturnType);
+		MethodInfo genericAddBenchmark = RegisterBenchmarkGenericMethod.MakeGenericMethod(benchmark.ReturnType);
 
 		//Add it to our registry
-		_registeredAddBenchmarkVariations.Add(benchmark.ReturnType,
+		_registeredBenchmarkVariations.Add(benchmark.ReturnType,
 			new RegisterBenchmarkVariation(genericAddBenchmark, funcType));
 	}
 }
@@ -128,6 +93,6 @@ public class BenchmarkCollector : BenchmarkSuite {
 /// <summary>
 /// A container class for a variation of the AddBenchmark method
 /// </summary>
-/// <param name="GenericAddBenchmark">The generic AddBenchmark method <see cref="BenchmarkSuite.RegisterBenchmark{T}(string?,int,System.Func{T},int)"/></param>
+/// <param name="GenericAddBenchmark">The generic AddBenchmark method <see cref="BenchmarkSuite.RegisterBenchmark{T}(string?,System.Func{T},int)"/></param>
 /// <param name="FuncType">The Func Type using the return type as generic argument</param>
 internal sealed record RegisterBenchmarkVariation(MethodInfo GenericAddBenchmark, Type FuncType);

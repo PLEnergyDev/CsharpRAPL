@@ -35,7 +35,7 @@ public static class BenchmarkPlot {
 		plotOptions ??= new PlotOptions();
 
 		foreach ((string? group, List<DataSet>? dataSets) in groups) {
-			var options = new PlotOptions(plotOptions){Name = group};
+			var options = new PlotOptions(plotOptions) { Name = group };
 			PlotResults(resultType, dataSets.ToArray(), options);
 		}
 	}
@@ -63,28 +63,34 @@ public static class BenchmarkPlot {
 
 		var plt = new Plot(plotOptions.Width, plotOptions.Height);
 
+		dataSets = dataSets.OrderBy(set => set.Name).ToArray();
+
 		string[] names = dataSets.Select(set => set.Name).ToArray();
 
 
 		var hatchIndex = 3;
 		foreach ((int index, DataSet dataSet) in dataSets.WithIndex()) {
-			var options = new PlotOptions(plotOptions);
 			double[] plotData = GetPlotData(dataSet, resultType);
+			if (plotData.Length == 0) {
+				Console.Error.WriteLine($"No data for {resultType} skipping.");
+				continue;
+			}
+
 			double min = plotData.Min();
 			double max = plotData.Max();
-			options.LegendLabel =
-				$"{dataSet.Name}\nMax: {max:F4} Min: {min:F4}\nLowerQ: {plotData.LowerQuartile():F4} UpperQ: {plotData.UpperQuartile():F4}";
-			options.FillColor ??= plt.GetSettings().GetNextColor();
-			
-			BoxPlot bar = plt.PlotBoxPlot(index, plotData, min, max, options);
 
+			BoxPlot bar = plt.AddBoxPlot(index, plotData, min, max, plotOptions);
+
+			bar.PlotOptions.LegendLabel =
+				$"{dataSet.Name}\nMax: {max:F4} Min: {min:F4}\nLowerQ: {plotData.LowerQuartile():F4} UpperQ: {plotData.UpperQuartile():F4}";
+			bar.PlotOptions.FillColor ??= plt.GetSettings().GetNextColor();
 			if (hatchIndex > 9) {
 				hatchIndex = 0;
 			}
 
 			bar.PlotOptions.HatchStyle = (HatchStyle)hatchIndex;
 			bar.PlotOptions.HatchColor = Color.Gray;
-			
+
 			hatchIndex++;
 		}
 

@@ -2,16 +2,16 @@
 using System.IO;
 using CsharpRAPL.Data;
 
-namespace CsharpRAPL; 
+namespace CsharpRAPL;
 
 public abstract class DeviceApi {
-	private readonly string _sysFile;
-
-	private readonly CollectionApproach _approach;
+	public double Delta { get; private set; }
 
 	private double _endValue;
 	private double _startValue;
-	public double Delta { get; private set; }
+
+	private readonly CollectionApproach _approach;
+	private readonly string _sysFile;
 
 	protected DeviceApi(CollectionApproach collectionApproach) {
 		_approach = collectionApproach;
@@ -30,7 +30,7 @@ public abstract class DeviceApi {
 
 	protected virtual double Collect() {
 		double res = -1.0;
-		//TODO: Test om der er mærkbar forskel ved at holde filen åben og læse linjen på ny
+		//TODO: Test and see if there is a measurable diffrence between keeping the file open or opening it everytime
 		if (double.TryParse(File.ReadAllText(_sysFile), out double energyValue)) {
 			res = energyValue;
 		}
@@ -49,7 +49,8 @@ public abstract class DeviceApi {
 	}
 
 	public bool IsValid() {
-		return Math.Abs(_startValue - -1.0) > float.Epsilon && Math.Abs(_endValue - -1.0) > float.Epsilon &&
+		return Math.Abs(_startValue - -1.0) > double.Epsilon &&
+		       Math.Abs(_endValue - -1.0) > double.Epsilon &&
 		       Delta >= 0;
 	}
 

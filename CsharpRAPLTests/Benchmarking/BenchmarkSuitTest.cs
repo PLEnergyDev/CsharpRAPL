@@ -12,8 +12,8 @@ public class BenchmarkSuitTest {
 
 	[Test]
 	public void TestRegisterBenchmark01() {
-		var benchmarkSuit = new BenchmarkSuite();
-		benchmarkSuit.RegisterBenchmark(10, DummyBenchmark);
+		var benchmarkSuit = new BenchmarkSuite(10,29);
+		benchmarkSuit.RegisterBenchmark(DummyBenchmark);
 
 		Assert.AreEqual(1, benchmarkSuit.GetBenchmarks().Count);
 		Assert.AreEqual(10, benchmarkSuit.GetBenchmarks()[0].Iterations);
@@ -27,12 +27,12 @@ public class BenchmarkSuitTest {
 		var benchmarkSuit = new BenchmarkSuite();
 
 
-		benchmarkSuit.RegisterBenchmark("TestGroup", 13, DummyBenchmark);
+		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark);
 
 
 		Assert.AreEqual("TestGroup", benchmarkSuit.GetBenchmarks()[0].Group);
 		Assert.AreEqual(1, benchmarkSuit.GetBenchmarks().Count);
-		Assert.AreEqual(13, benchmarkSuit.GetBenchmarks()[0].Iterations);
+		Assert.AreEqual(50, benchmarkSuit.GetBenchmarks()[0].Iterations);
 		Assert.False(benchmarkSuit.GetBenchmarks()[0].HasRun);
 		Assert.AreEqual("DummyBenchmark", benchmarkSuit.GetBenchmarks()[0].Name);
 		Assert.AreEqual(0, benchmarkSuit.GetBenchmarks()[0].Order);
@@ -44,12 +44,12 @@ public class BenchmarkSuitTest {
 		var benchmarkSuit = new BenchmarkSuite();
 
 
-		benchmarkSuit.RegisterBenchmark("TestGroup", 12, DummyBenchmark, 42);
+		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark, 42);
 
 
 		Assert.AreEqual("TestGroup", benchmarkSuit.GetBenchmarks()[0].Group);
 		Assert.AreEqual(1, benchmarkSuit.GetBenchmarks().Count);
-		Assert.AreEqual(12, benchmarkSuit.GetBenchmarks()[0].Iterations);
+		Assert.AreEqual(50, benchmarkSuit.GetBenchmarks()[0].Iterations);
 		Assert.False(benchmarkSuit.GetBenchmarks()[0].HasRun);
 		Assert.AreEqual("DummyBenchmark", benchmarkSuit.GetBenchmarks()[0].Name);
 		Assert.AreEqual(42, benchmarkSuit.GetBenchmarks()[0].Order);
@@ -59,16 +59,16 @@ public class BenchmarkSuitTest {
 	public void TestRegisterBenchmark04() {
 		var benchmarkSuit = new BenchmarkSuite();
 		var exception =
-			Assert.Throws<NotSupportedException>(() => benchmarkSuit.RegisterBenchmark(10, () => "Test"));
-		Assert.AreEqual(exception.Message, "Adding benchmarks through anonymous methods is not supported");
+			Assert.Throws<NotSupportedException>(() => benchmarkSuit.RegisterBenchmark(() => "Test"));
+		Assert.AreEqual(exception?.Message, "Adding benchmarks through anonymous methods is not supported");
 	}
 
 	[Test]
 	public void TestRegisterBenchmark05() {
 		var benchmarkSuit = new BenchmarkSuite();
 		var exception =
-			Assert.Throws<NotSupportedException>(() => benchmarkSuit.RegisterBenchmark(10, () => { return "Test"; }));
-		Assert.AreEqual(exception.Message, "Adding benchmarks through anonymous methods is not supported");
+			Assert.Throws<NotSupportedException>(() => benchmarkSuit.RegisterBenchmark(() => { return "Test"; }));
+		Assert.AreEqual(exception?.Message, "Adding benchmarks through anonymous methods is not supported");
 	}
 
 	[Test]
@@ -76,13 +76,13 @@ public class BenchmarkSuitTest {
 		var benchmarkSuit = new BenchmarkSuite();
 
 
-		benchmarkSuit.RegisterBenchmark("TestGroup", 12, DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("TestGroup", 12, DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("TestGroup2", 12, DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("TestGroup2", 12, DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("TestGroup2", 12, DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("TestGroup3", 12, DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("TestGroup", 12, DummyBenchmark, 42);
+		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark, 42);
+		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark, 42);
+		benchmarkSuit.RegisterBenchmark("TestGroup2", DummyBenchmark, 42);
+		benchmarkSuit.RegisterBenchmark("TestGroup2", DummyBenchmark, 42);
+		benchmarkSuit.RegisterBenchmark("TestGroup2", DummyBenchmark, 42);
+		benchmarkSuit.RegisterBenchmark("TestGroup3", DummyBenchmark, 42);
+		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark, 42);
 
 		Dictionary<string, List<IBenchmark>> groups = benchmarkSuit.GetBenchmarksByGroup();
 

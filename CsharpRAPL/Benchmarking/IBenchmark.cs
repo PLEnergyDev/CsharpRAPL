@@ -9,6 +9,7 @@ public interface IBenchmark {
 	public string? Group { get; }
 	public int Order { get; }
 	public bool HasRun { get; }
+	public double ElapsedTime { get; }
 	public void Run();
 	public List<BenchmarkResult> GetResults(bool ignoreFirst = true);
 }

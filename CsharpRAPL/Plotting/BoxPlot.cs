@@ -18,14 +18,13 @@ public class BoxPlot : IPlottable {
 	public double MinValue { get; }
 	public double UpperQuartile { get; }
 	public double LowerQuartile { get; }
-
+	public PlotOptions PlotOptions { get; }
 	public bool IsVisible { get; set; } = true;
 	public int XAxisIndex { get; set; }
 	public int YAxisIndex { get; set; }
-
-	public PlotOptions PlotOptions;
-	private double _errorBelow;
-	private double _errorAbove;
+	
+	private readonly double _errorBelow;
+	private readonly double _errorAbove;
 
 
 	public BoxPlot(double position, double[] plotData, double errorBelow, double errorAbove, PlotOptions plotOptions) {
@@ -46,7 +45,7 @@ public class BoxPlot : IPlottable {
 		double minSize = Math.Min(_errorBelow, LowerQuartile);
 		double maxSize = Math.Max(_errorAbove, UpperQuartile);
 
-		if (PlotOptions.UseMinSize) {
+		if (PlotOptions.StartFromZero) {
 			minSize = 0.0;
 		}
 

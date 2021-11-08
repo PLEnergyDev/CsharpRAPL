@@ -1,4 +1,3 @@
-using System;
 using System.Drawing;
 using ScottPlot.Drawing;
 
@@ -22,7 +21,7 @@ public class PlotOptions {
 		BarWidth = plotOptions.BarWidth;
 		HatchStyle = plotOptions.HatchStyle;
 		RotateText = plotOptions.RotateText;
-		UseMinSize = plotOptions.UseMinSize;
+		StartFromZero = plotOptions.StartFromZero;
 	}
 
 	public string Name { get; set; } = "";
@@ -39,5 +38,5 @@ public class PlotOptions {
 	public double BarWidth { get; set; } = 0.8;
 	public HatchStyle HatchStyle { get; set; } = HatchStyle.None;
 	public bool RotateText { get; set; } = true;
-	public bool UseMinSize { get; set; } = false;
+	public bool StartFromZero { get; set; }
 }

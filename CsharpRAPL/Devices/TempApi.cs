@@ -2,9 +2,11 @@ using System;
 using System.IO;
 using CsharpRAPL.Data;
 
-namespace CsharpRAPL.Devices; 
+namespace CsharpRAPL.Devices;
 
 public sealed class TempApi : DeviceApi {
+	public TempApi() : base(CollectionApproach.Average) { }
+
 	protected override string OpenRaplFile() {
 		const string path = "/sys/class/thermal/";
 		var thermalId = 0;
@@ -20,6 +22,4 @@ public sealed class TempApi : DeviceApi {
 
 		throw new Exception("No thermal zone found for the package");
 	}
-
-	public TempApi() : base(CollectionApproach.Average) { }
 }
