@@ -68,11 +68,11 @@ public class BenchmarkSuite {
 	}
 
 	public void RunAll() {
-		List<IBenchmark> benchmarks = Benchmarks.OrderBy(benchmark => benchmark.Order).ToList();
-
 		if (Environment.OSVersion.Platform != PlatformID.Unix) {
 			throw new NotSupportedException("Running the benchmarks is only supported on Unix.");
 		}
+		
+		List<IBenchmark> benchmarks = Benchmarks.OrderBy(benchmark => benchmark.Order).ToList();
 
 		Warmup();
 		
