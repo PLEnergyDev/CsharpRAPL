@@ -1,38 +1,38 @@
 image: mcr.microsoft.com/dotnet/sdk:6.0.100-rc.1
 
 stages:
-  - build
-  - build-example
-  - test
+    - build
+    - build-benchmarks
+    - test
 
 build:
-  stage: build
-  script:
-    - "cd 'CsharpRAPL'"
-    - "dotnet restore"
-    - "dotnet build"
+    stage: build
+    script:
+        - "cd 'CsharpRAPL'"
+        - "dotnet restore"
+        - "dotnet build"
 
 build-examples:
-  needs:
-    - build
-  stage: build-example
-  script:
-    - "cd 'ExampleProject'"
-    - "dotnet restore"
-    - "dotnet build"
+    needs:
+        - build
+    stage: build-benchmarks
+    script:
+        - "cd 'Benchmarks'"
+        - "dotnet restore"
+        - "dotnet build"
 
 test:
-  needs:
-    - build
-  stage: test
-  script:
-    - 'dotnet test --test-adapter-path:. --logger:"junit;LogFilePath=..\artifacts\{assembly}-test-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"'
-    # To use the report we have to define it as an artifact of the job.
-    # So where we just tells it where to save it.
-  artifacts:
-    when: always
-    paths:
-      - ./**/*test-result.xml
-    reports:
-      junit:
-        - ./**/*test-result.xml
+    needs:
+        - build
+    stage: test
+    script:
+        - 'dotnet test --test-adapter-path:. --logger:"junit;LogFilePath=..\artifacts\{assembly}-test-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"'
+        # To use the report we have to define it as an artifact of the job.
+        # So where we just tells it where to save it.
+    artifacts:
+        when: always
+        paths:
+            - ./**/*test-result.xml
+        reports:
+            junit:
+                - ./**/*test-result.xml
