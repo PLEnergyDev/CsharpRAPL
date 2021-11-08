@@ -107,7 +107,7 @@ public class Benchmark<T> : IBenchmark {
 		_resultBuffer.Clear();
 		_normalizedResultBuffer.Clear();
 		if (CsharpRAPLCLI.Options.UseIterationCalculation) {
-			Iterations = IterationCalculation();
+			Iterations = IterationCalculationAll();
 		}
 
 		for (var i = 0; i <= Iterations; i++) {
@@ -154,7 +154,7 @@ public class Benchmark<T> : IBenchmark {
 
 
 			if (CsharpRAPLCLI.Options.UseIterationCalculation) {
-				Iterations = IterationCalculation();
+				Iterations = IterationCalculationAll();
 			}
 
 			if (!(_elapsedTime >= MaxExecutionTime)) {
@@ -210,6 +210,19 @@ public class Benchmark<T> : IBenchmark {
 			: new List<BenchmarkResult>(_resultBuffer);
 	}
 
+	/// <summary>
+	/// Finds the highest iteration calculation of all three measurement types
+	/// Should be used when general results are wanted instead of specifically for DRAM, Package or Elapsed Time
+	/// </summary>
+	/// <param name="confidence">The confidence (from 0 to 1) that we want</param>
+	/// <returns>The amount of samples needed for the given confidence for all measurements</returns>
+	private int IterationCalculationAll(double confidence = 0.95) {
+		int DRAMIteration = IterationCalculation(confidence, BenchmarkResultType.DramEnergy);
+		int TimeIteration = IterationCalculation(confidence, BenchmarkResultType.ElapsedTime);
+		int PackageIteration = IterationCalculation(confidence, BenchmarkResultType.PackageEnergy);
+		return Math.Max(DRAMIteration, Math.Max(TimeIteration, PackageIteration));
+	}
+	
 	/// <summary>
 	/// Uses the formula described in the report in formula 4.2 to calculate sample size
 	/// </summary>
