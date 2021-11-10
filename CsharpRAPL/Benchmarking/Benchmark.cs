@@ -214,10 +214,10 @@ public class Benchmark<T> : IBenchmark {
 	/// <param name="confidence">The confidence (from 0 to 1) that we want</param>
 	/// <returns>The amount of samples needed for the given confidence for all measurements</returns>
 	private int IterationCalculationAll(double confidence = 0.95) {
-		int DRAMIteration = IterationCalculation(confidence, BenchmarkResultType.DramEnergy);
-		int TimeIteration = IterationCalculation(confidence, BenchmarkResultType.ElapsedTime);
-		int PackageIteration = IterationCalculation(confidence, BenchmarkResultType.PackageEnergy);
-		return Math.Max(DRAMIteration, Math.Max(TimeIteration, PackageIteration));
+		int dramIteration = IterationCalculation(confidence, BenchmarkResultType.DramEnergy);
+		int timeIteration = IterationCalculation(confidence, BenchmarkResultType.ElapsedTime);
+		int packageIteration = IterationCalculation(confidence);
+		return Math.Max(dramIteration, Math.Max(timeIteration, packageIteration));
 	}
 	
 	/// <summary>
