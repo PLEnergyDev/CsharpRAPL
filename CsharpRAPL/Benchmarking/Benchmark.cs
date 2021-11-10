@@ -151,7 +151,7 @@ public class Benchmark<T> : IBenchmark {
 				Iterations = IterationCalculationAll();
 			}
 
-			if (!(ElapsedTime >= MaxExecutionTime)) {
+			if (ElapsedTime < MaxExecutionTime) {
 				continue;
 			}
 
