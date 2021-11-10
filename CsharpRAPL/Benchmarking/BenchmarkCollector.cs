@@ -33,28 +33,35 @@ public class BenchmarkCollector : BenchmarkSuite {
 	}
 
 	private void CollectBenchmarks(Assembly assembly) {
-		foreach (MethodInfo benchmark in assembly.GetTypes().SelectMany(type =>
+		foreach (MethodInfo benchmarkMethod in assembly.GetTypes().SelectMany(type =>
 			type.GetMethods().Where(info => info.GetCustomAttribute<BenchmarkAttribute>() != null))) {
 			//Try to get the benchmark attribute
-			var benchmarkAttribute = benchmark.GetCustomAttribute<BenchmarkAttribute>()!;
+			var benchmarkAttribute = benchmarkMethod.GetCustomAttribute<BenchmarkAttribute>()!;
 
 			if (benchmarkAttribute.Skip) {
 				continue;
 			}
 
-			CheckMethodValidity(benchmark);
+			CheckMethodValidity(benchmarkMethod);
 
-			if (!_registeredBenchmarkVariations.ContainsKey(benchmark.ReturnType)) {
+			if (!_registeredBenchmarkVariations.ContainsKey(benchmarkMethod.ReturnType)) {
 				//If we haven't registered this return type yet, register it.
-				RegisterAddBenchmarkVariation(benchmark);
+				RegisterAddBenchmarkVariation(benchmarkMethod);
 			}
 
-			(MethodInfo genericRegisterBenchmark, Type funcType) = _registeredBenchmarkVariations[benchmark.ReturnType];
+			(MethodInfo genericRegisterBenchmark, Type funcType) = _registeredBenchmarkVariations[benchmarkMethod.ReturnType];
+
+			//If the benchmark method is static, we don't need an instance to call the method.
+			//So if it is we use Activator to create a new instance which we use for calling the method.
+			Delegate benchmarkDelegate = benchmarkMethod.IsStatic
+				? benchmarkMethod.CreateDelegate(funcType)
+				: benchmarkMethod.CreateDelegate(funcType, Activator.CreateInstance(benchmarkMethod.DeclaringType));
+
 
 			//Then add the benchmark using the correct generic add benchmark method.
 			genericRegisterBenchmark.Invoke(this, new object[] {
 				benchmarkAttribute.Group!,
-				benchmark.CreateDelegate(funcType),
+				benchmarkDelegate,
 				benchmarkAttribute.Order
 			});
 		}
