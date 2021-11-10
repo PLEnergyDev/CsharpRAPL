@@ -65,7 +65,7 @@ public static class BenchmarkPlot {
 
 		dataSets = dataSets.OrderBy(set => set.Name).ToArray();
 
-		string[] names = dataSets.Select(set => set.Name).ToArray();
+		string[] names = dataSets.Select(set => set.Name.Humanize(LetterCasing.Title)).ToArray();
 
 
 		var hatchIndex = 3;
