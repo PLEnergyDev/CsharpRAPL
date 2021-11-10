@@ -145,13 +145,11 @@ public class Benchmark<T> : IBenchmark {
 						continue;
 				}
 			}
-
-
-			if (CsharpRAPLCLI.Options.UseIterationCalculation) {
-				Iterations = IterationCalculationAll();
-			}
-
+			
 			if (ElapsedTime < MaxExecutionTime) {
+				if (CsharpRAPLCLI.Options.UseIterationCalculation) {
+					Iterations = IterationCalculationAll();
+				}
 				continue;
 			}
 
