@@ -83,9 +83,13 @@ public static class BenchmarkPlot {
 
 			bar.PlotOptions.LegendLabel =
 				$"{dataSet.Name}\nMax: {max:F4} Min: {min:F4}\nLowerQ: {plotData.LowerQuartile():F4} UpperQ: {plotData.UpperQuartile():F4}";
-			bar.PlotOptions.FillColor ??= plt.GetSettings().GetNextColor();
+
 			if (hatchIndex > 9) {
 				hatchIndex = 0;
+			}
+
+			if (bar.PlotOptions.UseColorRange) {
+				bar.PlotOptions.FillColor = plt.GetSettings().GetNextColor();
 			}
 
 			bar.PlotOptions.HatchStyle = (HatchStyle)hatchIndex;
