@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using Benchmarks.HelperObjects;
 using CsharpRAPL.Benchmarking;
-using ExampleProject.HelperObjects;
 
-namespace ExampleProject.Benchmarks;
+namespace Benchmarks;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]

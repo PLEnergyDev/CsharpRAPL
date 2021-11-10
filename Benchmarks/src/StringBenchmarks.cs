@@ -2,7 +2,7 @@
 using System.Text;
 using CsharpRAPL.Benchmarking;
 
-namespace ExampleProject.Benchmarks;
+namespace Benchmarks;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]

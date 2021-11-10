@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using CsharpRAPL.Benchmarking;
 
-namespace ExampleProject.Benchmarks.Operations; 
+namespace Benchmarks.Operations; 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class SubtractionBenchmarks {

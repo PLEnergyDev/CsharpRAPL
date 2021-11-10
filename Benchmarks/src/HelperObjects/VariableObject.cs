@@ -1,4 +1,4 @@
-namespace ExampleProject.HelperObjects;
+namespace Benchmarks.HelperObjects;
 
 public class VariableObject {
 	public static int StaticPropertyA { get; set; }
