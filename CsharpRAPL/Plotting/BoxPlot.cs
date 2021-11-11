@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
@@ -11,18 +11,18 @@ using ScottPlot.Plottable;
 namespace CsharpRAPL.Plotting;
 
 public class BoxPlot : IPlottable {
-	
 	public double Position { get; }
 	public double[] PlotData { get; }
 	public double MaxValue { get; }
 	public double MinValue { get; }
 	public double UpperQuartile { get; }
 	public double LowerQuartile { get; }
+	public double Average { get; set; }
 	public PlotOptions PlotOptions { get; }
 	public bool IsVisible { get; set; } = true;
 	public int XAxisIndex { get; set; }
 	public int YAxisIndex { get; set; }
-	
+
 	private readonly double _errorBelow;
 	private readonly double _errorAbove;
 
@@ -36,6 +36,7 @@ public class BoxPlot : IPlottable {
 		LowerQuartile = plotData.LowerQuartile();
 		MaxValue = plotData.Max();
 		MinValue = plotData.Min();
+		Average = plotData.Average();
 		_errorBelow = errorBelow;
 		_errorAbove = errorAbove;
 		PlotOptions = plotOptions;
@@ -86,6 +87,12 @@ public class BoxPlot : IPlottable {
 		float errorCapAboveY = dims.GetPixelY(_errorAbove);
 		float errorCapBelowY = dims.GetPixelY(_errorBelow);
 
+		float averageStartX = dims.GetPixelX(position - PlotOptions.BarWidth / 2);
+		float averageEndX = dims.GetPixelX(position + PlotOptions.BarWidth / 2);
+		float averageStartY = dims.GetPixelY(Average);
+		float averageEndY = dims.GetPixelY(Average);
+
+
 		RenderBarFromRect(rect, gfx);
 
 		if (!(PlotOptions.ErrorLineWidth > 0) || !(_errorAbove > double.Epsilon) || !(_errorBelow > double.Epsilon)) {
@@ -98,11 +105,15 @@ public class BoxPlot : IPlottable {
 
 		gfx.DrawLine(errorPen, errorCapStartX, errorCapAboveY, errorCapEndX, errorCapAboveY);
 		gfx.DrawLine(errorPen, errorCapStartX, errorCapBelowY, errorCapEndX, errorCapBelowY);
+		
+		errorPen.DashStyle = DashStyle.Dash;
+		gfx.DrawLine(errorPen, averageStartX, averageStartY, averageEndX, averageEndY);
 	}
 
 	private void RenderBarFromRect(RectangleF rect, Graphics gfx) {
 		using var outlinePen = new Pen(PlotOptions.BorderColor, PlotOptions.BorderLineWidth);
-		using Brush fillBrush = GDI.Brush(PlotOptions.FillColor ?? Color.Green, PlotOptions.HatchColor, PlotOptions.HatchStyle);
+		using Brush fillBrush = GDI.Brush(PlotOptions.FillColor, PlotOptions.HatchColor,
+			PlotOptions.HatchStyle);
 		gfx.FillRectangle(fillBrush, rect.X, rect.Y, rect.Width, rect.Height);
 		if (PlotOptions.BorderLineWidth > 0) {
 			gfx.DrawRectangle(outlinePen, rect.X, rect.Y, rect.Width, rect.Height);
@@ -122,7 +133,7 @@ public class BoxPlot : IPlottable {
 		return new LegendItem[] {
 			new() {
 				label = PlotOptions.LegendLabel,
-				color = PlotOptions.FillColor ?? Color.Green,
+				color = PlotOptions.FillColor,
 				lineWidth = 10.0,
 				markerShape = MarkerShape.none,
 				hatchColor = PlotOptions.HatchColor,
