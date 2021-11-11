@@ -43,7 +43,7 @@ public class BenchmarkSuite {
 			RegisterBenchmarkClass(benchmark.Method.DeclaringType!);
 		}
 
-		Benchmarks.Add(new Benchmark<T>(benchmark.Method.Name, Iterations, benchmark, false, group, order));
+		Benchmarks.Add(new Benchmark<T>(benchmark.Method.Name, Iterations, benchmark, true, group, order));
 	}
 
 	private void RegisterBenchmarkClass(Type benchmarkClass) {
@@ -81,7 +81,7 @@ public class BenchmarkSuite {
 			bench.Run();
 			Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
 			Console.WriteLine(
-				$"\rFinished {bench.Name} in {bench.ElapsedTime}ms with {bench.GetResults().Count} iterations\n");
+				$"\rFinished {bench.Name} in {bench.ElapsedTime}s with {bench.GetResults().Count} iterations\n");
 		}
 
 		PlotGroups();
