@@ -98,7 +98,7 @@ public static class BenchmarkPlot {
 			hatchIndex++;
 		}
 
-		if (plotOptions.RotateText && names.Max(s => s.Length) > 10 && dataSets.Length > 6) {
+		if (plotOptions.RotateText && names.Max(s => s.Length) > 10 && dataSets.Length > 3) {
 			plt.XAxis.TickLabelStyle(rotation: 45);
 		}
 
