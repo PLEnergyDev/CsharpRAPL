@@ -3,12 +3,12 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net6.0</TargetFramework>
-        <RootNamespace>ExampleProject</RootNamespace>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Deterministic>true</Deterministic>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CsharpRAPL\CsharpRAPL.csproj"/>
+        <ProjectReference Include="..\CsharpRAPL\CsharpRAPL.csproj" />
     </ItemGroup>
 
 </Project>

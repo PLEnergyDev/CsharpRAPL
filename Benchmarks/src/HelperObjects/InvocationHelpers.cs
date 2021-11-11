@@ -1,4 +1,4 @@
-﻿namespace ExampleProject.HelperObjects;
+﻿namespace Benchmarks.HelperObjects;
 
 public class InvocationHelper {
 	
