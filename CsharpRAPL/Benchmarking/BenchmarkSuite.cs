@@ -81,7 +81,7 @@ public class BenchmarkSuite {
 			bench.Run();
 			Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
 			Console.WriteLine(
-				$"\rFinished {bench.Name} in {bench.ElapsedTime}s with {bench.GetResults().Count} iterations\n");
+				$"\rFinished {bench.Name} in {bench.ElapsedTime:F3}s with {bench.GetResults().Count} iterations\n");
 		}
 
 		PlotGroups();
