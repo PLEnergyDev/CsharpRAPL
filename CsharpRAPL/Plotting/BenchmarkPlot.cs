@@ -79,21 +79,21 @@ public static class BenchmarkPlot {
 			double min = plotData.Min();
 			double max = plotData.Max();
 
-			BoxPlot bar = plt.AddBoxPlot(index, plotData, min, max, plotOptions);
+			BoxPlot boxPlot = plt.AddBoxPlot(index, plotData, min, max, plotOptions);
 
-			bar.PlotOptions.LegendLabel =
-				$"{dataSet.Name}\nMax: {max:F4} Min: {min:F4}\nLowerQ: {plotData.LowerQuartile():F4} UpperQ: {plotData.UpperQuartile():F4}";
+			boxPlot.PlotOptions.LegendLabel =
+				$"{dataSet.Name}\nMax: {boxPlot.MaxValue:F4} Min: {boxPlot.MinValue:F4}\nLowerPQ: {boxPlot.LowerPValueQuantile:F4} UpperPQ: {boxPlot.UpperPValueQuantile:F4}\n Average: {boxPlot.Average:F4} Median: {boxPlot.Median:F4}";
 
 			if (hatchIndex > 9) {
 				hatchIndex = 0;
 			}
 
-			if (bar.PlotOptions.UseColorRange) {
-				bar.PlotOptions.FillColor = plt.GetSettings().GetNextColor();
+			if (boxPlot.PlotOptions.UseColorRange) {
+				boxPlot.PlotOptions.FillColor = plt.GetSettings().GetNextColor();
 			}
 
-			bar.PlotOptions.HatchStyle = (HatchStyle)hatchIndex;
-			bar.PlotOptions.HatchColor = Color.Gray;
+			boxPlot.PlotOptions.HatchStyle = (HatchStyle)hatchIndex;
+			boxPlot.PlotOptions.HatchColor = Color.Gray;
 
 			hatchIndex++;
 		}
