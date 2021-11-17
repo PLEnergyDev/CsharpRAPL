@@ -36,6 +36,8 @@ public class Benchmark<T> : IBenchmark {
 
 	private RAPL? _rapl;
 
+	private string _normalizedReturnValue;
+
 
 	public Benchmark(string name, int iterations, Func<T> benchmark, bool silenceBenchmarkOutput = true,
 		string? group = null, int order = 0) {
@@ -76,12 +78,12 @@ public class Benchmark<T> : IBenchmark {
 		if (!_rapl.IsValid()) {
 			return;
 		}
-
+		
 		BenchmarkResult result = _rapl.GetResults() with {
 			BenchmarkReturnValue = benchmarkOutput?.ToString() ?? string.Empty
 		};
 		BenchmarkResult normalizedResult = _rapl.GetNormalizedResults(GetLoopIterations()) with {
-			BenchmarkReturnValue = benchmarkOutput?.ToString() ?? string.Empty
+			BenchmarkReturnValue = _normalizedReturnValue
 		};
 		_rawResults.Add(result);
 		_normalizedResults.Add(normalizedResult);
@@ -103,6 +105,10 @@ public class Benchmark<T> : IBenchmark {
 		if (CsharpRAPLCLI.Options.UseIterationCalculation) {
 			Iterations = IterationCalculationAll();
 		}
+		
+		// Get normalized return value
+		SetLoopIterations(10);
+		_normalizedReturnValue = _benchmark()?.ToString() ?? string.Empty; 
 
 		for (var i = 0; i <= Iterations; i++) {
 			if (Iterations != 1) {
