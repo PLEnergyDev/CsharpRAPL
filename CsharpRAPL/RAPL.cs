@@ -4,13 +4,13 @@ using CsharpRAPL.Devices;
 namespace CsharpRAPL; 
 
 public sealed class RAPL {
-	private readonly DramApi _dramApi;
+	private readonly DRAMApi _dramApi;
 	private readonly TimerApi _timerApi;
 	private readonly PackageApi _packageApi;
 	private readonly TempApi _tempApi;
 
 	public RAPL() {
-		_dramApi = new DramApi();
+		_dramApi = new DRAMApi();
 		_timerApi = new TimerApi();
 		_packageApi = new PackageApi();
 		_tempApi = new TempApi();
@@ -36,7 +36,7 @@ public sealed class RAPL {
 
 	public BenchmarkResult GetResults() {
 		BenchmarkResult result = new() {
-			DramEnergy = _dramApi.Delta,
+			DRAMEnergy = _dramApi.Delta,
 			Temperature = _tempApi.Delta,
 			ElapsedTime = _timerApi.Delta,
 			PackageEnergy = _packageApi.Delta
@@ -46,7 +46,7 @@ public sealed class RAPL {
 
 	public BenchmarkResult GetNormalizedResults(int loopIterations, int normalizedIterations = 1000000) {
 		BenchmarkResult result = new() {
-			DramEnergy = _dramApi.Delta / ((double)loopIterations / normalizedIterations),
+			DRAMEnergy = _dramApi.Delta / ((double)loopIterations / normalizedIterations),
 			Temperature = _tempApi.Delta / 1000,
 			ElapsedTime = _timerApi.Delta / ((double)loopIterations / normalizedIterations),
 			PackageEnergy = _packageApi.Delta / ((double)loopIterations / normalizedIterations)

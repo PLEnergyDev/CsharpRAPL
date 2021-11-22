@@ -220,7 +220,7 @@ public class Benchmark<T> : IBenchmark {
 	/// <param name="confidence">The confidence (from 0 to 1) that we want</param>
 	/// <returns>The amount of samples needed for the given confidence for all measurements</returns>
 	private int IterationCalculationAll(double confidence = 0.95) {
-		int dramIteration = IterationCalculation(confidence, BenchmarkResultType.DramEnergy);
+		int dramIteration = IterationCalculation(confidence, BenchmarkResultType.DRAMEnergy);
 		int timeIteration = IterationCalculation(confidence, BenchmarkResultType.ElapsedTime);
 		int packageIteration = IterationCalculation(confidence);
 		return Math.Max(dramIteration, Math.Max(timeIteration, packageIteration));
@@ -249,7 +249,7 @@ public class Benchmark<T> : IBenchmark {
 		for (var i = 0; i < _rawResults.Count; i++) {
 			values[i] = resultType switch {
 				BenchmarkResultType.Temperature => _rawResults[i].Temperature,
-				BenchmarkResultType.DramEnergy => _rawResults[i].DramEnergy,
+				BenchmarkResultType.DRAMEnergy => _rawResults[i].DRAMEnergy,
 				BenchmarkResultType.ElapsedTime => _rawResults[i].ElapsedTime,
 				BenchmarkResultType.PackageEnergy => _rawResults[i].PackageEnergy,
 				_ => throw new ArgumentOutOfRangeException(nameof(resultType),

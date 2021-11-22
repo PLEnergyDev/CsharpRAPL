@@ -40,7 +40,6 @@ public abstract class DeviceApi {
 
 	public void Start() {
 		_startValue = Collect();
-		UpdateDelta();
 	}
 
 	public void End() {
