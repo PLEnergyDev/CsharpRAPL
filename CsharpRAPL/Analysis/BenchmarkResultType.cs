@@ -3,6 +3,6 @@
 public enum BenchmarkResultType {
 	ElapsedTime,
 	PackageEnergy,
-	DramEnergy,
+	DRAMEnergy,
 	Temperature
 }

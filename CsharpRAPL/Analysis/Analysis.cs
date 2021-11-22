@@ -74,7 +74,7 @@ public class Analysis {
 		// Test if first is significantly different from the second
 		var timeTTest = new TwoSampleTTest(firstDataSet.TimesValues, secondDataSet.TimesValues);
 		var pkgTTest = new TwoSampleTTest(firstDataSet.PackageValues, secondDataSet.PackageValues);
-		var dramTTest = new TwoSampleTTest(firstDataSet.DramValues, secondDataSet.DramValues);
+		var dramTTest = new TwoSampleTTest(firstDataSet.DRAMValues, secondDataSet.DRAMValues);
 
 		// Save the P-values
 		return new List<(string Message, double Value)> {
@@ -129,7 +129,7 @@ public class Analysis {
 	public void PlotAnalysis() {
 		PlotAnalysis(BenchmarkResultType.ElapsedTime);
 		PlotAnalysis(BenchmarkResultType.PackageEnergy);
-		PlotAnalysis(BenchmarkResultType.DramEnergy);
+		PlotAnalysis(BenchmarkResultType.DRAMEnergy);
 		PlotAnalysis(BenchmarkResultType.Temperature);
 	}
 

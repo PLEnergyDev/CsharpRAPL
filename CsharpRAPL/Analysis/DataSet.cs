@@ -53,7 +53,7 @@ public class DataSet {
 	public BenchmarkResult GetMin() {
 		return new BenchmarkResult {
 			Temperature = Data.Min(result => result.Temperature),
-			DramEnergy = Data.Min(result => result.DramEnergy),
+			DRAMEnergy = Data.Min(result => result.DRAMEnergy),
 			ElapsedTime = Data.Min(result => result.ElapsedTime),
 			PackageEnergy = Data.Min(result => result.PackageEnergy)
 		};
@@ -63,7 +63,7 @@ public class DataSet {
 		return resultType switch {
 			BenchmarkResultType.ElapsedTime => Data.MinBy(result => result.ElapsedTime),
 			BenchmarkResultType.PackageEnergy => Data.MinBy(result => result.PackageEnergy),
-			BenchmarkResultType.DramEnergy => Data.MinBy(result => result.DramEnergy),
+			BenchmarkResultType.DRAMEnergy => Data.MinBy(result => result.DRAMEnergy),
 			BenchmarkResultType.Temperature => Data.MinBy(result => result.Temperature),
 			_ => throw new ArgumentOutOfRangeException(nameof(resultType), resultType, null)
 		} ?? throw new InvalidOperationException("The data set had no elements.");
@@ -72,7 +72,7 @@ public class DataSet {
 	public BenchmarkResult GetMax() {
 		return new BenchmarkResult {
 			Temperature = Data.Max(result => result.Temperature),
-			DramEnergy = Data.Max(result => result.DramEnergy),
+			DRAMEnergy = Data.Max(result => result.DRAMEnergy),
 			ElapsedTime = Data.Max(result => result.ElapsedTime),
 			PackageEnergy = Data.Max(result => result.PackageEnergy)
 		};
@@ -82,7 +82,7 @@ public class DataSet {
 		return resultType switch {
 			BenchmarkResultType.ElapsedTime => Data.MaxBy(result => result.ElapsedTime),
 			BenchmarkResultType.PackageEnergy => Data.MaxBy(result => result.PackageEnergy),
-			BenchmarkResultType.DramEnergy => Data.MaxBy(result => result.DramEnergy),
+			BenchmarkResultType.DRAMEnergy => Data.MaxBy(result => result.DRAMEnergy),
 			BenchmarkResultType.Temperature => Data.MaxBy(result => result.Temperature),
 			_ => throw new ArgumentOutOfRangeException(nameof(resultType), resultType, null)
 		} ?? throw new InvalidOperationException("The data set had no elements.");
@@ -91,7 +91,7 @@ public class DataSet {
 	public BenchmarkResult GetAverage() {
 		return new BenchmarkResult {
 			Temperature = Data.Average(result => result.Temperature),
-			DramEnergy = Data.Average(result => result.DramEnergy),
+			DRAMEnergy = Data.Average(result => result.DRAMEnergy),
 			ElapsedTime = Data.Average(result => result.ElapsedTime),
 			PackageEnergy = Data.Average(result => result.PackageEnergy)
 		};

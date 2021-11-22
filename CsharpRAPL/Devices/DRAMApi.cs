@@ -4,14 +4,14 @@ using CsharpRAPL.Data;
 
 namespace CsharpRAPL.Devices; 
 
-public sealed class DramApi : DeviceApi {
-	public DramApi() : base(CollectionApproach.Difference) { }
+public sealed class DRAMApi : DeviceApi {
+	public DRAMApi() : base(CollectionApproach.Difference) { }
 
 	protected override string OpenRaplFile() {
-		return GetDramFile(GetSocketDirectoryName());
+		return GetDRAMFile(GetSocketDirectoryName());
 	}
 
-	private static string GetDramFile(string directoryName) {
+	private static string GetDRAMFile(string directoryName) {
 		var raplDeviceId = 0;
 		while (Directory.Exists($"{directoryName}/intel-rapl:0:{raplDeviceId}")) {
 			var dirName = $"{directoryName}/intel-rapl:0:{raplDeviceId}";

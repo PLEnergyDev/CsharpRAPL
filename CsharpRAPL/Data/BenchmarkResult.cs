@@ -19,7 +19,7 @@ public record BenchmarkResult {
 	/// DRam energy used in µJ
 	/// </summary>
 	[Index(2)]
-	public double DramEnergy { get; init; }
+	public double DRAMEnergy { get; init; }
 
 	/// <summary>
 	/// Temperature in Celsius (C°)
