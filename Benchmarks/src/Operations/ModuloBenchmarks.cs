@@ -15,7 +15,7 @@ public class ModuloBenchmarks {
 		int b = 2;
 		int res = 0;
 		for (int i = 0; i < LoopIterations; i++) {
-			res = a % b;
+			res = a % (b + i);
 		}
 
 		return res;
@@ -28,7 +28,7 @@ public class ModuloBenchmarks {
 		const int b = 2;
 		int res = 0;
 		for (int i = 0; i < LoopIterations; i++) {
-			res = a % b;
+			res = a % (b + i);
 		}
 
 		return res;
@@ -39,7 +39,7 @@ public class ModuloBenchmarks {
 		int a = 10;
 		int res = 0;
 		for (int i = 0; i < LoopIterations; i++) {
-			res %= a;
+			res %= (a + i);
 		}
 
 		return res;
@@ -50,7 +50,7 @@ public class ModuloBenchmarks {
 		int a = 10;
 		int res = 0;
 		for (int i = 0; i < LoopIterations; i++) {
-			res = res % a;
+			res = res % (a + i);
 		}
 
 		return res;

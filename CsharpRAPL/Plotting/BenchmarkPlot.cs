@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using Accord.Statistics;
 using CsharpRAPL.Analysis;
 using CsharpRAPL.Benchmarking;
 using CsharpRAPL.CommandLine;

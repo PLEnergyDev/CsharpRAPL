@@ -14,7 +14,7 @@ public class VariablesBenchmarks {
 	public static int LocalVariable() {
 		int localA = 0, localB = 1;
 		for (int i = 0; i < LoopIterations; i++) {
-			localA += localB;
+			localA += localB + i;
 		}
 
 		return localA;
@@ -23,7 +23,7 @@ public class VariablesBenchmarks {
 	[Benchmark("Variables", "Tests static property")]
 	public static int StaticProperty() {
 		for (int i = 0; i < LoopIterations; i++) {
-			VariableObject.StaticPropertyA += VariableObject.StaticPropertyB;
+			VariableObject.StaticPropertyA += VariableObject.StaticPropertyB + i;
 		}
 
 		return VariableObject.StaticPropertyA;
@@ -34,16 +34,16 @@ public class VariablesBenchmarks {
 		VariableObject obj = new VariableObject();
 
 		for (int i = 0; i < LoopIterations; i++) {
-			obj.InstancePropertyA += obj.InstancePropertyB;
+			obj.InstancePropertyA += obj.InstancePropertyB + i;
 		}
 
 		return obj.InstancePropertyA;
 	}
-	
+
 	[Benchmark("Variables", "Tests static variables")]
 	public static int StaticVariable() {
 		for (int i = 0; i < LoopIterations; i++) {
-			VariableObject.StaticVariableA += VariableObject.StaticVariableB;
+			VariableObject.StaticVariableA += VariableObject.StaticVariableB + i;
 		}
 
 		return VariableObject.StaticVariableA;
@@ -54,9 +54,23 @@ public class VariablesBenchmarks {
 		VariableObject obj = new VariableObject();
 
 		for (int i = 0; i < LoopIterations; i++) {
-			obj.InstanceVariableA += obj.InstanceVariableB;
+			obj.InstanceVariableA += obj.InstanceVariableB + i;
 		}
 
 		return obj.InstanceVariableA;
+	}
+
+
+
+	[Benchmark("Variables", "Tests using a parameter as variable")]
+	public static int Parameter() {
+		VariableObject obj = new VariableObject();
+		return obj.TestParameter(0, LoopIterations);
+	}
+	
+	[Benchmark("Variables", "Tests using a parameter as variable in a static method")]
+	public static int ParameterStatic() {
+		VariableObject obj = new VariableObject();
+		return VariableObject.StaticTestParameter(0, LoopIterations);
 	}
 }
