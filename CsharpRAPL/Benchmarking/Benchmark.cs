@@ -81,8 +81,9 @@ public class Benchmark<T> : IBenchmark {
 		BenchmarkResult result = _rapl.GetResults() with {
 			BenchmarkReturnValue = benchmarkOutput?.ToString() ?? string.Empty
 		};
+		
 		BenchmarkResult normalizedResult = _rapl.GetNormalizedResults(GetLoopIterations()) with {
-			BenchmarkReturnValue = _normalizedReturnValue
+			BenchmarkReturnValue = _normalizedReturnValue ?? string.Empty
 		};
 		_rawResults.Add(result);
 		_normalizedResults.Add(normalizedResult);
