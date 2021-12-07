@@ -35,8 +35,7 @@ public class Benchmark<T> : IBenchmark {
 	private readonly FieldInfo? _loopIterationsFieldInfo;
 
 	private RAPL? _rapl;
-
-	private string _normalizedReturnValue;
+	private string? _normalizedReturnValue;
 
 
 	public Benchmark(string name, int iterations, Func<T> benchmark, bool silenceBenchmarkOutput = true,
