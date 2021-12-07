@@ -12,10 +12,9 @@ public class AdditionBenchmarks {
 	[Benchmark("Addition", "Tests simple addition")]
 	public static int Add() {
 		int a = 10;
-		int b = 2;
 		int res = 0;
 		for (int i = 0; i < LoopIterations; i++) {
-			res = a + b;
+			res = a + i;
 		}
 
 		return res;
@@ -24,21 +23,20 @@ public class AdditionBenchmarks {
 	[Benchmark("Addition", "Tests simple addition where the parts are marked as constant")]
 	public static int Const() {
 		const int a = 10;
-		const int b = 2;
 		int res = 0;
 		for (int i = 0; i < LoopIterations; i++) {
-			res = a + b;
+			res = a + i;
 		}
 
 		return res;
 	}
 
 	[Benchmark("Addition", "Tests addition using compound assignment")]
-	public static int AddAssign() {
-		int a = 10;
-		int res = 0;
+	public static long AddAssign() {
+		int a = 1;
+		int res = 9;
 		for (int i = 0; i < LoopIterations; i++) {
-			res += a;
+			res += a + i;
 		}
 
 		return res;
@@ -46,10 +44,10 @@ public class AdditionBenchmarks {
 
 	[Benchmark("Addition", "Tests addition without compound assignment")]
 	public static int Assign() {
-		int a = 10;
-		int res = 0;
+		int a = 1;
+		int res = 9;
 		for (int i = 0; i < LoopIterations; i++) {
-			res = res + a;
+			res = res + a + i;
 		}
 
 		return res;

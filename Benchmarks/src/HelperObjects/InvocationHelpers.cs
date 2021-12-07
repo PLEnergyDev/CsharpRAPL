@@ -1,14 +1,21 @@
 ﻿namespace Benchmarks.HelperObjects;
 
 public class InvocationHelper {
+	public static int StaticField = 4;
+	private int Field = 4;
 	
-	//TODO: Maybe not use constant values
 	public int Calculate() {
-		return 1 + 1;
+		Field++;
+		return Field + 2;
 	}
 	
-	//TODO: Maybe not use constant values
+	public int CalculateUsingStaticField() {
+		StaticField++;
+		return StaticField + 2;
+	}
+	
 	public static int CalculateStatic() {
-		return 1 + 1;
+		StaticField++;
+		return StaticField + 2;
 	}
 }

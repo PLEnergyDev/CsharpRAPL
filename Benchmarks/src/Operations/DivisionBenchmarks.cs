@@ -15,7 +15,7 @@ public class DivisionBenchmarks {
 		int b = 2;
 		int res = 0;
 		for (int i = 0; i < LoopIterations; i++) {
-			res = a / b;
+			res = a / (b + i);
 		}
 
 		return res;
@@ -28,7 +28,7 @@ public class DivisionBenchmarks {
 		const int b = 2;
 		int res = 0;
 		for (int i = 0; i < LoopIterations; i++) {
-			res = a / b;
+			res = a / (b + i);
 		}
 
 		return res;
@@ -40,7 +40,7 @@ public class DivisionBenchmarks {
 		int a = 10;
 		int res = 1;
 		for (int i = 0; i < LoopIterations; i++) {
-			res /= a;
+			res /= (a + i);
 		}
 
 		return res;
@@ -51,99 +51,7 @@ public class DivisionBenchmarks {
 		int a = 10;
 		int res = 1;
 		for (int i = 0; i < LoopIterations; i++) {
-			res = res / a;
-		}
-
-		return res;
-	}
-
-	[Benchmark("Division", "Tests Simple Division with forced double")]
-	public static double ForcedDouble() {
-		double a = 10;
-		double b = 3;
-		double res = 0;
-		for (int i = 0; i < LoopIterations; i++) {
-			res = a / b;
-		}
-
-		return res;
-	}
-
-	[Benchmark("Division", "Tests Simple Division with consts and forced double")]
-	public static double ForcedDoubleConst() {
-		const double a = 10;
-		const double b = 3;
-		double res = 0;
-		for (int i = 0; i < LoopIterations; i++) {
-			res = a / b;
-		}
-
-		return res;
-	}
-
-	[Benchmark("Division", "Tests division using compound assignment and with forced double")]
-	public static double ForcedDoubleComp() {
-		double a = 10;
-		double res = 1;
-		for (int i = 0; i < LoopIterations; i++) {
-			res /= a;
-		}
-
-		return res;
-	}
-
-	[Benchmark("Division", "Tests division without compound assignment and with forced double ForcedDoubleAssign")]
-	public static double FDA() {
-		double a = 10;
-		double res = 1;
-		for (int i = 0; i < LoopIterations; i++) {
-			res = res / a;
-		}
-
-		return res;
-	}
-
-	[Benchmark("Division",
-		"Tests Simple Division with forced double and non-constant denominator ForcedDoubleNonConstDenom")]
-	public static double FDNCD() {
-		double a = 10;
-		double res = 0;
-		for (int i = 0; i < LoopIterations; i++) {
-			res = a / (i + 1);
-		}
-
-		return res;
-	}
-
-	[Benchmark("Division",
-		"Tests Simple Division with consts and forced double and non-constant denominator ForcedDoubleConstNonConstDenom")]
-	public static double FDCNCD() {
-		const double a = 10;
-		double res = 0;
-		for (int i = 0; i < LoopIterations; i++) {
-			res = a / (i + 1);
-		}
-
-		return res;
-	}
-
-	[Benchmark("Division",
-		"Tests division using compound assignment and with forced double and non-constant denominator ForcedDoubleCompNonConstDenom")]
-	public static double FDCmpNCD() {
-		double res = 1;
-		for (int i = 0; i < LoopIterations; i++) {
-			res /= (i + 1);
-		}
-
-		return res;
-	}
-
-	[Benchmark("Division",
-		"Tests division without compound assignment and with forced double and non-constant denominator ForcedDoubleAssignNonConstDenom")]
-	public static double FDANCD() {
-		double res = 1;
-		for (int i = 0; i < LoopIterations; i++) {
-			res = res / (i + 1);
+			res = res / (a + i);
 		}
 
 		return res;

@@ -10,10 +10,9 @@ public class SubtractionBenchmarks {
 	[Benchmark("Subtraction", "Tests simple subtraction")]
 	public static int Subtraction() {
 		int a = 10;
-		int b = 2;
 		int res = 0;
 		for (int i = 0; i < LoopIterations; i++) {
-			res = a - b;
+			res = a - i - 3;
 		}
 
 		return res;
@@ -23,10 +22,9 @@ public class SubtractionBenchmarks {
 	[Benchmark("Subtraction", "Tests simple subtraction where the parts are marked as constant")]
 	public static int Const() {
 		const int a = 10;
-		const int b = 2;
 		int res = 0;
 		for (int i = 0; i < LoopIterations; i++) {
-			res = a - b;
+			res = a - i - 3;
 		}
 
 		return res;
@@ -35,9 +33,9 @@ public class SubtractionBenchmarks {
 	[Benchmark("Subtraction", "Tests subtraction using compound assignment")]
 	public static int SubtractionAssign() {
 		int a = 10;
-		int res = 0;
+		int res = 10;
 		for (int i = 0; i < LoopIterations; i++) {
-			res -= a;
+			res -= (a - i - 3);
 		}
 
 		return res;
@@ -47,9 +45,9 @@ public class SubtractionBenchmarks {
 	[Benchmark("Subtraction", "Tests subtraction without compound assignment")]
 	public static int Assign() {
 		int a = 10;
-		int res = 0;
+		int res = 10;
 		for (int i = 0; i < LoopIterations; i++) {
-			res = res - a;
+			res = res - (a - i - 3);
 		}
 
 		return res;

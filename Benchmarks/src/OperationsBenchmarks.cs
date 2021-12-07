@@ -15,6 +15,7 @@ public static class OperationsBenchmarks {
 		int res = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			res++;
+			res++;
 		}
 
 		return res;
@@ -24,6 +25,7 @@ public static class OperationsBenchmarks {
 	public static int PostDecrement() {
 		int res = 0;
 		for (int i = 0; i < LoopIterations; i++) {
+			res--;
 			res--;
 		}
 
@@ -35,6 +37,7 @@ public static class OperationsBenchmarks {
 		int res = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			++res;
+			++res;
 		}
 
 		return res;
@@ -44,6 +47,7 @@ public static class OperationsBenchmarks {
 	public static int PreDecrement() {
 		int res = 0;
 		for (int i = 0; i < LoopIterations; i++) {
+			--res;
 			--res;
 		}
 

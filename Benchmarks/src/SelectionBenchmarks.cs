@@ -9,7 +9,7 @@ public class SelectionBenchmarks {
 	public static int Iterations;
 	public static int LoopIterations;
 
-	[Benchmark("Selection", "Tests if statement")]
+	[Benchmark("SelectionIf", "Tests if statement")]
 	public static int If() {
 		int halfLoopIteration = LoopIterations / 2;
 		int count = 0;
@@ -28,14 +28,12 @@ public class SelectionBenchmarks {
 				count--;
 				continue;
 			}
-
-			halfLoopIteration++;
 		}
 
 		return count;
 	}
 
-	[Benchmark("Selection", "Tests if statement compared to switch")]
+	[Benchmark("SelectionSwitch", "Tests if statement compared to switch")]
 	public static int IfComparableWithSwitch() {
 		int count = 1;
 		for (int i = 0; i < LoopIterations; i++) {
@@ -90,7 +88,7 @@ public class SelectionBenchmarks {
 		return count;
 	}
 
-	[Benchmark("Selection", "Tests if and else statement")]
+	[Benchmark("SelectionIf", "Tests if and else statement")]
 	public static int IfElse() {
 		int count = 0;
 		int halfLoopIteration = LoopIterations / 2;
@@ -113,7 +111,7 @@ public class SelectionBenchmarks {
 		return count;
 	}
 
-	[Benchmark("Selection", "Tests if and if else statement")]
+	[Benchmark("SelectionIf", "Tests if and if else statement")]
 	public static int IfElseIf() //TODO IL code is equivalent with IfElse
 	{
 		int count = 0;
@@ -136,7 +134,7 @@ public class SelectionBenchmarks {
 		return count;
 	}
 
-	[Benchmark("Selection", "Tests switch statement")]
+	[Benchmark("SelectionSwitch", "Tests switch statement")]
 	public static int Switch() {
 		int count = 1;
 		for (int i = 0; i < LoopIterations; i++) {
@@ -177,7 +175,54 @@ public class SelectionBenchmarks {
 		return count;
 	}
 
-	[Benchmark("Selection", "Tests if else comparable with conditional operator")]
+	[Benchmark("SelectionConst", "Switch comparable with If with const number")]
+	public static int SwitchConstNumber() {
+		int count = 1;
+		const int halfLoopIteration = 25000;
+		for (int i = 0; i < LoopIterations; i++) {
+			switch (i) {
+				case < halfLoopIteration:
+					count++;
+					break;
+				case halfLoopIteration:
+					count--;
+					break;
+				case > halfLoopIteration:
+					count++;
+					break;
+			}
+		}
+
+		return count;
+	}
+
+	[Benchmark("SelectionConst", "Tests if statement with constant number")]
+	public static int IfConstNumber() {
+		const int halfLoopIteration = 25000;
+		int count = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			if (i < halfLoopIteration) {
+				count++;
+				continue;
+			}
+
+			if (i == halfLoopIteration) {
+				count += 10;
+				continue;
+			}
+
+			if (i > halfLoopIteration) {
+				count--;
+				continue;
+			}
+
+			count++; //Will never get here
+		}
+
+		return count;
+	}
+
+	[Benchmark("SelectionConditional", "Tests if else comparable with conditional operator")]
 	public static int IfElseComparableWithConditional() {
 		int count = 0;
 		for (int i = 0; i < LoopIterations; i++) {
@@ -193,7 +238,7 @@ public class SelectionBenchmarks {
 	}
 
 
-	[Benchmark("Selection", "Tests if conditional operator")]
+	[Benchmark("SelectionConditional", "Tests if conditional operator")]
 	public static int ConditionalOperator() {
 		int count = 0;
 		for (int i = 0; i < LoopIterations; i++) {

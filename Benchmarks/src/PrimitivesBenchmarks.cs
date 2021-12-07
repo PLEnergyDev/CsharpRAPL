@@ -14,181 +14,181 @@ public class PrimitivesBenchmarks {
 		int primitive = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
-			primitive *= 10;
+			primitive *= 3;
 			primitive /= 2;
 			primitive--;
-			primitive = 0;
+			primitive %= 20;
 		}
 
 		return primitive;
 	}
 
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive uint")]
-	public static int Uint() {
+	public static uint Uint() {
 		uint primitive = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
-			primitive *= 10;
+			primitive *= 3;
 			primitive /= 2;
 			primitive--;
-			primitive = 0;
+			primitive %= 20;
 		}
 
-		return (int)primitive;
+		return primitive;
 	}
 
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive nint")]
-	public static int Nint() {
+	public static nint Nint() {
 		nint primitive = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
-			primitive *= 10;
+			primitive *= 3;
 			primitive /= 2;
 			primitive--;
-			primitive = 0;
+			primitive %= 20;
 		}
 
-		return (int)primitive;
+		return primitive;
 	}
 
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive nuint")]
-	public static int Nuint() {
+	public static nuint Nuint() {
 		nuint primitive = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
-			primitive *= 10;
+			primitive *= 3;
 			primitive /= 2;
 			primitive--;
-			primitive = 0;
+			primitive %= 20;
 		}
 
-		return (int)primitive;
+		return primitive;
 	}
 
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive long")]
-	public static int Long() {
+	public static long Long() {
 		long primitive = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
-			primitive *= 10;
+			primitive *= 3;
 			primitive /= 2;
 			primitive--;
-			primitive = 0;
+			primitive %= 20;
 		}
 
-		return (int)primitive;
+		return primitive;
 	}
 
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive ulong")]
-	public static int Ulong() {
+	public static ulong Ulong() {
 		ulong primitive = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
-			primitive *= 10;
+			primitive *= 3;
 			primitive /= 2;
 			primitive--;
-			primitive = 0;
+			primitive %= 20;
 		}
 
-		return (int)primitive;
+		return primitive;
 	}
 
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive short")]
-	public static int Short() {
+	public static short Short() {
 		short primitive = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
-			primitive *= 10;
+			primitive *= 3;
 			primitive /= 2;
 			primitive--;
-			primitive = 0;
+			primitive %= 20;
 		}
 
 		return primitive;
 	}
 
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive ushort")]
-	public static int Ushort() {
+	public static ushort Ushort() {
 		ushort primitive = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
-			primitive *= 10;
+			primitive *= 3;
 			primitive /= 2;
 			primitive--;
-			primitive = 0;
+			primitive %= 20;
 		}
 
 		return primitive;
 	}
 
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive byte")]
-	public static int Byte() {
+	public static byte Byte() {
 		byte primitive = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
-			primitive *= 10;
+			primitive *= 3;
 			primitive /= 2;
 			primitive--;
-			primitive = 0;
+			primitive %= 20;
 		}
 
 		return primitive;
 	}
 
 	[Benchmark("PrimitiveInteger", "Tests operation on primitive sbyte")]
-	public static int Sbyte() {
+	public static sbyte Sbyte() {
 		sbyte primitive = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
-			primitive *= 10;
+			primitive *= 3;
 			primitive /= 2;
 			primitive--;
-			primitive = 0;
+			primitive %= 20;
 		}
 
 		return primitive;
 	}
 
 	[Benchmark("PrimitiveDecimal", "Tests operation on primitive float")]
-	public static int Float() {
+	public static float Float() {
 		float primitive = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
-			primitive *= 10;
+			primitive *= 3;
 			primitive /= 2;
 			primitive--;
-			primitive = 0;
+			primitive %= 20;
 		}
 
-		return (int)primitive;
+		return primitive;
 	}
 
 	[Benchmark("PrimitiveDecimal", "Tests operation on primitive double")]
-	public static int Double() {
+	public static double Double() {
 		double primitive = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
-			primitive *= 10;
+			primitive *= 3;
 			primitive /= 2;
 			primitive--;
-			primitive = 0;
+			primitive %= 20;
 		}
 
-		return (int)primitive;
+		return primitive;
 	}
 
 	[Benchmark("PrimitiveDecimal", "Tests operation on primitive decimal")]
-	public static int Decimal() {
+	public static decimal Decimal() {
 		decimal primitive = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			primitive++;
-			primitive *= 10;
+			primitive *= 3;
 			primitive /= 2;
 			primitive--;
-			primitive = 0;
+			primitive %= 20;
 		}
 
-		return (int)primitive;
+		return primitive;
 	}
 
 	[Benchmark("PrimitiveBool", "Tests setting bool values")]

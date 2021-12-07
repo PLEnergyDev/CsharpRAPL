@@ -55,7 +55,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 			//So if it is we use Activator to create a new instance which we use for calling the method.
 			Delegate benchmarkDelegate = benchmarkMethod.IsStatic
 				? benchmarkMethod.CreateDelegate(funcType)
-				: benchmarkMethod.CreateDelegate(funcType, Activator.CreateInstance(benchmarkMethod.DeclaringType));
+				: benchmarkMethod.CreateDelegate(funcType, Activator.CreateInstance(benchmarkMethod.DeclaringType!));
 
 
 			//Then add the benchmark using the correct generic add benchmark method.
