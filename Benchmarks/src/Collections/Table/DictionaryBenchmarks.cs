@@ -77,7 +77,7 @@ public class DictionaryBenchmarks {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			Dictionary<int, int> dictionary = new Dictionary<int, int>();
-			for (int index = 0; index < dictionary.Count; index++) {
+			for (int index = 0; index < Data.Count; index++) {
 				dictionary.Add(index, index * 2);
 			}
 

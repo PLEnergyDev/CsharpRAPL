@@ -84,8 +84,8 @@ public class ArrayListBenchmarks {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			ArrayList array = new ArrayList();
-			for (int index = 0; index < array.Count; index++) {
-				array[index] = index * 2;
+			for (int index = 0; index < Data.Count; index++) {
+				array.Add(index * 2);
 			}
 
 			result += array.Count;

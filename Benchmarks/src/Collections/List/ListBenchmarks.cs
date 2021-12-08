@@ -85,7 +85,7 @@ public class ListBenchmarks {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			List<int> list = new List<int>();
-			for (int index = 0; index < list.Count; index++) {
+			for (int index = 0; index < Data.Count; index++) {
 				list.Add(index * 2);
 			}
 

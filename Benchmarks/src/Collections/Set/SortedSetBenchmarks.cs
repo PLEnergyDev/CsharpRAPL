@@ -24,7 +24,7 @@ public class SortedSetBenchmarks {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			SortedSet<int> hashSet = new SortedSet<int>();
-			for (int index = 0; index < hashSet.Count; index++) {
+			for (int index = 0; index < Data.Count; index++) {
 				hashSet.Add(index * 2);
 			}
 

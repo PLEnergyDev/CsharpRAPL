@@ -77,7 +77,7 @@ public class SortedDictionaryBenchmarks {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			SortedDictionary<int, int> sortedDictionary = new SortedDictionary<int, int>();
-			for (int index = 0; index < sortedDictionary.Count; index++) {
+			for (int index = 0; index < Data.Count; index++) {
 				sortedDictionary.Add(index, index * 2);
 			}
 

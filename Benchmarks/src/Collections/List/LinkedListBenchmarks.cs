@@ -102,7 +102,7 @@ public class LinkedListBenchmarks {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			LinkedList<int> linkedList = new LinkedList<int>();
-			for (int index = 0; index < linkedList.Count; index++) {
+			for (int index = 0; index < Data.Count; index++) {
 				linkedList.AddLast(index * 2);
 			}
 

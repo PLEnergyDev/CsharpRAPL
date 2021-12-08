@@ -78,7 +78,7 @@ public class HashtableBenchmarks {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			Hashtable hashtable = new Hashtable();
-			for (int index = 0; index < hashtable.Count; index++) {
+			for (int index = 0; index < Data.Count; index++) {
 				hashtable.Add(index, index * 2);
 			}
 

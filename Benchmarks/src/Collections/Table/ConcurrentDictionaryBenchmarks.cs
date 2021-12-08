@@ -77,7 +77,7 @@ public class ConcurrentDictionaryBenchmarks {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			ConcurrentDictionary<int, int> concurrentDictionary = new ConcurrentDictionary<int, int>();
-			for (int index = 0; index < concurrentDictionary.Count; index++) {
+			for (int index = 0; index < Data.Count; index++) {
 				concurrentDictionary.TryAdd(index, index * 2);
 			}
 
