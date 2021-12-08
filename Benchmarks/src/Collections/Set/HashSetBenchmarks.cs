@@ -23,7 +23,7 @@ public class HashSetBenchmarks {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			HashSet<int> array = new HashSet<int>();
-			for (int index = 0; index < array.Count; index++) {
+			for (int index = 0; index < Data.Count; index++) {
 				array.Add(index * 2);
 			}
 

@@ -78,7 +78,7 @@ public class ImmutableSortedDictionaryBenchmarks {
 		for (int i = 0; i < LoopIterations; i++) {
 			ImmutableSortedDictionary<int, int>
 				immutableSortedDictionary = ImmutableSortedDictionary.Create<int, int>();
-			for (int index = 0; index < immutableSortedDictionary.Count; index++) {
+			for (int index = 0; index < Data.Count; index++) {
 				immutableSortedDictionary = immutableSortedDictionary.Add(index, index * 2);
 			}
 

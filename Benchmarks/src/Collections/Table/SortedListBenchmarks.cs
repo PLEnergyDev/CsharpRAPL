@@ -78,7 +78,7 @@ public class SortedListBenchmarks {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			SortedList<int, int> sortedList = new SortedList<int, int>();
-			for (int index = 0; index < sortedList.Count; index++) {
+			for (int index = 0; index < Data.Count; index++) {
 				sortedList.Add(index, index * 2);
 			}
 

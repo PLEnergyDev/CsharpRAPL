@@ -82,7 +82,7 @@ public class ImmutableArrayBenchmarks {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			ImmutableArray<int> array = ImmutableArray<int>.Empty;
-			for (int index = 0; index < array.Length; index++) {
+			for (int index = 0; index < Data.Length; index++) {
 				array = array.Add(index * 2);
 			}
 

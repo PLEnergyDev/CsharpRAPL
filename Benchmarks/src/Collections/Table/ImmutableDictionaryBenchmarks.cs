@@ -76,7 +76,7 @@ public class ImmutableDictionaryBenchmarks {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			ImmutableDictionary<int, int> immutableDictionary = ImmutableDictionary.Create<int, int>();
-			for (int index = 0; index < immutableDictionary.Count; index++) {
+			for (int index = 0; index < Data.Count; index++) {
 				immutableDictionary = immutableDictionary.Add(index, index * 2);
 			}
 

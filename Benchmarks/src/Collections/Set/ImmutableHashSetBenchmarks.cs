@@ -22,7 +22,7 @@ public class ImmutableHashSetBenchmarks {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			ImmutableHashSet<int> hashSet = ImmutableHashSet<int>.Empty;
-			for (int index = 0; index < hashSet.Count; index++) {
+			for (int index = 0; index < Data.Count; index++) {
 				hashSet = hashSet.Add(index * 2);
 			}
 

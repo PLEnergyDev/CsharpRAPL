@@ -23,7 +23,7 @@ public class ImmutableSortedSetBenchmarks {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			ImmutableSortedSet<int> sortedSet = ImmutableSortedSet<int>.Empty;
-			for (int index = 0; index < sortedSet.Count; index++) {
+			for (int index = 0; index < Data.Count; index++) {
 				sortedSet = sortedSet.Add(index * 2);
 			}
 
