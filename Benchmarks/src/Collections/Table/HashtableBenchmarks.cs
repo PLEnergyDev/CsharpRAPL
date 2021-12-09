@@ -95,7 +95,7 @@ public class HashtableBenchmarks {
 		for (int i = 0; i < LoopIterations; i++) {
 			Hashtable target = new Hashtable();
 
-			foreach (KeyValuePair<int, int> pair in Data) {
+			foreach (DictionaryEntry pair in Data) {
 				target.Add(pair.Key, pair.Value);
 			}
 
