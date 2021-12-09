@@ -38,7 +38,7 @@ public class HashSetBenchmarks {
 		int sum = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
-				Data.TryGetValue(i, out int value);
+				Data.TryGetValue(j, out int value);
 				sum += value;
 			}
 		}
