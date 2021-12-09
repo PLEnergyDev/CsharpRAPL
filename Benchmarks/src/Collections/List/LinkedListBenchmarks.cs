@@ -119,7 +119,7 @@ public class LinkedListBenchmarks {
 			LinkedList<int> target = new();
 			LinkedListNode<int> data = Data.First;
 			for (int index = 0; index < Data.Count; index++) {
-				target.AddLast(data);
+				target.AddLast(data.Value);
 				data = data.Next;
 			}
 

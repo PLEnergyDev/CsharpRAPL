@@ -79,8 +79,10 @@ public class ArrayBenchmarks {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			int[] target = new int[1000];
+			int index = 0;
 			foreach (int element in Data) {
-				target[target.Length] = element;
+				target[index] = element;
+				index++;
 			}
 
 			result += target.Length;
