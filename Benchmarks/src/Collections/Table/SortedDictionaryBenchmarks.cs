@@ -87,14 +87,48 @@ public class SortedDictionaryBenchmarks {
 		return result;
 	}
 
-	[Benchmark("TableCopy", "Tests copying an SortedDictionary using a loop")]
-	public static int SortedDictionaryCopyManual() {
+	[Benchmark("TableCopy", "Tests copying a SortedDictionary using a foreach loop looping through k/v pairs")]
+	public static int SortedDictionaryCopyManualForeach() {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			SortedDictionary<int, int> target = new SortedDictionary<int, int>();
 
-			for (int j = 0; j < Data.Count; j++) {
-				target.Add(j, Data[j]);
+			foreach (KeyValuePair<int, int> pair in Data) {
+				target.Add(pair.Key, pair.Value);
+			}
+
+			result += target.Count;
+		}
+
+
+		return result;
+	}
+
+	[Benchmark("TableCopy", "Tests copying a SortedDictionary using a foreach loop and looping through keys")]
+	public static int SortedDictionaryCopyManualForeachIndex() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			SortedDictionary<int, int> target = new SortedDictionary<int, int>();
+
+			foreach (int key in Data.Keys) {
+				target.Add(key, Data[key]);
+			}
+
+			result += target.Count;
+		}
+
+
+		return result;
+	}
+
+	[Benchmark("TableCopy", "Tests copying a SortedDictionary using a foreach loop using deconstruction")]
+	public static int SortedDictionaryCopyManualForeachDeconstruct() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			SortedDictionary<int, int> target = new SortedDictionary<int, int>();
+
+			foreach ((int key, int value) in Data) {
+				target.Add(key, value);
 			}
 
 			result += target.Count;

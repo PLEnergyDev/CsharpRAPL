@@ -75,13 +75,30 @@ public class ImmutableHashSetBenchmarks {
 		return temp.Count;
 	}
 
-	[Benchmark("SetCopy", "Tests copying an HashSet using a loop")]
-	public static int ImmutableHashSetCopyManual() {
+	[Benchmark("SetCopy", "Tests copying an ImmutableHashSet using a foreach loop")]
+	public static int ImmutableHashSetCopyManualForeach() {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			ImmutableHashSet<int> target = ImmutableHashSet<int>.Empty;
-			for (int j = Data.Count - 1; j >= 0; j--) {
-				target = target.Add(j);
+			foreach (int element in Data) {
+				target = target.Add(element);
+			}
+
+			result += target.Count;
+		}
+
+
+		return result;
+	}
+
+	[Benchmark("SetCopy", "Tests copying an ImmutableHashSet using a for loop")]
+	public static int ImmutableHashSetCopyManualFor() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			ImmutableHashSet<int> target = ImmutableHashSet<int>.Empty;
+			for (int j = 0; j < Data.Count; j++) {
+				Data.TryGetValue(j, out int value);
+				target = target.Add(value);
 			}
 
 			result += target.Count;

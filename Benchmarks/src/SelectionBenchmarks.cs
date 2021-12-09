@@ -23,11 +23,9 @@ public class SelectionBenchmarks {
 				count += 10;
 				continue;
 			}
-
-			if (i > halfLoopIteration) {
-				count--;
-				continue;
-			}
+			
+			count--;
+			continue;
 		}
 
 		return count;

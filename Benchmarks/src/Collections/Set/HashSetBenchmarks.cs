@@ -59,7 +59,7 @@ public class HashSetBenchmarks {
 		return temp.Count;
 	}
 
-		[Benchmark("SetRemoval", "Tests removal from a HashSet")]
+	[Benchmark("SetRemoval", "Tests removal from a HashSet")]
 	public static int HashSetRemoval() {
 		HashSet<int> temp = new();
 		for (int i = 0; i < LoopIterations; i++) {
@@ -75,13 +75,30 @@ public class HashSetBenchmarks {
 		return temp.Count;
 	}
 
-	[Benchmark("SetCopy", "Tests copying an HashSet using a loop")]
-	public static int HashSetCopyManual() {
+	[Benchmark("SetCopy", "Tests copying a HashSet using a foreach loop")]
+	public static int HashSetCopyManualForeach() {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			HashSet<int> target = new HashSet<int>();
-			for (int j = Data.Count - 1; j >= 0; j--) {
-				target.Add(j);
+			foreach (int element in Data) {
+				target.Add(element);
+			}
+
+			result += target.Count;
+		}
+
+
+		return result;
+	}
+
+	[Benchmark("SetCopy", "Tests copying a HashSet using a for loop")]
+	public static int HashSetCopyManualFor() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			HashSet<int> target = new HashSet<int>();
+			for (int j = 0; j < Data.Count; j++) {
+				Data.TryGetValue(j, out int value);
+				target.Add(value);
 			}
 
 			result += target.Count;
