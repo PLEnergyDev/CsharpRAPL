@@ -94,13 +94,29 @@ public class ArrayListBenchmarks {
 		return result;
 	}
 
-	[Benchmark("ListCopy", "Tests copying an ArrayList using a loop")]
-	public static int ArrayListCopyManual() {
+	[Benchmark("ListCopy", "Tests copying an ArrayList using a foreach loop")]
+	public static int ArrayListCopyManualForeach() {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			ArrayList target = new();
-			for (int j = 0; j < Data.Count; j++) {
-				target.Add(j);
+			foreach (int element in Data) {
+				target.Add(element);
+			}
+
+			result += target.Count;
+		}
+
+
+		return result;
+	}
+
+	[Benchmark("ListCopy", "Tests copying an ArrayList using a for loop")]
+	public static int ArrayListCopyManualFor() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			ArrayList target = new();
+			for (int index = 0; index < Data.Count; index++) {
+				target.Add(Data[index]);
 			}
 
 			result += target.Count;

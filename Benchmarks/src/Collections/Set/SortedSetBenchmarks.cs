@@ -30,7 +30,7 @@ public class SortedSetBenchmarks {
 
 			result += hashSet.Count;
 		}
-		
+
 		return result;
 	}
 
@@ -76,13 +76,30 @@ public class SortedSetBenchmarks {
 		return temp.Count;
 	}
 
-	[Benchmark("SetCopy", "Tests copying an HashSet using a loop")]
-	public static int SortedHashSetCopyManual() {
+	[Benchmark("SetCopy", "Tests copying a SortedSet using a foreach loop")]
+	public static int SortedSetCopyManualForeach() {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			SortedSet<int> target = new SortedSet<int>();
-			for (int j = Data.Count - 1; j >= 0; j--) {
-				target.Add(j);
+			foreach (int element in Data) {
+				target.Add(element);
+			}
+
+			result += target.Count;
+		}
+
+
+		return result;
+	}
+	
+	[Benchmark("SetCopy", "Tests copying a SortedSet using a for loop")]
+	public static int SortedSetCopyManualFor() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			SortedSet<int> target = new SortedSet<int>();
+			for (int j = 0; j < Data.Count; j++) {
+				Data.TryGetValue(j, out int value);
+				target.Add(value);
 			}
 
 			result += target.Count;

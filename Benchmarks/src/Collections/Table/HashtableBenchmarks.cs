@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using CsharpRAPL;
 using CsharpRAPL.Benchmarking;
@@ -88,14 +89,14 @@ public class HashtableBenchmarks {
 		return result;
 	}
 
-	[Benchmark("TableCopy", "Tests copying an Hashtable using a loop")]
-	public static int HashtableCopyManual() {
+	[Benchmark("TableCopy", "Tests copying a Hashtable using a foreach loop looping through k/v pairs")]
+	public static int HashtableCopyManualForeach() {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			Hashtable target = new Hashtable();
 
-			for (int j = 0; j < Data.Count; j++) {
-				target.Add(j, Data[j]);
+			foreach (KeyValuePair<int, int> pair in Data) {
+				target.Add(pair.Key, pair.Value);
 			}
 
 			result += target.Count;
@@ -104,4 +105,22 @@ public class HashtableBenchmarks {
 
 		return result;
 	}
+
+	[Benchmark("TableCopy", "Tests copying a Hashtable using a foreach loop and looping through keys")]
+	public static int HashtableCopyManualForeachIndex() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			Hashtable target = new Hashtable();
+
+			foreach (int key in Data.Keys) {
+				target.Add(key, Data[key]);
+			}
+
+			result += target.Count;
+		}
+
+
+		return result;
+	}
+	
 }

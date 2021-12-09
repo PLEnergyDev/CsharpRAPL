@@ -92,14 +92,15 @@ public class ImmutableArrayBenchmarks {
 
 		return result;
 	}
-
-	[Benchmark("ListCopy", "Tests copying an ImmutableArray using a loop")]
-	public static int ImmutableArrayCopyManual() {
+	
+	
+	[Benchmark("ListCopy", "Tests copying an ImmutableArray using a foreach loop")]
+	public static int ImmutableArrayCopyManualForeach() {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			ImmutableArray<int> target = ImmutableArray<int>.Empty;
-			for (int j = 0; j < Data.Length; j++) {
-				target = target.Add(j);
+			foreach (int element in Data) {
+				target = target.Add(element);
 			}
 
 			result += target.Length;
@@ -108,4 +109,20 @@ public class ImmutableArrayBenchmarks {
 
 		return result;
 	}
+	[Benchmark("ListCopy", "Tests copying an ImmutableArray using a for loop")]
+	public static int ImmutableArrayCopyManualFor() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			ImmutableArray<int> target = ImmutableArray<int>.Empty;
+			for (int index = 0; index < Data.Length; index++) {
+				target = target.Add(Data[index]);
+			}
+
+			result += target.Length;
+		}
+
+
+		return result;
+	}
+
 }

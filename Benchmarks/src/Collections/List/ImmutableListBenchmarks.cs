@@ -94,13 +94,29 @@ public class ImmutableListBenchmarks {
 		return result;
 	}
 
-	[Benchmark("ListCopy", "Tests copying an ImmutableList using a loop")]
-	public static int ImmutableListCopyManual() {
+	[Benchmark("ListCopy", "Tests copying an ImmutableList using a foreach loop")]
+	public static int ImmutableListCopyManualForeach() {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			ImmutableList<int> target = ImmutableList<int>.Empty;
-			for (int j = 0; j < Data.Count; j++) {
-				target = target.Add(j);
+			foreach (int element in Data) {
+				target = target.Add(element);
+			}
+
+			result += target.Count;
+		}
+
+
+		return result;
+	}
+
+	[Benchmark("ListCopy", "Tests copying an ImmutableList using a for loop")]
+	public static int ImmutableListCopyManualFor() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			ImmutableList<int> target = ImmutableList<int>.Empty;
+			for (int index = 0; index < Data.Count; index++) {
+				target = target.Add(Data[index]);
 			}
 
 			result += target.Count;

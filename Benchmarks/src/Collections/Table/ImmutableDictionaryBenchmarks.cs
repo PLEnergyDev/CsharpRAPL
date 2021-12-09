@@ -86,14 +86,48 @@ public class ImmutableDictionaryBenchmarks {
 		return result;
 	}
 
-	[Benchmark("TableCopy", "Tests copying an ImmutableDictionary using a loop")]
-	public static int ImmutableDictionaryCopyManual() {
+	[Benchmark("TableCopy", "Tests copying an ImmutableDictionary using a foreach loop looping through k/v pairs")]
+	public static int ImmutableDictionaryCopyManualForeach() {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			ImmutableDictionary<int, int> target = ImmutableDictionary.Create<int, int>();
 
-			for (int j = 0; j < Data.Count; j++) {
-				target = target.Add(j, Data[j]);
+			foreach (KeyValuePair<int, int> pair in Data) {
+				target = target.Add(pair.Key, pair.Value);
+			}
+
+			result += target.Count;
+		}
+
+
+		return result;
+	}
+
+	[Benchmark("TableCopy", "Tests copying an ImmutableDictionary using a foreach loop and looping through keys")]
+	public static int ImmutableDictionaryCopyManualForeachIndex() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			ImmutableDictionary<int, int> target = ImmutableDictionary.Create<int, int>();
+
+			foreach (int key in Data.Keys) {
+				target = target.Add(key, Data[key]);
+			}
+
+			result += target.Count;
+		}
+
+
+		return result;
+	}
+
+	[Benchmark("TableCopy", "Tests copying an ImmutableDictionary using a foreach loop using deconstruction")]
+	public static int ImmutableDictionaryCopyManualForeachDeconstruct() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			ImmutableDictionary<int, int> target = ImmutableDictionary.Create<int, int>();
+
+			foreach ((int key, int value) in Data) {
+				target = target.Add(key, value);
 			}
 
 			result += target.Count;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using CsharpRAPL;
 using CsharpRAPL.Benchmarking;
@@ -87,14 +88,48 @@ public class ConcurrentDictionaryBenchmarks {
 		return result;
 	}
 
-	[Benchmark("TableCopy", "Tests copying an ConcurrentDictionary using a loop")]
-	public static int ConcurrentDictionaryCopyManual() {
+	[Benchmark("TableCopy", "Tests copying an ConcurrentDictionary using a foreach loop looping through k/v pairs")]
+	public static int ConcurrentDictionaryCopyManualForeach() {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			ConcurrentDictionary<int, int> target = new ConcurrentDictionary<int, int>();
 
-			for (int j = 0; j < Data.Count; j++) {
-				target.TryAdd(j, Data[j]);
+			foreach (KeyValuePair<int, int> pair in Data) {
+				target.TryAdd(pair.Key, pair.Value);
+			}
+
+			result += target.Count;
+		}
+
+
+		return result;
+	}
+
+	[Benchmark("TableCopy", "Tests copying an ConcurrentDictionary using a foreach loop and looping through keys")]
+	public static int ConcurrentDictionaryCopyManualForeachIndex() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			ConcurrentDictionary<int, int> target = new ConcurrentDictionary<int, int>();
+
+			foreach (int key in Data.Keys) {
+				target.TryAdd(key, Data[key]);
+			}
+
+			result += target.Count;
+		}
+
+
+		return result;
+	}
+
+	[Benchmark("TableCopy", "Tests copying an ConcurrentDictionary using a foreach loop using deconstruction")]
+	public static int ConcurrentDictionaryCopyManualForeachDeconstruct() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			ConcurrentDictionary<int, int> target = new ConcurrentDictionary<int, int>();
+
+			foreach ((int key, int value) in Data) {
+				target.TryAdd(key, value);
 			}
 
 			result += target.Count;

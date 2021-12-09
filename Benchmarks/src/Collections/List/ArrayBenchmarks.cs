@@ -59,12 +59,28 @@ public class ArrayBenchmarks {
 	}
 
 	[Benchmark("ListCopy", "Tests copying an array using a loop")]
-	public static int ArrayCopyManual() {
+	public static int ArrayCopyManualFor() {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			int[] target = new int[1000];
 			for (int j = 0; j < Data.Length; j++) {
 				target[j] = Data[j];
+			}
+
+			result += target.Length;
+		}
+
+
+		return result;
+	}
+
+	[Benchmark("ListCopy", "Tests copying an array using a loop")]
+	public static int ArrayCopyManualForeach() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			int[] target = new int[1000];
+			foreach (int element in Data) {
+				target[target.Length] = element;
 			}
 
 			result += target.Length;

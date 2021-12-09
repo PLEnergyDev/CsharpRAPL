@@ -95,13 +95,28 @@ public class ListBenchmarks {
 		return result;
 	}
 
-	[Benchmark("ListCopy", "Tests copying an List using a loop")]
-	public static int ListCopyManual() {
+	[Benchmark("ListCopy", "Tests copying a List using a foreach loop")]
+	public static int ListCopyManualForeach() {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			List<int> target = new List<int>();
-			for (int j = 0; j < Data.Count; j++) {
-				target.Add(j);
+			foreach (int element in Data) {
+				target.Add(element);
+			}
+
+			result += target.Count;
+		}
+
+
+		return result;
+	}
+	[Benchmark("ListCopy", "Tests copying a List using a for loop")]
+	public static int ListCopyManualFor() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			List<int> target = new List<int>();
+			for (int index = 0; index < Data.Count; index++) {
+				target.Add(Data[index]);
 			}
 
 			result += target.Count;
@@ -148,7 +163,7 @@ public class ListBenchmarks {
 	}
 
 	[Benchmark("ListCopy", "Tests copying a list using ToList from Linq")]
-	public static int ListLinqClone() {
+	public static int ListCopyManualLinq() {
 		List<int> target = new List<int>();
 		for (int i = 0; i < LoopIterations; i++) {
 			target = Data.ToList();

@@ -76,13 +76,30 @@ public class ImmutableSortedSetBenchmarks {
 		return temp.Count;
 	}
 
-	[Benchmark("SetCopy", "Tests copying an ImmutableSortedSet using a loop")]
-	public static int ImmutableSortedSetCopyManual() {
+	[Benchmark("SetCopy", "Tests copying an ImmutableSortedSet using a foreach loop")]
+	public static int ImmutableSortedSetCopyManualForeach() {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			ImmutableSortedSet<int> target = ImmutableSortedSet<int>.Empty;
-			for (int j = Data.Count - 1; j >= 0; j--) {
-				target = target.Add(j);
+			foreach (int element in Data) {
+				target = target.Add(element);
+			}
+
+			result += target.Count;
+		}
+
+
+		return result;
+	}
+
+	[Benchmark("SetCopy", "Tests copying an ImmutableSortedSet using a for loop")]
+	public static int ImmutableSortedSetCopyManualFor() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			ImmutableSortedSet<int> target = ImmutableSortedSet<int>.Empty;
+			for (int j = 0; j < Data.Count; j++) {
+				Data.TryGetValue(j, out int value);
+				target = target.Add(value);
 			}
 
 			result += target.Count;

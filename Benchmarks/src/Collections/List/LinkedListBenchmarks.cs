@@ -93,7 +93,7 @@ public class LinkedListBenchmarks {
 
 			result += target.Count;
 		}
-		
+
 		return result;
 	}
 
@@ -108,22 +108,38 @@ public class LinkedListBenchmarks {
 
 			result += linkedList.Count;
 		}
-		
+
 		return result;
 	}
 
-	[Benchmark("ListCopy", "Tests copying an LinkedList using a loop")]
-	public static int LinkedListCopyManual() {
+	[Benchmark("ListCopy", "Tests copying an LinkedList using a for loop")]
+	public static int LinkedListCopyManualFor() {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			LinkedList<int> target = new();
-			for (int j = 0; j < Data.Count; j++) {
-				target.AddLast(j);
+			LinkedListNode<int> data = Data.First;
+			for (int index = 0; index < Data.Count; index++) {
+				target.AddLast(data);
+				data = data.Next;
 			}
 
 			result += target.Count;
 		}
 
+		return result;
+	}
+
+	[Benchmark("ListCopy", "Tests copying an LinkedList using a foreach loop")]
+	public static int LinkedListCopyManualForeach() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			LinkedList<int> target = new();
+			foreach (int element in Data) {
+				target.AddLast(element);
+			}
+
+			result += target.Count;
+		}
 
 		return result;
 	}

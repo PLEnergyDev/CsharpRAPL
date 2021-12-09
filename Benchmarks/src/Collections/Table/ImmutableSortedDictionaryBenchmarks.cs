@@ -88,14 +88,48 @@ public class ImmutableSortedDictionaryBenchmarks {
 		return result;
 	}
 
-	[Benchmark("TableCopy", "Tests copying an ImmutableSortedDictionary using a loop")]
-	public static int ImmutableSortedDictionaryCopyManual() {
+	[Benchmark("TableCopy", "Tests copying an ImmutableSortedDictionary using a foreach loop looping through k/v pairs")]
+	public static int ImmutableSortedDictionaryCopyManualForeach() {
 		int result = 0;
 		for (int i = 0; i < LoopIterations; i++) {
-			ImmutableSortedDictionary<int, int> target = ImmutableSortedDictionary.Create<int, int>();
+			ImmutableSortedDictionary<int, int>
+				target = ImmutableSortedDictionary.Create<int, int>();
+			foreach (KeyValuePair<int, int> pair in Data) {
+				target = target.Add(pair.Key, pair.Value);
+			}
 
-			for (int j = 0; j < Data.Count; j++) {
-				target = target.Add(j, Data[j]);
+			result += target.Count;
+		}
+
+
+		return result;
+	}
+
+	[Benchmark("TableCopy", "Tests copying an ImmutableSortedDictionary using a foreach loop and looping through keys")]
+	public static int ImmutableSortedDictionaryCopyManualForeachIndex() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			ImmutableSortedDictionary<int, int>
+				target = ImmutableSortedDictionary.Create<int, int>();
+			foreach (int key in Data.Keys) {
+				target = target.Add(key, Data[key]);
+			}
+
+			result += target.Count;
+		}
+
+
+		return result;
+	}
+
+	[Benchmark("TableCopy", "Tests copying an ImmutableSortedDictionary using a foreach loop using deconstruction")]
+	public static int ImmutableSortedDictionaryCopyManualForeachDeconstruct() {
+		int result = 0;
+		for (int i = 0; i < LoopIterations; i++) {
+			ImmutableSortedDictionary<int, int>
+				target = ImmutableSortedDictionary.Create<int, int>();
+			foreach ((int key, int value) in Data) {
+				target = target.Add(key, value);
 			}
 
 			result += target.Count;
