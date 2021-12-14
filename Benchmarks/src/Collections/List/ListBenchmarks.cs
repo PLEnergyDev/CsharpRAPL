@@ -20,7 +20,7 @@ public class ListBenchmarks {
 	}
 
 	[Benchmark("ListGet", "Tests getting values sequentially from a List")]
-	public int ListGet() {
+	public static int ListGet() {
 		int sum = 0;
 		for (int i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
