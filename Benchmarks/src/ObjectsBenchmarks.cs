@@ -242,7 +242,7 @@ public class ObjectsBenchmarks {
 	}
 
 	[Benchmark("ObjectInvocation", "Tests invocation of a static method on a record struct")]
-	public static int RecordStructFieldMethod() {
+	public static int RecordStructStaticMethod() {
 		int result = 0;
 		RecordStructHelper unused = new RecordStructHelper();
 
