@@ -105,7 +105,7 @@ public static class BenchmarkPlot {
 		plt.XTicks(Enumerable.Range(0, dataSets.Length).Select(i1 => (double)i1).ToArray(), names);
 		plt.XLabel("Benchmark");
 		plt.YLabel(GetYLabel(resultType));
-		plt.YAxis.TickLabelFormat(d => Math.Round(d, 5).ToString("N3",CultureInfo.CreateSpecificCulture("da-DK")));
+		plt.YAxis.TickLabelFormat(d => Math.Round(d, 5).ToString("G", CultureInfo.CreateSpecificCulture("da-DK")));
 		plt.Title(string.IsNullOrEmpty(plotOptions.Name)
 			? $"{resultType}"
 			: $"{plotOptions.Name.Humanize(LetterCasing.Title)}");
