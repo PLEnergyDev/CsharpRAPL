@@ -52,19 +52,14 @@ public class BenchmarkCollectorTest {
 	[Test]
 	public void TrySetFieldTest01() {
 		Assert.AreEqual(0, DummyBenchmarks.TestField1);
-		BenchmarkSuite.TrySetField(typeof(DummyBenchmarks), "TestField1", 10);
+		BenchmarkSuite.SetField(typeof(DummyBenchmarks), "TestField1", 10);
 		Assert.AreEqual(10, DummyBenchmarks.TestField1);
 	}
 
 	[Test]
 	public void TrySetFieldTest02() {
 		var exception = Assert.Throws<NotSupportedException>(() =>
-			BenchmarkSuite.TrySetField(typeof(DummyBenchmarks), "TestField2", 10));
-		Assert.AreEqual("Your TestField2 field must be static.", exception?.Message);
-	}
-
-	[Test]
-	public void TrySetFieldTest03() {
-		Assert.False(BenchmarkSuite.TrySetField(typeof(DummyBenchmarks), "_testField3", 10));
+			BenchmarkSuite.SetField(typeof(DummyBenchmarks), "TestField2", 10));
+		Assert.AreEqual("Your 'TestField2' field must be static.", exception?.Message);
 	}
 }
