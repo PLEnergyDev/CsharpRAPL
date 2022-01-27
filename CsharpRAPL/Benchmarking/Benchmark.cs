@@ -32,9 +32,9 @@ public class Benchmark<T> : IBenchmark {
 	private readonly Func<T> _benchmark;
 	private readonly List<BenchmarkResult> _rawResults = new();
 	private readonly List<BenchmarkResult> _normalizedResults = new();
-	private readonly FieldInfo? _loopIterationsFieldInfo;
+	private readonly FieldInfo _loopIterationsFieldInfo;
 
-	private RAPL? _rapl;
+	private readonly RAPL _rapl;
 	private string? _normalizedReturnValue;
 
 
@@ -47,10 +47,13 @@ public class Benchmark<T> : IBenchmark {
 
 		_benchmark = benchmark;
 		_stdout = Console.Out;
+		_rapl = new RAPL();
 
 		Debug.Assert(_benchmark.Method.DeclaringType != null, "_benchmark.Method.DeclaringType != null");
 		_loopIterationsFieldInfo =
-			_benchmark.Method.DeclaringType.GetField("LoopIterations", BindingFlags.Public | BindingFlags.Static);
+			_benchmark.Method.DeclaringType.GetField("LoopIterations", BindingFlags.Public | BindingFlags.Static) ??
+			throw new InvalidOperationException(
+				$"Your class '{_benchmark.Method.DeclaringType.Name}' must have the field '{name}'.");
 
 		if (!silenceBenchmarkOutput) {
 			_benchmarkOutputStream = _stdout;
@@ -58,18 +61,10 @@ public class Benchmark<T> : IBenchmark {
 	}
 
 	private void Start() {
-		if (_rapl is null) {
-			throw new NotSupportedException("Rapl has not been initialized");
-		}
-
 		_rapl.Start();
 	}
 
 	private void End(T benchmarkOutput) {
-		if (_rapl is null) {
-			throw new NotSupportedException("Rapl has not been initialized");
-		}
-
 		_rapl.End();
 
 		//Result only valid if all results are valid
@@ -77,11 +72,11 @@ public class Benchmark<T> : IBenchmark {
 		if (!_rapl.IsValid()) {
 			return;
 		}
-		
+
 		BenchmarkResult result = _rapl.GetResults() with {
 			BenchmarkReturnValue = benchmarkOutput?.ToString() ?? string.Empty
 		};
-		
+
 		BenchmarkResult normalizedResult = _rapl.GetNormalizedResults(GetLoopIterations()) with {
 			BenchmarkReturnValue = _normalizedReturnValue ?? string.Empty
 		};
@@ -96,7 +91,9 @@ public class Benchmark<T> : IBenchmark {
 		//Sets console to write to null
 		Console.SetOut(_benchmarkOutputStream);
 
-		_rapl = new RAPL();
+		if (_rapl is null) {
+			throw new NotSupportedException("Rapl has not been initialized");
+		}
 
 		ElapsedTime = 0;
 		_rawResults.Clear();
@@ -105,10 +102,10 @@ public class Benchmark<T> : IBenchmark {
 		if (CsharpRAPLCLI.Options.UseIterationCalculation) {
 			Iterations = IterationCalculationAll();
 		}
-		
+
 		// Get normalized return value
 		SetLoopIterations(10);
-		_normalizedReturnValue = _benchmark()?.ToString() ?? string.Empty; 
+		_normalizedReturnValue = _benchmark()?.ToString() ?? string.Empty;
 
 		for (var i = 0; i <= Iterations; i++) {
 			if (Iterations != 1) {
@@ -130,7 +127,7 @@ public class Benchmark<T> : IBenchmark {
 			End(benchmarkOutput);
 
 
-			if (_loopIterationsFieldInfo != null && CsharpRAPLCLI.Options.UseLoopIterationScaling &&
+			if (CsharpRAPLCLI.Options.UseLoopIterationScaling &&
 			    _rawResults[^1].ElapsedTime < TargetLoopIterationTime) {
 				int currentValue = GetLoopIterations();
 
@@ -151,11 +148,12 @@ public class Benchmark<T> : IBenchmark {
 						continue;
 				}
 			}
-			
+
 			if (ElapsedTime < MaxExecutionTime) {
 				if (CsharpRAPLCLI.Options.UseIterationCalculation) {
 					Iterations = IterationCalculationAll();
 				}
+
 				continue;
 			}
 
@@ -165,9 +163,8 @@ public class Benchmark<T> : IBenchmark {
 
 		SaveResults();
 		HasRun = true;
-		if (_loopIterationsFieldInfo != null) {
-			SetLoopIterations(CsharpRAPLCLI.Options.LoopIterations);
-		}
+		SetLoopIterations(CsharpRAPLCLI.Options.LoopIterations);
+
 
 		//Resets console output
 		Console.SetOut(_stdout);
@@ -187,7 +184,7 @@ public class Benchmark<T> : IBenchmark {
 	/// </summary>
 	private void SaveResults() {
 		DateTime dateTime = DateTime.Now;
-		var time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";
+		string time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";
 		string outputPath = Group != null
 			? $"{CsharpRAPLCLI.Options.OutputPath}/{Group}/{Name}"
 			: $"{CsharpRAPLCLI.Options.OutputPath}/{Name}";
@@ -225,7 +222,7 @@ public class Benchmark<T> : IBenchmark {
 		int packageIteration = IterationCalculation(confidence);
 		return Math.Max(dramIteration, Math.Max(timeIteration, packageIteration));
 	}
-	
+
 	/// <summary>
 	/// Uses the formula described in the report in formula 4.2 to calculate sample size
 	/// </summary>
@@ -275,16 +272,12 @@ public class Benchmark<T> : IBenchmark {
 	}
 
 	private int GetLoopIterations() {
-		if (_loopIterationsFieldInfo != null) {
-			return (int)(_loopIterationsFieldInfo.GetValue(null) ?? throw new InvalidOperationException());
-		}
-
-		return 0;
+		return (int)(_loopIterationsFieldInfo.GetValue(null) ??
+		             throw new InvalidOperationException(
+			             $"Your class '{_benchmark.Method.DeclaringType.Name}' must have the field 'LoopIterations'."));
 	}
 
 	private void SetLoopIterations(int value) {
-		if (_loopIterationsFieldInfo != null) {
-			_loopIterationsFieldInfo.SetValue(null, value);
-		}
+		_loopIterationsFieldInfo.SetValue(null, value);
 	}
 }

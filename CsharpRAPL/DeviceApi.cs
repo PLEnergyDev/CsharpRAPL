@@ -25,12 +25,13 @@ public abstract class DeviceApi {
 			return "/sys/class/powercap/intel-rapl/intel-rapl:0";
 		}
 
-		throw new Exception("PyRAPLCantInitDeviceAPI"); //TODO: Proper exceptions
+		throw new Exception(
+			"Failed to assess the path '/sys/class/powercap/intel-rapl/intel-rapl:0', make sure that you have rapl available on your computer.");
 	}
 
 	protected virtual double Collect() {
 		double res = -1.0;
-		//TODO: Test and see if there is a measurable diffrence between keeping the file open or opening it everytime
+		//TODO: Test and see if there is a measurable difference between keeping the file open or opening it everytime
 		if (double.TryParse(File.ReadAllText(_sysFile), out double energyValue)) {
 			res = energyValue;
 		}

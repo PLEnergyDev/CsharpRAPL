@@ -47,35 +47,34 @@ public class BenchmarkSuite {
 	}
 
 	private void RegisterBenchmarkClass(Type benchmarkClass) {
-		TrySetField(benchmarkClass, IterationsName, Iterations);
-		TrySetField(benchmarkClass, LoopIterationsName, LoopIterations);
+		SetField(benchmarkClass, IterationsName, Iterations);
+		SetField(benchmarkClass, LoopIterationsName, LoopIterations);
 		_registeredBenchmarkClasses.Add(benchmarkClass);
 	}
 
-	public static bool TrySetField(Type benchmarkClass, string name, int value) {
+	public static void SetField(Type benchmarkClass, string name, int value) {
 		FieldInfo? fieldInfo = benchmarkClass.GetFields()
 			.FirstOrDefault(info => info.Name == name);
 		if (fieldInfo == null) {
-			return false;
+			throw new NotSupportedException($"Your class '{benchmarkClass.Name}' must have the field '{name}'.");
 		}
 
 		if (!fieldInfo.IsStatic) {
-			throw new NotSupportedException($"Your {name} field must be static.");
+			throw new NotSupportedException($"Your '{name}' field must be static.");
 		}
 
 		benchmarkClass.GetField(name, BindingFlags.Public | BindingFlags.Static)?.SetValue(null, value);
-		return true;
 	}
 
 	public void RunAll() {
 		if (Environment.OSVersion.Platform != PlatformID.Unix) {
 			throw new NotSupportedException("Running the benchmarks is only supported on Unix.");
 		}
-		
+
 		List<IBenchmark> benchmarks = Benchmarks.OrderBy(benchmark => benchmark.Order).ToList();
 
 		Warmup();
-		
+
 		foreach ((int index, IBenchmark bench) in benchmarks.WithIndex()) {
 			Console.WriteLine($"Starting {bench.Name} which is the {index + 1} out of {benchmarks.Count} tests");
 			bench.Run();

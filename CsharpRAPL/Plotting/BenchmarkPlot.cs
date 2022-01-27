@@ -15,14 +15,17 @@ using DataSet = CsharpRAPL.Analysis.DataSet;
 namespace CsharpRAPL.Plotting;
 
 public static class BenchmarkPlot {
-	//TODO: Note that this expect the path is the root of the groups e.g.
-	// Data/ would be a root that contained Data/Loops and Data/Control
+	/// <summary>
+	/// Plots results groups from a folder.
+	/// </summary>
+	/// <param name="resultType">The result type to plot.</param>
+	/// <param name="path">The root path to the groups e.g. Data/ would be a root that contained Data/Loops and Data/Control.</param>
+	/// <param name="plotOptions">Plot configuration options.</param>
 	public static void PlotResultsGroupsFromFolder(BenchmarkResultType resultType, string path,
 		PlotOptions? plotOptions = null) {
 		var groups = new Dictionary<string, List<DataSet>>();
 
 		foreach (string file in Helpers.GetAllCSVFilesFromPath(path)) {
-			//TODO: what if there is no group?
 			string group = Path.GetRelativePath(Directory.GetCurrentDirectory(), file)
 				.Split(Path.DirectorySeparatorChar)[1];
 			if (!groups.ContainsKey(group)) {
