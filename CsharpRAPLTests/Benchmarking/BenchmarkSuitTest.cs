@@ -6,13 +6,16 @@ using NUnit.Framework;
 namespace CsharpRAPL.Tests.Benchmarking;
 
 public class BenchmarkSuitTest {
+	public static int Iterations;
+	public static int LoopIterations;
+
 	public static int DummyBenchmark() {
 		return 1;
 	}
 
 	[Test]
 	public void TestRegisterBenchmark01() {
-		var benchmarkSuit = new BenchmarkSuite(10,29);
+		var benchmarkSuit = new BenchmarkSuite(10, 29);
 		benchmarkSuit.RegisterBenchmark(DummyBenchmark);
 
 		Assert.AreEqual(1, benchmarkSuit.GetBenchmarks().Count);

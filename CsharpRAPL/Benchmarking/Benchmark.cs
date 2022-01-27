@@ -34,7 +34,7 @@ public class Benchmark<T> : IBenchmark {
 	private readonly List<BenchmarkResult> _normalizedResults = new();
 	private readonly FieldInfo _loopIterationsFieldInfo;
 
-	private readonly RAPL _rapl;
+	private RAPL _rapl;
 	private string? _normalizedReturnValue;
 
 
@@ -47,7 +47,6 @@ public class Benchmark<T> : IBenchmark {
 
 		_benchmark = benchmark;
 		_stdout = Console.Out;
-		_rapl = new RAPL();
 
 		Debug.Assert(_benchmark.Method.DeclaringType != null, "_benchmark.Method.DeclaringType != null");
 		_loopIterationsFieldInfo =
@@ -90,6 +89,7 @@ public class Benchmark<T> : IBenchmark {
 	public void Run() {
 		//Sets console to write to null
 		Console.SetOut(_benchmarkOutputStream);
+		_rapl = new RAPL();
 
 		if (_rapl is null) {
 			throw new NotSupportedException("Rapl has not been initialized");

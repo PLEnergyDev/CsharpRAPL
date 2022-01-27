@@ -60,6 +60,6 @@ public class BenchmarkCollectorTest {
 	public void TrySetFieldTest02() {
 		var exception = Assert.Throws<NotSupportedException>(() =>
 			BenchmarkSuite.SetField(typeof(DummyBenchmarks), "TestField2", 10));
-		Assert.AreEqual("Your TestField2 field must be static.", exception?.Message);
+		Assert.AreEqual("Your 'TestField2' field must be static.", exception?.Message);
 	}
 }
