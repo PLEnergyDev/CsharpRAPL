@@ -26,7 +26,7 @@ public class Options {
 	[Option('l', nameof(LoopIterations), Required = false,
 		HelpText = "Sets the target loop iterations. (Disables Dynamic Loop Iteration Scaling)", Default = -1)]
 	public int LoopIterations {
-		get => _loopIterations == -1 ? DefaultIterations : _loopIterations;
+		get => _loopIterations == -1 ? DefaultLoopIterations : _loopIterations;
 		set => _loopIterations = value;
 	}
 
