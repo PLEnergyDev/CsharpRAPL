@@ -65,7 +65,7 @@ deploy:
     - cd CsharpRAPL
     - dotnet build CsharpRAPL.csproj -c Release
     - dotnet pack "CsharpRAPL.csproj" -c Release -o .
-    - dotnet nuget push *.nupkg -k ${NUGET_KEY} -s "https://api.nuget.org/v3/index.json"
+    - dotnet nuget push *.nupkg -k ${NUGET_KEY} --source "https://api.nuget.org/v3/index.json"
 
 
 deploy-coverage-report:
