@@ -50,7 +50,7 @@ public static class BenchmarkPlot {
 		PlotResultsGroupsFromFolder(BenchmarkResultType.Temperature, path, plotOptions);
 	}
 
-	public static void PlotResults(BenchmarkResultType resultType, IBenchmark[] dataSets,
+	public static void PlotResults(BenchmarkResultType resultType, IEnumerable<IBenchmark> dataSets,
 		PlotOptions? plotOptions = null) {
 		DataSet[] data = dataSets.Select(benchmark => new DataSet(benchmark.Name, benchmark.GetResults())).ToArray();
 		PlotResults(resultType, data, plotOptions);
@@ -114,7 +114,7 @@ public static class BenchmarkPlot {
 			: $"{plotOptions.Name.Humanize(LetterCasing.Title)}");
 
 		DateTime dateTime = DateTime.Now;
-		var time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";
+		string time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";
 		Directory.CreateDirectory($"{CsharpRAPLCLI.Options.PlotOutputPath}/{resultType}");
 		plt.SaveFig(string.IsNullOrEmpty(plotOptions.Name)
 			? $"{CsharpRAPLCLI.Options.PlotOutputPath}/{resultType}/{time}.png"

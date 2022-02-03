@@ -73,17 +73,18 @@ public class CLITest {
 		"-r, --RemoveOldResults       If set removes all files from the output folder and the plot folder.",
 		"-o, --OutputPath             (Default: results/) Set the output path for results.",
 		"-p, --PlotOutputPath         (Default: _plots/) Sets the output path for plots.",
+		"-a, --BenchmarksToAnalyse    The names of the benchmarks to analyse.",
+		"-z, --ZipResults             Zips the CSV results and plots into a single zip file.",
 		"--OnlyPlot                   Plots the results in the output path.",
 		"--OnlyAnalysis               Analysis the results in the output path.",
-		"-a, --BenchmarksToAnalyse    The names of the benchmarks to analyse.",
 		"--Verbose                    Enables debug information.",
-		"-z, --ZipResults             Zips the CSV results and plots into a single zip file.",
 		"--help                       Display this help screen.",
 		"--version                    Display version information."
 	};
 
 	[OneTimeSetUp]
 	public void Setup() {
+		Options.ShouldExit = false;
 		Directory.CreateDirectory("TestData");
 		Directory.CreateDirectory("TestData/Test");
 		using (var addWriter = new StreamWriter("TestData/AddSet.csv")) {
@@ -108,10 +109,10 @@ public class CLITest {
 
 	[OneTimeTearDown]
 	public void OneTimeTearDown() {
+		Options.ShouldExit = true;
 		Directory.Delete("TestData", true);
 	}
-
-
+	
 	[Test]
 	[Order(0)]
 	public void TestParse01() {
