@@ -13,11 +13,7 @@ CsharpRAPLCLI.SetAnalysisCallback(_ => { });
 
 Options options = CsharpRAPLCLI.Parse(args);
 
-if (options.ShouldExit) {
-	return;
-}
-
-var suite = new BenchmarkCollector(options.Iterations, options.LoopIterations);
+var suite = new BenchmarkCollector();
 
 suite.RunAll();
 

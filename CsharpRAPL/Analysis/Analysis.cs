@@ -91,11 +91,7 @@ public class Analysis {
 		}
 
 		(bool isValid, string message) second = _secondDataset.EnsureResults();
-		if (!second.isValid) {
-			return second;
-		}
-
-		return (true, "");
+		return !second.isValid ? second : (true, "");
 	}
 
 	public (bool isValid, string message) EnsureResultsMutually() {
@@ -141,7 +137,7 @@ public class Analysis {
 
 	public static Dictionary<string, double> CalculatePValueForGroup(List<IBenchmark> dataSets) {
 		var groupToPValue = new Dictionary<string, double>();
-		for (int i = 0; i < dataSets.Count; i++) {
+		for (var i = 0; i < dataSets.Count; i++) {
 			for (int j = i + 1; j < dataSets.Count; j++) {
 				var analysis = new Analysis(dataSets[i], dataSets[j]);
 				foreach ((string message, double value) in analysis.CalculatePValue()) {

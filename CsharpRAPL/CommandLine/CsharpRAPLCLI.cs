@@ -16,7 +16,7 @@ public static class CsharpRAPLCLI {
 	private static Action<string>? _plotCallback;
 
 
-	public static Options Parse(string[] args, int maximumTerminalWidth = 0) {
+	public static Options Parse(IEnumerable<string> args, int maximumTerminalWidth = 0) {
 		var parser = new Parser(settings => {
 			settings.CaseSensitive = false;
 			settings.HelpWriter = Console.Out;
@@ -34,13 +34,20 @@ public static class CsharpRAPLCLI {
 				_plotCallback.Invoke(Options.OutputPath);
 			}
 
-			Options.ShouldExit = true;
+			if (Options.ShouldExit) {
+				Environment.Exit(0);
+			}
+
 			return Options;
 		}
 
-		if (Options.OnlyAnalysis) {
-			StartAnalysis(Options.BenchmarksToAnalyse.ToArray());
-			Options.ShouldExit = true;
+		if (!Options.OnlyAnalysis) {
+			return Options;
+		}
+
+		StartAnalysis(Options.BenchmarksToAnalyse.ToArray());
+		if (Options.ShouldExit) {
+			Environment.Exit(0);
 		}
 
 		return Options;
@@ -74,7 +81,9 @@ public static class CsharpRAPLCLI {
 	private static void HandleParseError(IEnumerable<Error> errs) {
 		foreach (Error error in errs) {
 			if (error.Tag is ErrorType.HelpRequestedError or ErrorType.VersionRequestedError) {
-				Options.ShouldExit = true;
+				if (Options.ShouldExit) {
+					Environment.Exit(0);
+				}
 			}
 			else {
 				throw new NotSupportedException(ParseError(error));
@@ -89,7 +98,7 @@ public static class CsharpRAPLCLI {
 				continue;
 			}
 
-			for (int i = 0; i < benchmarksWithGroups[group].Count; i++) {
+			for (var i = 0; i < benchmarksWithGroups[group].Count; i++) {
 				for (int j = i + 1; j < benchmarksWithGroups[group].Count; j++) {
 					var analysis =
 						new Analysis.Analysis(benchmarksWithGroups[group][i], benchmarksWithGroups[group][j]);
@@ -180,41 +189,48 @@ public static class CsharpRAPLCLI {
 	}
 
 	private static string ParseError(Error error) {
-		switch (error) {
-			case BadFormatTokenError badFormatTokenError:
-				return $"Token '{badFormatTokenError.Token}' is not recognized.";
-			case MissingValueOptionError missingValueOptionError:
-				return $"Option '{missingValueOptionError.NameInfo.NameText}' has no value.";
-			case UnknownOptionError unknownOptionError:
-				return $"Option '{unknownOptionError.Token}' is unknown.";
-			case MissingRequiredOptionError missingRequiredOptionError:
-				return missingRequiredOptionError.NameInfo.Equals(NameInfo.EmptyName)
-					? "A required value not bound to option name is missing."
-					: $"Required option '{missingRequiredOptionError.NameInfo.NameText}' is missing.";
-			case BadFormatConversionError badFormatConversionError:
-				return badFormatConversionError.NameInfo.Equals(NameInfo.EmptyName)
-					? "A value not bound to option name is defined with a bad format."
-					: $"Option '{badFormatConversionError.NameInfo.NameText + "' is defined with a bad format."}";
-			case InvalidAttributeConfigurationError:
-				return "Invalid Attribute Configuration";
-			case MissingGroupOptionError missingGroupOptionError:
-				return
-					$"Missing Group {missingGroupOptionError.Group} {string.Join(", ", missingGroupOptionError.Names)}";
-			case SequenceOutOfRangeError sequenceOutOfRangeError:
-				return sequenceOutOfRangeError.NameInfo.Equals(NameInfo.EmptyName)
-					? "A sequence value not bound to option name is defined with few items than required."
-					: $"A sequence option '{sequenceOutOfRangeError.NameInfo.NameText}' is defined with fewer or more items than required.";
-			case BadVerbSelectedError badVerbSelectedError:
-				return $"Verb '{badVerbSelectedError.Token}' is not recognized.";
-			case GroupOptionAmbiguityError groupOptionAmbiguityError:
-				return
-					$"Group Option Ambiguity Error{groupOptionAmbiguityError.NameInfo} {groupOptionAmbiguityError.Option}";
-			case NoVerbSelectedError:
-				return "No verb selected.";
-			case RepeatedOptionError repeatedOptionError:
-				return $"Option '{repeatedOptionError.NameInfo.NameText}' is defined multiple times.";
-		}
+		return error switch {
+			BadFormatTokenError badFormatTokenError =>
+				$"Token '{badFormatTokenError.Token}' is not recognized.",
 
-		throw new ArgumentOutOfRangeException($"{error.Tag} is out of range.");
+			MissingValueOptionError missingValueOptionError =>
+				$"Option '{missingValueOptionError.NameInfo.NameText}' has no value.",
+
+			UnknownOptionError unknownOptionError =>
+				$"Option '{unknownOptionError.Token}' is unknown.",
+
+			MissingRequiredOptionError missingRequiredOptionError =>
+				missingRequiredOptionError.NameInfo.Equals(NameInfo.EmptyName)
+					? "A required value not bound to option name is missing."
+					: $"Required option '{missingRequiredOptionError.NameInfo.NameText}' is missing.",
+
+			BadFormatConversionError badFormatConversionError =>
+				badFormatConversionError.NameInfo.Equals(NameInfo.EmptyName)
+					? "A value not bound to option name is defined with a bad format."
+					: $"Option '{badFormatConversionError.NameInfo.NameText + "' is defined with a bad format."}",
+
+			InvalidAttributeConfigurationError =>
+				"Invalid Attribute Configuration",
+
+			MissingGroupOptionError missingGroupOptionError =>
+				$"Missing Group {missingGroupOptionError.Group} {string.Join(", ", missingGroupOptionError.Names)}",
+
+			SequenceOutOfRangeError sequenceOutOfRangeError =>
+				sequenceOutOfRangeError.NameInfo.Equals(NameInfo.EmptyName)
+					? "A sequence value not bound to option name is defined with few items than required."
+					: $"A sequence option '{sequenceOutOfRangeError.NameInfo.NameText}' is defined with fewer or more items than required.",
+
+			BadVerbSelectedError badVerbSelectedError =>
+				$"Verb '{badVerbSelectedError.Token}' is not recognized.",
+
+			GroupOptionAmbiguityError groupOptionAmbiguityError =>
+				$"Group Option Ambiguity Error{groupOptionAmbiguityError.NameInfo} {groupOptionAmbiguityError.Option}",
+			NoVerbSelectedError =>
+				"No verb selected.",
+
+			RepeatedOptionError repeatedOptionError =>
+				$"Option '{repeatedOptionError.NameInfo.NameText}' is defined multiple times.",
+			_ => throw new ArgumentOutOfRangeException($"{error.Tag} is out of range.")
+		};
 	}
 }

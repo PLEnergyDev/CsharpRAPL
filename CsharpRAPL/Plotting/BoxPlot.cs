@@ -17,8 +17,8 @@ public class BoxPlot : IPlottable {
 	public double MinValue { get; }
 	public double UpperPValueQuantile { get; }
 	public double LowerPValueQuantile { get; }
-	public double Average { get; set; }
-	public double Median { get; set; }
+	public double Average { get; }
+	public double Median { get; }
 	public PlotOptions PlotOptions { get; }
 	public bool IsVisible { get; set; } = true;
 	public int XAxisIndex { get; set; }
@@ -34,7 +34,7 @@ public class BoxPlot : IPlottable {
 			? plotData
 			: throw new ArgumentException("plotData must be an array that contains elements");
 		Position = position;
-		UpperPValueQuantile = plotData.Quantile(1 - (pValue / 2));
+		UpperPValueQuantile = plotData.Quantile(1 - pValue / 2);
 		LowerPValueQuantile = plotData.Quantile(pValue / 2);
 		MaxValue = plotData.Max();
 		MinValue = plotData.Min();
@@ -114,7 +114,7 @@ public class BoxPlot : IPlottable {
 
 		float averageStartY = dims.GetPixelY(Average);
 		float averageEndY = dims.GetPixelY(Average);
-		
+
 		float medianStartY = dims.GetPixelY(Median);
 		float medianEndY = dims.GetPixelY(Median);
 
@@ -138,7 +138,7 @@ public class BoxPlot : IPlottable {
 			$"BoxPlot{(string.IsNullOrWhiteSpace(PlotOptions.LegendLabel) ? (object)"" : $" ({PlotOptions.LegendLabel})")} with {GetPointCount()} points";
 	}
 
-	public int GetPointCount() {
+	private int GetPointCount() {
 		return PlotData.Length;
 	}
 

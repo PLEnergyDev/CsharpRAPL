@@ -47,6 +47,7 @@ public class Benchmark<T> : IBenchmark {
 
 		_benchmark = benchmark;
 		_stdout = Console.Out;
+		_rapl = null!;
 
 		Debug.Assert(_benchmark.Method.DeclaringType != null, "_benchmark.Method.DeclaringType != null");
 		_loopIterationsFieldInfo =
@@ -274,7 +275,7 @@ public class Benchmark<T> : IBenchmark {
 	private int GetLoopIterations() {
 		return (int)(_loopIterationsFieldInfo.GetValue(null) ??
 		             throw new InvalidOperationException(
-			             $"Your class '{_benchmark.Method.DeclaringType.Name}' must have the field 'LoopIterations'."));
+			             $"Your class '{_benchmark.Method.DeclaringType?.Name}' must have the field 'LoopIterations'."));
 	}
 
 	private void SetLoopIterations(int value) {

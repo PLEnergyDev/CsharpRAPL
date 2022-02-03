@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using CsharpRAPL.CommandLine;
 
 namespace CsharpRAPL.Benchmarking;
 
@@ -19,6 +20,9 @@ public class BenchmarkCollector : BenchmarkSuite {
 	private static readonly MethodInfo RegisterBenchmarkGenericMethod = typeof(BenchmarkSuite)
 		.GetMethods(RegisterBenchmarkFlags)
 		.First(info => info.Name == nameof(RegisterBenchmark) && info.GetParameters().Length == 3);
+
+	public BenchmarkCollector(bool onlyCallingAssembly = true) : this(CsharpRAPLCLI.Options.Iterations,
+		CsharpRAPLCLI.Options.LoopIterations, onlyCallingAssembly) { }
 
 	public BenchmarkCollector(int iterations, int loopIterations, bool onlyCallingAssembly = true) :
 		base(iterations, loopIterations) {
@@ -49,7 +53,8 @@ public class BenchmarkCollector : BenchmarkSuite {
 				RegisterAddBenchmarkVariation(benchmarkMethod);
 			}
 
-			(MethodInfo genericRegisterBenchmark, Type funcType) = _registeredBenchmarkVariations[benchmarkMethod.ReturnType];
+			(MethodInfo genericRegisterBenchmark, Type funcType) =
+				_registeredBenchmarkVariations[benchmarkMethod.ReturnType];
 
 			//If the benchmark method is static, we don't need an instance to call the method.
 			//So if it is we use Activator to create a new instance which we use for calling the method.

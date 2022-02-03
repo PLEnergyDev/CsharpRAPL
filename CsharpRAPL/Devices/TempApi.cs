@@ -11,7 +11,7 @@ public sealed class TempApi : DeviceApi {
 		const string path = "/sys/class/thermal/";
 		var thermalId = 0;
 		while (Directory.Exists($"{path}/thermal_zone{thermalId}")) {
-			var dirname = $"{path}/thermal_zone{thermalId}";
+			string dirname = $"{path}/thermal_zone{thermalId}";
 			string type = File.ReadAllText($"{dirname}/type").Trim();
 			if (type.Contains("pkg_temp")) {
 				return $"{dirname}/temp";

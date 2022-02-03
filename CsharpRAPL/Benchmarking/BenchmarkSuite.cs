@@ -20,10 +20,7 @@ public class BenchmarkSuite {
 	private const string LoopIterationsName = nameof(LoopIterations);
 	private const string IterationsName = nameof(Iterations);
 
-	public BenchmarkSuite() {
-		Iterations = CsharpRAPLCLI.Options.DefaultIterations;
-		LoopIterations = CsharpRAPLCLI.Options.LoopIterations;
-	}
+	public BenchmarkSuite() : this(CsharpRAPLCLI.Options.Iterations, CsharpRAPLCLI.Options.LoopIterations) { }
 
 	public BenchmarkSuite(int iterations, int loopIterations) {
 		Iterations = iterations;
@@ -91,16 +88,16 @@ public class BenchmarkSuite {
 	}
 
 	private static void Warmup() {
-		int warmup = 0;
+		var warmup = 0;
 		Console.WriteLine("Warmup commencing");
-		for (int i = 0; i < 10; i++) {
+		for (var i = 0; i < 10; i++) {
 			while (warmup < int.MaxValue) {
 				warmup++;
 				if (warmup % 1000000 != 0) {
 					continue;
 				}
 
-				int percentage = (int)((double)warmup / int.MaxValue * 10.0 + 10.0 * i);
+				var percentage = (int)((double)warmup / int.MaxValue * 10.0 + 10.0 * i);
 				Console.SetCursorPosition(0, Console.CursorTop);
 				Console.Write($"{percentage}%");
 				Console.Out.Flush();

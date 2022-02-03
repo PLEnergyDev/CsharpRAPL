@@ -6,8 +6,8 @@ namespace CsharpRAPL.CommandLine;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class Options {
-	public int DefaultIterations = 50;
-	public int DefaultLoopIterations = 10000000;
+	private const int DefaultIterations = 50;
+	private const int DefaultLoopIterations = 10000000;
 
 	private int _iterations = -1;
 	private int _loopIterations = -1;
@@ -42,24 +42,29 @@ public class Options {
 		Default = "_plots/")]
 	public string PlotOutputPath { get; set; } = "_plots/";
 
+
+	[Option('a', nameof(BenchmarksToAnalyse), HelpText = "The names of the benchmarks to analyse.")]
+	public IEnumerable<string> BenchmarksToAnalyse { get; set; } = Array.Empty<string>();
+
+	[Option('z', nameof(ZipResults), HelpText = "Zips the CSV results and plots into a single zip file.")]
+	public bool ZipResults { get; set; }
+
 	[Option(nameof(OnlyPlot), Required = false, HelpText = "Plots the results in the output path.")]
 	public bool OnlyPlot { get; set; }
 
 	[Option(nameof(OnlyAnalysis), Required = false, HelpText = "Analysis the results in the output path.")]
 	public bool OnlyAnalysis { get; set; }
 
-	[Option('a', nameof(BenchmarksToAnalyse), HelpText = "The names of the benchmarks to analyse.")]
-	public IEnumerable<string> BenchmarksToAnalyse { get; set; } = Array.Empty<string>();
-
 	[Option(nameof(Verbose), HelpText = "Enables debug information.")]
 	public bool Verbose { get; set; }
 
-	[Option('z', nameof(ZipResults), HelpText = "Zips the CSV results and plots into a single zip file.")]
-	public bool ZipResults { get; set; }
 
 	public bool UseIterationCalculation => _iterations == -1;
 
 	public bool UseLoopIterationScaling => _loopIterations == -1;
 
-	public bool ShouldExit;
+	/// <summary>
+	/// Determines if the program should exit when encountering an error.
+	/// </summary>
+	public static bool ShouldExit { get; set; } = true;
 }
