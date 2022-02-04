@@ -2,5 +2,5 @@
 
 public interface IDoable {
 
-	int UpdateAndGetValue();
+	ulong UpdateAndGetValue();
 }

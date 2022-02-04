@@ -9,8 +9,9 @@ namespace Benchmarks.Collections.Table;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class ImmutableDictionaryBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 	public static readonly ImmutableDictionary<int, int> Data;
 
 	static ImmutableDictionaryBenchmarks() {
@@ -21,7 +22,7 @@ public class ImmutableDictionaryBenchmarks {
 	[Benchmark("TableInsertion", "Tests insertion into a ImmutableDictionary")]
 	public static int ImmutableDictionaryInsertion() {
 		ImmutableDictionary<int, int> temp = ImmutableDictionary.Create<int, int>();
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			temp = ImmutableDictionary.Create<int, int>();
 			for (int j = 0; j < 1000; j++) {
 				temp = temp.Add(CollectionsHelpers.SequentialIndices[j], CollectionsHelpers.RandomValues[j]);
@@ -34,7 +35,7 @@ public class ImmutableDictionaryBenchmarks {
 	[Benchmark("TableGet", "Tests getting values sequentially from a ImmutableDictionary")]
 	public static int ImmutableDictionaryGet() {
 		int sum = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				sum += Data[CollectionsHelpers.SequentialIndices[j]];
 			}
@@ -46,7 +47,7 @@ public class ImmutableDictionaryBenchmarks {
 	[Benchmark("TableGet", "Tests getting values randomly from a ImmutableDictionary")]
 	public static int ImmutableDictionaryGetRandom() {
 		int sum = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				sum += Data[CollectionsHelpers.RandomIndices[j]];
 			}
@@ -58,7 +59,7 @@ public class ImmutableDictionaryBenchmarks {
 	[Benchmark("TableRemoval", "Tests removal from a ImmutableDictionary")]
 	public static int ImmutableDictionaryRemoval() {
 		ImmutableDictionary<int, int> temp = ImmutableDictionary.Create<int, int>();
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < 1000; j++) {
 				temp = temp.Add(CollectionsHelpers.SequentialIndices[j], CollectionsHelpers.RandomValues[j]);
 			}
@@ -74,7 +75,7 @@ public class ImmutableDictionaryBenchmarks {
 	[Benchmark("TableCreation", "Tests allocation and initialization of an ImmutableDictionary")]
 	public static int ImmutableDictionaryCreation() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			ImmutableDictionary<int, int> immutableDictionary = ImmutableDictionary.Create<int, int>();
 			for (int index = 0; index < Data.Count; index++) {
 				immutableDictionary = immutableDictionary.Add(index, index * 2);
@@ -89,7 +90,7 @@ public class ImmutableDictionaryBenchmarks {
 	[Benchmark("TableCopy", "Tests copying an ImmutableDictionary using a foreach loop looping through k/v pairs")]
 	public static int ImmutableDictionaryCopyManualForeach() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			ImmutableDictionary<int, int> target = ImmutableDictionary.Create<int, int>();
 
 			foreach (KeyValuePair<int, int> pair in Data) {
@@ -106,7 +107,7 @@ public class ImmutableDictionaryBenchmarks {
 	[Benchmark("TableCopy", "Tests copying an ImmutableDictionary using a foreach loop and looping through keys")]
 	public static int ImmutableDictionaryCopyManualForeachIndex() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			ImmutableDictionary<int, int> target = ImmutableDictionary.Create<int, int>();
 
 			foreach (int key in Data.Keys) {
@@ -123,7 +124,7 @@ public class ImmutableDictionaryBenchmarks {
 	[Benchmark("TableCopy", "Tests copying an ImmutableDictionary using a foreach loop using deconstruction")]
 	public static int ImmutableDictionaryCopyManualForeachDeconstruct() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			ImmutableDictionary<int, int> target = ImmutableDictionary.Create<int, int>();
 
 			foreach ((int key, int value) in Data) {

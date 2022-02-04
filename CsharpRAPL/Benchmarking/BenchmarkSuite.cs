@@ -11,8 +11,8 @@ using CsharpRAPL.Plotting;
 namespace CsharpRAPL.Benchmarking;
 
 public class BenchmarkSuite {
-	public int Iterations { get; }
-	public int LoopIterations { get; }
+	public ulong Iterations { get; }
+	public ulong LoopIterations { get; }
 	private List<IBenchmark> Benchmarks { get; } = new();
 
 	private readonly HashSet<Type> _registeredBenchmarkClasses = new();
@@ -22,7 +22,7 @@ public class BenchmarkSuite {
 
 	public BenchmarkSuite() : this(CsharpRAPLCLI.Options.Iterations, CsharpRAPLCLI.Options.LoopIterations) { }
 
-	public BenchmarkSuite(int iterations, int loopIterations) {
+	public BenchmarkSuite(ulong iterations, ulong loopIterations) {
 		Iterations = iterations;
 		LoopIterations = loopIterations;
 	}
@@ -49,17 +49,31 @@ public class BenchmarkSuite {
 		_registeredBenchmarkClasses.Add(benchmarkClass);
 	}
 
-	public static void SetField(Type benchmarkClass, string name, int value) {
+	private static void CheckFieldValidity(Type benchmarkClass, string name) {
 		FieldInfo? fieldInfo = benchmarkClass.GetFields()
 			.FirstOrDefault(info => info.Name == name);
 		if (fieldInfo == null) {
-			throw new NotSupportedException($"Your class '{benchmarkClass.Name}' must have the field '{name}'.");
+			throw new NotSupportedException(
+				$"Your class '{benchmarkClass.Name}' doesn't have the field '{name}' and it is required.");
 		}
 
 		if (!fieldInfo.IsStatic) {
 			throw new NotSupportedException($"Your '{name}' field must be static.");
 		}
 
+		if (fieldInfo.FieldType != typeof(ulong) && fieldInfo.FieldType != typeof(uint)) {
+			throw new NotSupportedException(
+				$"Your field '{fieldInfo.Name}' must have the type 'ulong' or 'uint' for the benchmark '{benchmarkClass.Name}'.");
+		}
+	}
+
+	public static void SetField(Type benchmarkClass, string name, ulong value) {
+		CheckFieldValidity(benchmarkClass, name);
+		benchmarkClass.GetField(name, BindingFlags.Public | BindingFlags.Static)?.SetValue(null, value);
+	}
+
+	public static void SetField(Type benchmarkClass, string name, uint value) {
+		CheckFieldValidity(benchmarkClass, name);
 		benchmarkClass.GetField(name, BindingFlags.Public | BindingFlags.Static)?.SetValue(null, value);
 	}
 

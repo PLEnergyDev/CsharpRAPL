@@ -7,30 +7,31 @@ namespace Benchmarks.Invocation;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
-public class FunBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+public class FuncBenchmarks {
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 	private static readonly InvocationHelper InstanceObject = new();
-	private static readonly Func<int> FuncInt = InstanceObject.Calculate;
-	private static readonly Func<int> StaticFuncInt = InvocationHelper.CalculateStatic;
+	private static readonly Func<ulong> FuncLong = InstanceObject.Calculate;
+	private static readonly Func<ulong> StaticFuncInt = InvocationHelper.CalculateStatic;
 
 	[Benchmark("InvocationFunc", "Tests invocation using a func")]
-	public static int Func() {
-		int result = 0;
+	public static ulong Func() {
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
-			result += FuncInt() + i;
+		for (ulong i  = 0; i < LoopIterations; i++) {
+			result += FuncLong() + i;
 		}
 
 		return result;
 	}
 
 	[Benchmark("InvocationFunc", "Tests invocation using a static func")]
-	public static int FuncStatic() {
-		int result = 0;
+	public static ulong FuncStatic() {
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			result += StaticFuncInt() + i;
 		}
 

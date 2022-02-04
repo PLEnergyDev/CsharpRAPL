@@ -4,7 +4,7 @@ using CsharpRAPL.Data;
 namespace CsharpRAPL.Benchmarking;
 
 public interface IBenchmark {
-	public int Iterations { get; }
+	public ulong Iterations { get; }
 	public string Name { get; }
 	public string? Group { get; }
 	public int Order { get; }

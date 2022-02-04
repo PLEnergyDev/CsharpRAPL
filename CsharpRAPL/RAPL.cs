@@ -1,7 +1,7 @@
 using CsharpRAPL.Data;
 using CsharpRAPL.Devices;
 
-namespace CsharpRAPL; 
+namespace CsharpRAPL;
 
 public sealed class RAPL {
 	private readonly DRAMApi _dramApi;
@@ -34,17 +34,18 @@ public sealed class RAPL {
 		return _dramApi.IsValid() && _tempApi.IsValid() && _timerApi.IsValid() && _packageApi.IsValid();
 	}
 
-	public BenchmarkResult GetResults() {
+	public BenchmarkResult GetResults(ulong loopIterations) {
 		BenchmarkResult result = new() {
 			DRAMEnergy = _dramApi.Delta,
 			Temperature = _tempApi.Delta,
 			ElapsedTime = _timerApi.Delta,
-			PackageEnergy = _packageApi.Delta
+			PackageEnergy = _packageApi.Delta,
+			LoopIterations = loopIterations
 		};
 		return result;
 	}
 
-	public BenchmarkResult GetNormalizedResults(int loopIterations, int normalizedIterations = 1000000) {
+	public BenchmarkResult GetNormalizedResults(ulong loopIterations, int normalizedIterations = 1000000) {
 		BenchmarkResult result = new() {
 			DRAMEnergy = _dramApi.Delta / ((double)loopIterations / normalizedIterations),
 			Temperature = _tempApi.Delta / 1000,

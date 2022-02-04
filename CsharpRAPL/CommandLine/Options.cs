@@ -6,27 +6,27 @@ namespace CsharpRAPL.CommandLine;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class Options {
-	private const int DefaultIterations = 50;
-	private const int DefaultLoopIterations = 10000000;
+	private const ulong DefaultIterations = 50;
+	private const ulong DefaultLoopIterations = 10000000;
 
-	private int _iterations = -1;
-	private int _loopIterations = -1;
+	private ulong _iterations = 0;
+	private ulong _loopIterations = 0;
 
 	[Option('g', nameof(SkipPlotGroups), Required = false,
 		HelpText = "If plotting each benchmark group should be skipped.")]
 	public bool SkipPlotGroups { get; set; }
 
 	[Option('i', nameof(Iterations), Required = false,
-		HelpText = "Sets the target iterations. (Disables Dynamic Iteration Calculation)", Default = -1)]
-	public int Iterations {
-		get => _iterations == -1 ? DefaultIterations : _iterations;
+		HelpText = "Sets the target iterations. (Disables Dynamic Iteration Calculation)", Default = 0UL)]
+	public ulong Iterations {
+		get => UseIterationCalculation ? DefaultIterations : _iterations;
 		set => _iterations = value;
 	}
 
 	[Option('l', nameof(LoopIterations), Required = false,
-		HelpText = "Sets the target loop iterations. (Disables Dynamic Loop Iteration Scaling)", Default = -1)]
-	public int LoopIterations {
-		get => _loopIterations == -1 ? DefaultLoopIterations : _loopIterations;
+		HelpText = "Sets the target loop iterations. (Disables Dynamic Loop Iteration Scaling)", Default = 0UL)]
+	public ulong LoopIterations {
+		get => UseLoopIterationScaling ? DefaultLoopIterations : _loopIterations;
 		set => _loopIterations = value;
 	}
 
@@ -59,9 +59,9 @@ public class Options {
 	public bool Verbose { get; set; }
 
 
-	public bool UseIterationCalculation => _iterations == -1;
+	public bool UseIterationCalculation => _iterations == 0;
 
-	public bool UseLoopIterationScaling => _loopIterations == -1;
+	public bool UseLoopIterationScaling => _loopIterations == 0;
 
 	/// <summary>
 	/// Determines if the program should exit when encountering an error.

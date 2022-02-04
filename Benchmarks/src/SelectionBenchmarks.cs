@@ -6,14 +6,15 @@ namespace Benchmarks;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class SelectionBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 	[Benchmark("SelectionIf", "Tests if statement")]
-	public static int If() {
-		int halfLoopIteration = LoopIterations / 2;
-		int count = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong If() {
+		ulong halfLoopIteration = LoopIterations / 2;
+		ulong count = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			if (i < halfLoopIteration) {
 				count++;
 				continue;
@@ -32,9 +33,9 @@ public class SelectionBenchmarks {
 	}
 
 	[Benchmark("SelectionSwitch", "Tests if statement compared to switch")]
-	public static int IfComparableWithSwitch() {
-		int count = 1;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong IfComparableWithSwitch() {
+		ulong count = 1;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			if (count == 1) {
 				count = 2;
 				continue;
@@ -87,10 +88,10 @@ public class SelectionBenchmarks {
 	}
 
 	[Benchmark("SelectionIf", "Tests if and else statement")]
-	public static int IfElse() {
-		int count = 0;
-		int halfLoopIteration = LoopIterations / 2;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong IfElse() {
+		ulong count = 0;
+		ulong halfLoopIteration = LoopIterations / 2;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			if (i < halfLoopIteration) {
 				count++;
 				continue;
@@ -110,11 +111,11 @@ public class SelectionBenchmarks {
 	}
 
 	[Benchmark("SelectionIf", "Tests if and if else statement")]
-	public static int IfElseIf() //TODO IL code is equivalent with IfElse
+	public static ulong IfElseIf() //TODO IL code is equivalent with IfElse
 	{
-		int count = 0;
-		int halfLoopIteration = LoopIterations / 2;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong count = 0;
+		ulong halfLoopIteration = LoopIterations / 2;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			if (i < halfLoopIteration) {
 				count++;
 				continue;
@@ -133,9 +134,9 @@ public class SelectionBenchmarks {
 	}
 
 	[Benchmark("SelectionSwitch", "Tests switch statement")]
-	public static int Switch() {
-		int count = 1;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong Switch() {
+		ulong count = 1;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			switch (count) {
 				case 1:
 					count = 2;
@@ -174,10 +175,10 @@ public class SelectionBenchmarks {
 	}
 
 	[Benchmark("SelectionConst", "Switch comparable with If with const number")]
-	public static int SwitchConstNumber() {
-		int count = 1;
-		const int halfLoopIteration = 25000;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong SwitchConstNumber() {
+		ulong count = 1;
+		const ulong halfLoopIteration = 25000;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			switch (i) {
 				case < halfLoopIteration:
 					count++;
@@ -195,10 +196,10 @@ public class SelectionBenchmarks {
 	}
 
 	[Benchmark("SelectionConst", "Tests if statement with constant number")]
-	public static int IfConstNumber() {
-		const int halfLoopIteration = 25000;
-		int count = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong IfConstNumber() {
+		const ulong halfLoopIteration = 25000;
+		ulong count = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			if (i < halfLoopIteration) {
 				count++;
 				continue;
@@ -221,9 +222,9 @@ public class SelectionBenchmarks {
 	}
 
 	[Benchmark("SelectionConditional", "Tests if else comparable with conditional operator")]
-	public static int IfElseComparableWithConditional() {
-		int count = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong IfElseComparableWithConditional() {
+		ulong count = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			if (i <= LoopIterations) {
 				count = 1;
 			}
@@ -237,10 +238,10 @@ public class SelectionBenchmarks {
 
 
 	[Benchmark("SelectionConditional", "Tests if conditional operator")]
-	public static int ConditionalOperator() {
-		int count = 0;
-		for (int i = 0; i < LoopIterations; i++) {
-			count = i <= LoopIterations ? 1 : 2;
+	public static ulong ConditionalOperator() {
+		ulong count = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
+			count = i <= LoopIterations ? 1ul : 2ul;
 		}
 
 		return count;

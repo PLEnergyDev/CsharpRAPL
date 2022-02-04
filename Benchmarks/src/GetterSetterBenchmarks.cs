@@ -7,14 +7,15 @@ namespace Benchmarks;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class GetterSetterBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 	[Benchmark("GetterSetter", "Tests incrementing a property")]
-	public static int Property() {
+	public static ulong Property() {
 		GetterSetterHelper helper = new GetterSetterHelper();
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong result = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			helper.Property++;
 		}
 
@@ -22,10 +23,10 @@ public class GetterSetterBenchmarks {
 	}
 
 	[Benchmark("GetterSetterGet", "Tests getting a property")]
-	public static int PropertyGet() {
+	public static ulong PropertyGet() {
 		GetterSetterHelper helper = new GetterSetterHelper();
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong result = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			result += helper.Property + 2;
 		}
 
@@ -33,10 +34,10 @@ public class GetterSetterBenchmarks {
 	}
 
 	[Benchmark("GetterSetterSet", "Tests setting a property")]
-	public static int PropertySet() {
+	public static ulong PropertySet() {
 		GetterSetterHelper helper = new GetterSetterHelper();
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong result = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			helper.Property = i + 2;
 		}
 
@@ -44,10 +45,10 @@ public class GetterSetterBenchmarks {
 	}
 
 	[Benchmark("GetterSetter", "Tests incrementing a property with a backing field")]
-	public static int PropertyWithBackingField() {
+	public static ulong PropertyWithBackingField() {
 		GetterSetterHelper helper = new GetterSetterHelper();
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong result = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			helper.PropertyWithBackingField++;
 		}
 
@@ -55,10 +56,10 @@ public class GetterSetterBenchmarks {
 	}
 
 	[Benchmark("GetterSetterGet", "Tests getting a property with a backing field")]
-	public static int PropertyWithBackingFieldGet() {
+	public static ulong PropertyWithBackingFieldGet() {
 		GetterSetterHelper helper = new GetterSetterHelper();
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong result = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			result += helper.PropertyWithBackingField + 2;
 		}
 
@@ -66,10 +67,10 @@ public class GetterSetterBenchmarks {
 	}
 
 	[Benchmark("GetterSetterSet", "Tests setting a property with a backing field")]
-	public static int PropertyWithBackingFieldSet() {
+	public static ulong PropertyWithBackingFieldSet() {
 		GetterSetterHelper helper = new GetterSetterHelper();
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong result = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			helper.PropertyWithBackingField = i + 2;
 		}
 
@@ -77,10 +78,10 @@ public class GetterSetterBenchmarks {
 	}
 
 	[Benchmark("GetterSetter", "Tests incrementing value using both getter and setter methods")]
-	public static int GetterSetter() {
+	public static ulong GetterSetter() {
 		GetterSetterHelper helper = new GetterSetterHelper();
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong result = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			helper.SetValue(helper.GetValue() + 1);
 		}
 
@@ -88,10 +89,10 @@ public class GetterSetterBenchmarks {
 	}
 
 	[Benchmark("GetterSetterGet", "Tests getting a using a getter method")]
-	public static int GetterSetterGet() {
+	public static ulong GetterSetterGet() {
 		GetterSetterHelper helper = new GetterSetterHelper();
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong result = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			result += helper.GetValue() + 2;
 		}
 
@@ -99,10 +100,10 @@ public class GetterSetterBenchmarks {
 	}
 
 	[Benchmark("GetterSetterSet", "Tests setting a value using a setter method")]
-	public static int GetterSetterSet() {
+	public static ulong GetterSetterSet() {
 		GetterSetterHelper helper = new GetterSetterHelper();
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong result = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			helper.SetValue(i + 2);
 		}
 
@@ -110,10 +111,10 @@ public class GetterSetterBenchmarks {
 	}
 
 	[Benchmark("GetterSetter", "Tests incrementing a field")]
-	public static int Field() {
+	public static ulong Field() {
 		GetterSetterHelper helper = new GetterSetterHelper();
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong result = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			helper.Field++;
 		}
 
@@ -121,10 +122,10 @@ public class GetterSetterBenchmarks {
 	}
 
 	[Benchmark("GetterSetterGet", "Tests getting a field")]
-	public static int FieldGet() {
+	public static ulong FieldGet() {
 		GetterSetterHelper helper = new GetterSetterHelper();
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong result = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			result += helper.Field + 2;
 		}
 
@@ -132,10 +133,10 @@ public class GetterSetterBenchmarks {
 	}
 
 	[Benchmark("GetterSetterSet", "Tests setting a field")]
-	public static int FieldSet() {
+	public static ulong FieldSet() {
 		GetterSetterHelper helper = new GetterSetterHelper();
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong result = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			helper.Field = i + 2;
 		}
 

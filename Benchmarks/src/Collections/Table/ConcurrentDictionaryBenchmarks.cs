@@ -9,8 +9,9 @@ namespace Benchmarks.Collections.Table;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class ConcurrentDictionaryBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 	public static readonly ConcurrentDictionary<int, int> Data = new();
 
@@ -23,7 +24,7 @@ public class ConcurrentDictionaryBenchmarks {
 	[Benchmark("TableInsertion", "Tests insertion into a ConcurrentDictionary")]
 	public static int ConcurrentDictionaryInsertion() {
 		ConcurrentDictionary<int, int> temp = new ConcurrentDictionary<int, int>();
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			temp = new ConcurrentDictionary<int, int>();
 			for (int j = 0; j < 1000; j++) {
 				temp.TryAdd(CollectionsHelpers.SequentialIndices[j], CollectionsHelpers.RandomValues[j]);
@@ -36,7 +37,7 @@ public class ConcurrentDictionaryBenchmarks {
 	[Benchmark("TableGet", "Tests getting values sequentially from a ConcurrentDictionary")]
 	public static int ConcurrentDictionaryGet() {
 		int sum = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				sum += Data[CollectionsHelpers.SequentialIndices[j]];
 			}
@@ -48,7 +49,7 @@ public class ConcurrentDictionaryBenchmarks {
 	[Benchmark("TableGet", "Tests getting values randomly from a ConcurrentDictionary")]
 	public static int ConcurrentDictionaryGetRandom() {
 		int sum = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				sum += Data[CollectionsHelpers.RandomIndices[j]];
 			}
@@ -60,7 +61,7 @@ public class ConcurrentDictionaryBenchmarks {
 	[Benchmark("TableRemoval", "Tests removal from a ConcurrentDictionary")]
 	public static int ConcurrentDictionaryRemoval() {
 		ConcurrentDictionary<int, int> temp = new ConcurrentDictionary<int, int>();
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < 1000; j++) {
 				temp.TryAdd(CollectionsHelpers.SequentialIndices[j], CollectionsHelpers.RandomValues[j]);
 			}
@@ -76,7 +77,7 @@ public class ConcurrentDictionaryBenchmarks {
 	[Benchmark("TableCreation", "Tests allocation and initialization of a ConcurrentDictionary")]
 	public static int ConcurrentDictionaryCreation() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			ConcurrentDictionary<int, int> concurrentDictionary = new ConcurrentDictionary<int, int>();
 			for (int index = 0; index < Data.Count; index++) {
 				concurrentDictionary.TryAdd(index, index * 2);
@@ -91,7 +92,7 @@ public class ConcurrentDictionaryBenchmarks {
 	[Benchmark("TableCopy", "Tests copying an ConcurrentDictionary using a foreach loop looping through k/v pairs")]
 	public static int ConcurrentDictionaryCopyManualForeach() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			ConcurrentDictionary<int, int> target = new ConcurrentDictionary<int, int>();
 
 			foreach (KeyValuePair<int, int> pair in Data) {
@@ -108,7 +109,7 @@ public class ConcurrentDictionaryBenchmarks {
 	[Benchmark("TableCopy", "Tests copying an ConcurrentDictionary using a foreach loop and looping through keys")]
 	public static int ConcurrentDictionaryCopyManualForeachIndex() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			ConcurrentDictionary<int, int> target = new ConcurrentDictionary<int, int>();
 
 			foreach (int key in Data.Keys) {
@@ -125,7 +126,7 @@ public class ConcurrentDictionaryBenchmarks {
 	[Benchmark("TableCopy", "Tests copying an ConcurrentDictionary using a foreach loop using deconstruction")]
 	public static int ConcurrentDictionaryCopyManualForeachDeconstruct() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			ConcurrentDictionary<int, int> target = new ConcurrentDictionary<int, int>();
 
 			foreach ((int key, int value) in Data) {

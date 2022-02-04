@@ -24,7 +24,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 	public BenchmarkCollector(bool onlyCallingAssembly = true) : this(CsharpRAPLCLI.Options.Iterations,
 		CsharpRAPLCLI.Options.LoopIterations, onlyCallingAssembly) { }
 
-	public BenchmarkCollector(int iterations, int loopIterations, bool onlyCallingAssembly = true) :
+	public BenchmarkCollector(ulong iterations, ulong loopIterations, bool onlyCallingAssembly = true) :
 		base(iterations, loopIterations) {
 		if (onlyCallingAssembly) {
 			CollectBenchmarks(Assembly.GetCallingAssembly());
@@ -41,6 +41,9 @@ public class BenchmarkCollector : BenchmarkSuite {
 			type.GetMethods().Where(info => info.GetCustomAttribute<BenchmarkAttribute>() != null))) {
 			//Try to get the benchmark attribute
 			var benchmarkAttribute = benchmarkMethod.GetCustomAttribute<BenchmarkAttribute>()!;
+			
+			SetField(benchmarkMethod.DeclaringType!, nameof(LoopIterations), LoopIterations);
+			SetField(benchmarkMethod.DeclaringType!, nameof(Iterations), Iterations);
 
 			if (benchmarkAttribute.Skip) {
 				continue;

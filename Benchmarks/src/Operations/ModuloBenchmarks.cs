@@ -6,15 +6,16 @@ namespace Benchmarks.Operations;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class ModuloBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 	[Benchmark("Modulo", "Tests simple modulo")]
-	public static int Modulo() {
-		int a = 10;
-		int b = 2;
-		int res = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong Modulo() {
+		ulong a = 10;
+		ulong b = 2;
+		ulong res = 0;
+		for (ulong i = 0; i < LoopIterations; i++) {
 			res = a % (b + i);
 		}
 
@@ -23,11 +24,11 @@ public class ModuloBenchmarks {
 
 
 	[Benchmark("Modulo", "Tests simple modulo where the parts are marked as constant")]
-	public static int Const() {
-		const int a = 10;
-		const int b = 2;
-		int res = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong Const() {
+		const ulong a = 10;
+		const ulong b = 2;
+		ulong res = 0;
+		for (ulong i = 0; i < LoopIterations; i++) {
 			res = a % (b + i);
 		}
 
@@ -35,10 +36,10 @@ public class ModuloBenchmarks {
 	}
 
 	[Benchmark("Modulo", "Tests modulo using compound assignment")]
-	public static int ModuloAssign() {
-		int a = 10;
-		int res = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong ModuloAssign() {
+		ulong a = 10;
+		ulong res = 0;
+		for (ulong i = 0; i < LoopIterations; i++) {
 			res %= (a + i);
 		}
 
@@ -46,10 +47,10 @@ public class ModuloBenchmarks {
 	}
 
 	[Benchmark("Modulo", "Tests modulo without compound assignment")]
-	public static int Assign() {
-		int a = 10;
-		int res = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong Assign() {
+		ulong a = 10;
+		ulong res = 0;
+		for (ulong i = 0; i < LoopIterations; i++) {
 			res = res % (a + i);
 		}
 

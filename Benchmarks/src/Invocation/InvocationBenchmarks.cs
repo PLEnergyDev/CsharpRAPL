@@ -9,23 +9,27 @@ namespace Benchmarks.Invocation;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public static unsafe class InvocationBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 	private static readonly InvocationHelper InstanceObject = new();
-	
+
 	private static readonly MethodInfo MethodReflection =
 		typeof(InvocationHelper).GetMethod(nameof(InvocationHelper.Calculate));
-	private static readonly Func<int> FuncInt = InstanceObject.Calculate;
-	private static readonly delegate*<int> FunctionPointerInt = &InvocationHelper.CalculateStatic;
-	private delegate int DelegatePrototype();
+
+	private static readonly Func<ulong> FuncInt = InstanceObject.Calculate;
+	private static readonly delegate*<ulong> FunctionPointerInt = &InvocationHelper.CalculateStatic;
+
+	private delegate ulong DelegatePrototype();
+
 	private static readonly DelegatePrototype DelegatePrototypeInstance = InstanceObject.Calculate;
 
 	[Benchmark("Invocation", "Tests invocation using an instance")]
-	public static int Instance() {
-		int result = 0;
+	public static ulong Instance() {
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += InstanceObject.Calculate() + i;
 		}
 
@@ -33,10 +37,10 @@ public static unsafe class InvocationBenchmarks {
 	}
 
 	[Benchmark("Invocation", "Tests invocation using an instance")]
-	public static int InstanceStaticField() {
-		int result = 0;
+	public static ulong InstanceStaticField() {
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += InstanceObject.CalculateUsingStaticField() + i;
 		}
 
@@ -44,10 +48,10 @@ public static unsafe class InvocationBenchmarks {
 	}
 
 	[Benchmark("Invocation", "Tests invocation using a static method")]
-	public static int Static() {
-		int result = 0;
+	public static ulong Static() {
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += InvocationHelper.CalculateStatic() + i;
 		}
 
@@ -55,15 +59,15 @@ public static unsafe class InvocationBenchmarks {
 	}
 
 	[Benchmark("Invocation", "Tests invocation using an local function")]
-	public static int LocalFunction() {
-		int Calc() {
+	public static ulong LocalFunction() {
+		ulong Calc() {
 			InvocationHelper.StaticField++;
 			return InvocationHelper.StaticField + 2;
 		}
 
-		int result = 0;
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += Calc() + i;
 		}
 
@@ -71,10 +75,10 @@ public static unsafe class InvocationBenchmarks {
 	}
 
 	[Benchmark("Invocation", "Tests invocation using a func")]
-	public static int Func() {
-		int result = 0;
+	public static ulong Func() {
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += FuncInt() + i;
 		}
 
@@ -82,11 +86,11 @@ public static unsafe class InvocationBenchmarks {
 	}
 
 	[Benchmark("Invocation", "Tests invocation using a reflection on an instance method")]
-	public static int Reflection() {
-		int result = 0;
+	public static ulong Reflection() {
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
-			result += (int)MethodReflection.Invoke(InstanceObject, Array.Empty<object>())! + i;
+		for (ulong i = 0; i < LoopIterations; i++) {
+			result += (ulong)MethodReflection.Invoke(InstanceObject, Array.Empty<object>())! + i;
 		}
 
 		return result;
@@ -94,10 +98,10 @@ public static unsafe class InvocationBenchmarks {
 
 
 	[Benchmark("Invocation", "Tests invocation using a function pointer")]
-	public static int FunctionPointer() {
-		int result = 0;
+	public static ulong FunctionPointer() {
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += FunctionPointerInt() + i;
 		}
 
@@ -105,10 +109,10 @@ public static unsafe class InvocationBenchmarks {
 	}
 
 	[Benchmark("Invocation", "Tests delegate invoking an instance method")]
-	public static int Delegate() {
-		int result = 0;
+	public static ulong Delegate() {
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += DelegatePrototypeInstance.Invoke();
 		}
 

@@ -3,5 +3,5 @@
 namespace Benchmarks.HelperObjects;
 
 public class JumpHelperException : Exception {
-	public int Number = 10;
+	public ulong Number = 10;
 }

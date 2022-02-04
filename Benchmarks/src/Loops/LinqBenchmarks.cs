@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CsharpRAPL.Benchmarking;
 
@@ -7,10 +8,11 @@ namespace Benchmarks.Loops;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class LinqBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
 
-	private static readonly int[] RandomValues = {
+
+	private static readonly ulong[] RandomValues = {
 		132, 700, 206, 791, 374, 456, 597, 758, 477, 321, 30, 96, 842, 568, 337, 189, 640, 551, 570, 501, 893, 974, 554,
 		461, 640, 276, 256, 929, 725, 624, 288, 658, 828, 462, 153, 991, 3, 242, 583, 908, 349, 753, 436, 645, 574, 807,
 		302, 242, 760, 514, 920, 468, 709, 703, 209, 152, 638, 674, 818, 541, 359, 353, 527, 216, 257, 158, 81, 630,
@@ -58,11 +60,11 @@ public class LinqBenchmarks {
 		958, 776
 	};
 
-	[Benchmark("LoopsLinq", "Tests LINQ using Sum")]
-	public static int LinqSum() {
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
-			result += RandomValues.Sum();
+	[Benchmark("LoopsLinq", "Tests LINQ using Aggregate to get the sum")]
+	public static ulong LinqAggregate() {
+		ulong result = 0;
+		for (ulong i = 0; i < LoopIterations; i++) {
+			result += RandomValues.Aggregate((left, right) => left + right);
 		}
 
 
@@ -70,10 +72,10 @@ public class LinqBenchmarks {
 	}
 
 	[Benchmark("LoopsLinq", "Tests a foreach loop equivalent to LINQ Sum")]
-	public static int LinqSumForEachEquivalent() {
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
-			foreach (int value in RandomValues) {
+	public static ulong LinqSumForEachEquivalent() {
+		ulong result = 0;
+		for (ulong i = 0; i < LoopIterations; i++) {
+			foreach (ulong value in RandomValues) {
 				result += value;
 			}
 		}
@@ -82,9 +84,9 @@ public class LinqBenchmarks {
 	}
 
 	[Benchmark("LoopsLinq", "Tests a for loop equivalent to LINQ Sum")]
-	public static int LinqSumForEquivalent() {
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong LinqSumForEquivalent() {
+		ulong result = 0;
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < RandomValues.Length; j++) {
 				result += RandomValues[j];
 			}
@@ -94,9 +96,9 @@ public class LinqBenchmarks {
 	}
 
 	[Benchmark("LoopsLinq", "Tests LINQ using Min")]
-	public static int LinqMin() {
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong LinqMin() {
+		ulong result = 0;
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += RandomValues.Min();
 		}
 
@@ -105,11 +107,11 @@ public class LinqBenchmarks {
 	}
 
 	[Benchmark("LoopsLinq", "Tests a foreach loop equivalent to LINQ Min")]
-	public static int LinqMinForEachEquivalent() {
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
-			int min = 0;
-			foreach (int value in RandomValues) {
+	public static ulong LinqMinForEachEquivalent() {
+		ulong result = 0;
+		for (ulong i = 0; i < LoopIterations; i++) {
+			ulong min = 0;
+			foreach (ulong value in RandomValues) {
 				if (value < min) {
 					min = value;
 				}
@@ -122,12 +124,12 @@ public class LinqBenchmarks {
 	}
 
 	[Benchmark("LoopsLinq", "Tests a for loop equivalent to LINQ Min")]
-	public static int LinqMinForEquivalent() {
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
-			int min = 0;
+	public static ulong LinqMinForEquivalent() {
+		ulong result = 0;
+		for (ulong i = 0; i < LoopIterations; i++) {
+			ulong min = 0;
 			for (int j = 0; j < RandomValues.Length; j++) {
-				int value = RandomValues[j];
+				ulong value = RandomValues[j];
 				if (value < min) {
 					min = value;
 				}
@@ -139,11 +141,11 @@ public class LinqBenchmarks {
 		return result;
 	}
 
-	[Benchmark("LoopsLinq", "Tests LINQ using Select Sum")]
-	public static int LinqSelectSum() {
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
-			result += RandomValues.Select(value => value + value + 1).Sum();
+	[Benchmark("LoopsLinq", "Tests LINQ using Select Aggregate to get the sum")]
+	public static ulong LinqSelectAggregate() {
+		ulong result = 0;
+		for (ulong i = 0; i < LoopIterations; i++) {
+			result += RandomValues.Select(value => value + value + 1).Aggregate((left, right) => left + right);
 		}
 
 
@@ -151,10 +153,10 @@ public class LinqBenchmarks {
 	}
 
 	[Benchmark("LoopsLinq", "Tests a foreach loop equivalent to LINQ Select Sum")]
-	public static int LinqSelectSumForEachEquivalent() {
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
-			foreach (int value in RandomValues) {
+	public static ulong LinqSelectSumForEachEquivalent() {
+		ulong result = 0;
+		for (ulong i = 0; i < LoopIterations; i++) {
+			foreach (ulong value in RandomValues) {
 				result += value + value + 1;
 			}
 		}
@@ -163,9 +165,9 @@ public class LinqBenchmarks {
 	}
 
 	[Benchmark("LoopsLinq", "Tests a for loop equivalent to LINQ Select Sum")]
-	public static int LinqSelectSumForEquivalent() {
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong LinqSelectSumForEquivalent() {
+		ulong result = 0;
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < RandomValues.Length; j++) {
 				result += RandomValues[j] + RandomValues[j] + 1;
 			}

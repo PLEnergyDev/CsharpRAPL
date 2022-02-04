@@ -7,8 +7,9 @@ namespace Benchmarks.Collections.List;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class ImmutableArrayBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 	public static readonly ImmutableArray<int> Data;
 
@@ -19,7 +20,7 @@ public class ImmutableArrayBenchmarks {
 	[Benchmark("ListGet", "Tests getting values sequentially from a ImmutableArray")]
 	public static int ImmutableArrayGet() {
 		int sum = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Length; j++) {
 				sum += Data[CollectionsHelpers.SequentialIndices[j]];
 			}
@@ -31,7 +32,7 @@ public class ImmutableArrayBenchmarks {
 	[Benchmark("ListGet", "Tests getting values randomly from a ImmutableArray")]
 	public static int ImmutableArrayGetRandom() {
 		int sum = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Length; j++) {
 				sum += Data[CollectionsHelpers.RandomIndices[j]];
 			}
@@ -45,7 +46,7 @@ public class ImmutableArrayBenchmarks {
 		int result = 0;
 		ImmutableArray<int> target = ImmutableArray<int>.Empty;
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int index = 0; index < Data.Length; index++) {
 				target = target.Add(index);
 			}
@@ -62,7 +63,7 @@ public class ImmutableArrayBenchmarks {
 		int result = 0;
 		ImmutableArray<int> target = ImmutableArray<int>.Empty;
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Length; j++) {
 				target = target.Add(j);
 			}
@@ -80,7 +81,7 @@ public class ImmutableArrayBenchmarks {
 	[Benchmark("ListCreation", "Tests allocation and initialization of an ImmutableArray")]
 	public static int ImmutableArrayCreation() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			ImmutableArray<int> array = ImmutableArray<int>.Empty;
 			for (int index = 0; index < Data.Length; index++) {
 				array = array.Add(index * 2);
@@ -92,12 +93,12 @@ public class ImmutableArrayBenchmarks {
 
 		return result;
 	}
-	
-	
+
+
 	[Benchmark("ListCopy", "Tests copying an ImmutableArray using a foreach loop")]
 	public static int ImmutableArrayCopyManualForeach() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			ImmutableArray<int> target = ImmutableArray<int>.Empty;
 			foreach (int element in Data) {
 				target = target.Add(element);
@@ -109,10 +110,11 @@ public class ImmutableArrayBenchmarks {
 
 		return result;
 	}
+
 	[Benchmark("ListCopy", "Tests copying an ImmutableArray using a for loop")]
 	public static int ImmutableArrayCopyManualFor() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			ImmutableArray<int> target = ImmutableArray<int>.Empty;
 			for (int index = 0; index < Data.Length; index++) {
 				target = target.Add(Data[index]);
@@ -124,5 +126,4 @@ public class ImmutableArrayBenchmarks {
 
 		return result;
 	}
-
 }

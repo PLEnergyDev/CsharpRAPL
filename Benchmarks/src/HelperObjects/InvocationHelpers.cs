@@ -1,20 +1,20 @@
 ﻿namespace Benchmarks.HelperObjects;
 
 public class InvocationHelper {
-	public static int StaticField = 4;
-	private int Field = 4;
+	public static ulong StaticField = 4;
+	private ulong Field = 4;
 	
-	public int Calculate() {
+	public ulong Calculate() {
 		Field++;
 		return Field + 2;
 	}
 	
-	public int CalculateUsingStaticField() {
+	public ulong CalculateUsingStaticField() {
 		StaticField++;
 		return StaticField + 2;
 	}
 	
-	public static int CalculateStatic() {
+	public static ulong CalculateStatic() {
 		StaticField++;
 		return StaticField + 2;
 	}
