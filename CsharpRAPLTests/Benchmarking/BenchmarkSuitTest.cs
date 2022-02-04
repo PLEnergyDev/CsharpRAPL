@@ -6,8 +6,8 @@ using NUnit.Framework;
 namespace CsharpRAPL.Tests.Benchmarking;
 
 public class BenchmarkSuitTest {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
 
 	public static int DummyBenchmark() {
 		return 1;

@@ -7,8 +7,9 @@ namespace Benchmarks.Collections.Set;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class SortedSetBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 	public static readonly SortedSet<int> Data = new();
 
@@ -22,7 +23,7 @@ public class SortedSetBenchmarks {
 	[Benchmark("SetCreation", "Tests allocation and initialization of a SortedSet")]
 	public static int SortedSetCreation() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			SortedSet<int> hashSet = new SortedSet<int>();
 			for (int index = 0; index < Data.Count; index++) {
 				hashSet.Add(index * 2);
@@ -37,7 +38,7 @@ public class SortedSetBenchmarks {
 	[Benchmark("SetGet", "Tests getting values from a SortedSet")]
 	public static int SortedSetGet() {
 		int sum = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				Data.TryGetValue(j, out int value);
 				sum += value;
@@ -50,7 +51,7 @@ public class SortedSetBenchmarks {
 	[Benchmark("SetInsertion", "Tests insertion into a SortedSet")]
 	public static int SortedSetInsertion() {
 		SortedSet<int> temp = new SortedSet<int>();
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			temp = new SortedSet<int>();
 			for (int j = 0; j < 1000; j++) {
 				temp.Add(j);
@@ -63,7 +64,7 @@ public class SortedSetBenchmarks {
 	[Benchmark("SetRemoval", "Tests removal from a SortedSet")]
 	public static int SortedSetRemoval() {
 		SortedSet<int> temp = new SortedSet<int>();
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < 1000; j++) {
 				temp.Add(j);
 			}
@@ -79,7 +80,7 @@ public class SortedSetBenchmarks {
 	[Benchmark("SetCopy", "Tests copying a SortedSet using a foreach loop")]
 	public static int SortedSetCopyManualForeach() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			SortedSet<int> target = new SortedSet<int>();
 			foreach (int element in Data) {
 				target.Add(element);
@@ -95,7 +96,7 @@ public class SortedSetBenchmarks {
 	[Benchmark("SetCopy", "Tests copying a SortedSet using a for loop")]
 	public static int SortedSetCopyManualFor() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			SortedSet<int> target = new SortedSet<int>();
 			for (int j = 0; j < Data.Count; j++) {
 				Data.TryGetValue(j, out int value);

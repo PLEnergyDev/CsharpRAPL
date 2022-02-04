@@ -7,21 +7,22 @@ namespace Benchmarks.Invocation;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class LocalFunctionBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 	private static readonly InvocationHelper InstanceObject = new();
 
 	[Benchmark("InvocationLocalFunction", "Tests invocation using an local function")]
-	public static int LocalFunction() {
-		int Calc() {
+	public static ulong LocalFunction() {
+		ulong Calc() {
 			InvocationHelper.StaticField++;
 			return InvocationHelper.StaticField + 2;
 		}
 
-		int result = 0;
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			result += Calc() + i;
 		}
 
@@ -29,15 +30,15 @@ public class LocalFunctionBenchmarks {
 	}
 
 	[Benchmark("InvocationLocalFunction", "Tests invocation using a static local function")]
-	public static int LocalStaticFunction() {
-		static int Calc() {
+	public static ulong LocalStaticFunction() {
+		static ulong Calc() {
 			InvocationHelper.StaticField++;
 			return InvocationHelper.StaticField + 2;
 		}
 
-		int result = 0;
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			result += Calc() + i;
 		}
 
@@ -45,14 +46,14 @@ public class LocalFunctionBenchmarks {
 	}
 
 	[Benchmark("InvocationLocalFunction", "Tests invocation using an local function")]
-	public static int LocalFunctionInvocation() {
-		int Calc() {
+	public static ulong LocalFunctionInvocation() {
+		ulong Calc() {
 			return InstanceObject.Calculate();
 		}
 
-		int result = 0;
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			result += Calc() + i;
 		}
 
@@ -60,14 +61,14 @@ public class LocalFunctionBenchmarks {
 	}
 
 	[Benchmark("InvocationLocalFunction", "Tests invocation using a static local function")]
-	public static int LocalStaticFunctionInvocation() {
-		static int Calc() {
+	public static ulong LocalStaticFunctionInvocation() {
+		static ulong Calc() {
 			return InvocationHelper.CalculateStatic();
 		}
 
-		int result = 0;
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			result += Calc() + i;
 		}
 

@@ -1,22 +1,22 @@
 ﻿namespace Benchmarks.HelperObjects;
 
 public class GetterSetterHelper {
-	public int Property { get; set; }
+	public ulong Property { get; set; }
 
-	public int PropertyWithBackingField {
+	public ulong PropertyWithBackingField {
 		get { return _backingField; }
 		set { _backingField = value; }
 	}
 
-	public int Field;
+	public ulong Field;
 
-	private int _backingField;
+	private ulong _backingField;
 
-	public int GetValue() {
+	public ulong GetValue() {
 		return _backingField;
 	}
 
-	public void SetValue(int value) {
+	public void SetValue(ulong value) {
 		_backingField = value;
 	}
 }

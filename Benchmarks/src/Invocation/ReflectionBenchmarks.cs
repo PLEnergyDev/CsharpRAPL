@@ -9,8 +9,9 @@ namespace Benchmarks.Invocation;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class ReflectionBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 	private static readonly InvocationHelper InstanceObject = new();
 
@@ -37,62 +38,62 @@ public class ReflectionBenchmarks {
 		typeof(InvocationHelper).GetMethod(nameof(InvocationHelper.CalculateStatic),
 			BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod);
 
-	private static readonly Func<InvocationHelper, int> ReflectionDelegateInt =
-		(Func<InvocationHelper, int>)Delegate.CreateDelegate(typeof(Func<InvocationHelper, int>),
+	private static readonly Func<InvocationHelper, ulong> ReflectionDelegateInt =
+		(Func<InvocationHelper, ulong>)Delegate.CreateDelegate(typeof(Func<InvocationHelper, ulong>),
 			MethodReflectionDelegate);
 
-	private static readonly Func<int> StaticReflectionDelegateInt =
-		(Func<int>)Delegate.CreateDelegate(typeof(Func<int>), MethodReflectionDelegateStatic);
+	private static readonly Func<ulong> StaticReflectionDelegateInt =
+		(Func<ulong>)Delegate.CreateDelegate(typeof(Func<ulong>), MethodReflectionDelegateStatic);
 
 	[Benchmark("InvocationReflection", "Tests invocation using a reflection on an instance method")]
-	public static int Reflection() {
-		int result = 0;
+	public static ulong Reflection() {
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
-			result += (int)MethodReflection.Invoke(InstanceObject, Array.Empty<object>())! + i;
+		for (ulong i  = 0; i < LoopIterations; i++) {
+			result += (ulong)MethodReflection.Invoke(InstanceObject, Array.Empty<object>())! + i;
 		}
 
 		return result;
 	}
 
 	[Benchmark("InvocationReflection", "Tests invocation using a reflection on a static method")]
-	public static int ReflectionStatic() {
-		int result = 0;
+	public static ulong ReflectionStatic() {
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
-			result += (int)StaticMethodReflection.Invoke(null, Array.Empty<object>())! + i;
+		for (ulong i  = 0; i < LoopIterations; i++) {
+			result += (ulong)StaticMethodReflection.Invoke(null, Array.Empty<object>())! + i;
 		}
 
 		return result;
 	}
 
 	[Benchmark("InvocationReflection", "Tests invocation using a reflection on an instance method")]
-	public static int ReflectionFlags() {
-		int result = 0;
+	public static ulong ReflectionFlags() {
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
-			result += (int)MethodReflectionFlags.Invoke(InstanceObject, Array.Empty<object>())! + i;
+		for (ulong i  = 0; i < LoopIterations; i++) {
+			result += (ulong)MethodReflectionFlags.Invoke(InstanceObject, Array.Empty<object>())! + i;
 		}
 
 		return result;
 	}
 
 	[Benchmark("InvocationReflection", "Tests invocation using a reflection on a static method")]
-	public static int ReflectionStaticFlags() {
-		int result = 0;
+	public static ulong ReflectionStaticFlags() {
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
-			result += (int)StaticMethodReflectionFlags.Invoke(null, Array.Empty<object>())! + i;
+		for (ulong i  = 0; i < LoopIterations; i++) {
+			result += (ulong)StaticMethodReflectionFlags.Invoke(null, Array.Empty<object>())! + i;
 		}
 
 		return result;
 	}
 
 	[Benchmark("InvocationReflection", "Tests invocation using a reflection on an instance method using delegate")]
-	public static int ReflectionDelegate() {
-		int result = 0;
+	public static ulong ReflectionDelegate() {
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			result += ReflectionDelegateInt(InstanceObject) + i;
 		}
 
@@ -100,10 +101,10 @@ public class ReflectionBenchmarks {
 	}
 
 	[Benchmark("InvocationReflection", "Tests invocation using a reflection on a static method using delegate")]
-	public static int ReflectionDelegateStatic() {
-		int result = 0;
+	public static ulong ReflectionDelegateStatic() {
+		ulong result = 0;
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			result += StaticReflectionDelegateInt() + i;
 		}
 

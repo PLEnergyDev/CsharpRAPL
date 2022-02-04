@@ -117,8 +117,8 @@ We have provided the scripts:
 
 # CLI Options
     -g, --SkipPlotGroups         If plotting each benchmark group should be skipped.
-    -i, --Iterations             (Default: -1) Sets the target iterations. (Disables Dynamic Iteration Calculation)
-    -l, --LoopIterations         (Default: -1) Sets the target loop iterations. (Disables Dynamic Loop Iteration Scaling)
+    -i, --Iterations             (Default: 0) Sets the target iterations. (Disables Dynamic Iteration Calculation)
+    -l, --LoopIterations         (Default: 0) Sets the target loop iterations. (Disables Dynamic Loop Iteration Scaling)
     -r, --RemoveOldResults       If set removes all files from the output folder and the plot folder.
     -o, --OutputPath             (Default: results/) Set the output path for results.
     -p, --PlotOutputPath         (Default: _plots/) Sets the output path for plots.

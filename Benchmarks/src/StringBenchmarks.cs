@@ -7,8 +7,9 @@ namespace Benchmarks;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class StringBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 
 	[Benchmark("StringConcat", "Tests operation using + on strings")]
@@ -20,8 +21,8 @@ public class StringBenchmarks {
 		string stringStr = "string ";
 		string with = "with ";
 		string integer = "integer ";
-		int myInt = 42;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong myInt = 42;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			str = iStr + am + a + stringStr + with + integer + myInt;
 		}
 
@@ -38,8 +39,8 @@ public class StringBenchmarks {
 		string stringStr = "string ";
 		string with = "with ";
 		string integer = "integer ";
-		int myInt = 42;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong myInt = 42;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			str = "";
 			str += iStr;
 			str += am;
@@ -62,8 +63,8 @@ public class StringBenchmarks {
 		string stringStr = "string ";
 		string with = "with ";
 		string integer = "integer ";
-		int myInt = 42;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong myInt = 42;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			str = "";
 			str += iStr + am + a + stringStr + with + integer + myInt;
 		}
@@ -81,8 +82,8 @@ public class StringBenchmarks {
 		string stringStr = "string ";
 		string with = "with ";
 		string integer = "integer ";
-		int myInt = 42;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong myInt = 42;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			str = "";
 			sb.Clear();
 			sb.Append(iStr);
@@ -107,8 +108,8 @@ public class StringBenchmarks {
 		string stringStr = "string ";
 		string with = "with ";
 		string integer = "integer ";
-		int myInt = 42;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong myInt = 42;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			str = "";
 			str = string.Format("{0}{1}{2}{3}{4}{5}{6}", iStr, am, a, stringStr, with, integer, myInt);
 		}
@@ -125,8 +126,8 @@ public class StringBenchmarks {
 		string stringStr = "string ";
 		string with = "with ";
 		string integer = "integer ";
-		int myInt = 42;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong myInt = 42;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			str = "";
 			str = string.Concat(iStr, am, a, stringStr, with, integer, myInt);
 		}
@@ -143,8 +144,8 @@ public class StringBenchmarks {
 		string stringStr = "string ";
 		string with = "with ";
 		string integer = "integer ";
-		int myInt = 42;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong myInt = 42;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			str = "";
 			str = string.Join("", iStr, am, a, stringStr, with, integer, myInt);
 		}
@@ -161,8 +162,8 @@ public class StringBenchmarks {
 		string stringStr = "string ";
 		string with = "with ";
 		string integer = "integer ";
-		int myInt = 42;
-		for (int i = 0; i < LoopIterations; i++) {
+		ulong myInt = 42;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			str = "";
 			str = $"{iStr}{am}{a}{stringStr}{with}{integer}{myInt}";
 		}
@@ -179,8 +180,8 @@ public class StringBenchmarks {
 		const string stringStr = "string ";
 		const string with = "with ";
 		const string integer = "integer ";
-		const int myInt = 42;
-		for (int i = 0; i < LoopIterations; i++) {
+		const ulong myInt = 42;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			str = "";
 			str = $"{iStr}{am}{a}{stringStr}{with}{integer}{myInt}";
 		}

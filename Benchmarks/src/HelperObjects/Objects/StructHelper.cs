@@ -1,15 +1,15 @@
 ﻿namespace Benchmarks.HelperObjects.Objects;
 
 public struct StructHelper {
-	public static int StaticField = 4;
-	public int Field = 4;
+	public static ulong StaticField = 4;
+	public ulong Field = 4;
 
-	public int Calculate() {
+	public ulong Calculate() {
 		Field++;
 		return Field + 2;
 	}
 
-	public static int CalculateStatic() {
+	public static ulong CalculateStatic() {
 		StaticField++;
 		return StaticField + 2;
 	}

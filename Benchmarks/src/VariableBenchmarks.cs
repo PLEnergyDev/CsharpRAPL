@@ -7,13 +7,14 @@ namespace Benchmarks;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class VariablesBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 	[Benchmark("Variables", "Tests local variables")]
-	public static int LocalVariable() {
-		int localA = 0, localB = 1;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong LocalVariable() {
+		ulong localA = 0, localB = 1;
+		for (ulong i = 0; i < LoopIterations; i++) {
 			localA += localB + i;
 		}
 
@@ -21,8 +22,8 @@ public class VariablesBenchmarks {
 	}
 
 	[Benchmark("Variables", "Tests static property")]
-	public static int StaticProperty() {
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong StaticProperty() {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			VariableObject.StaticPropertyA += VariableObject.StaticPropertyB + i;
 		}
 
@@ -30,10 +31,10 @@ public class VariablesBenchmarks {
 	}
 
 	[Benchmark("Variables", "Tests instance property")]
-	public static int InstanceProperty() {
+	public static ulong InstanceProperty() {
 		VariableObject obj = new VariableObject();
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			obj.InstancePropertyA += obj.InstancePropertyB + i;
 		}
 
@@ -41,8 +42,8 @@ public class VariablesBenchmarks {
 	}
 
 	[Benchmark("Variables", "Tests static variables")]
-	public static int StaticVariable() {
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong StaticVariable() {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			VariableObject.StaticVariableA += VariableObject.StaticVariableB + i;
 		}
 
@@ -50,10 +51,10 @@ public class VariablesBenchmarks {
 	}
 
 	[Benchmark("Variables", "Tests instance variables")]
-	public static int InstanceVariable() {
+	public static ulong InstanceVariable() {
 		VariableObject obj = new VariableObject();
 
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			obj.InstanceVariableA += obj.InstanceVariableB + i;
 		}
 
@@ -61,15 +62,14 @@ public class VariablesBenchmarks {
 	}
 
 
-
 	[Benchmark("Variables", "Tests using a parameter as variable")]
-	public static int Parameter() {
+	public static ulong Parameter() {
 		VariableObject obj = new VariableObject();
 		return obj.TestParameter(0, LoopIterations);
 	}
-	
+
 	[Benchmark("Variables", "Tests using a parameter as variable in a static method")]
-	public static int ParameterStatic() {
+	public static ulong ParameterStatic() {
 		VariableObject obj = new VariableObject();
 		return VariableObject.StaticTestParameter(0, LoopIterations);
 	}

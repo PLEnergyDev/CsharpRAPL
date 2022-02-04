@@ -1,12 +1,12 @@
 ﻿namespace Benchmarks.HelperObjects;
 
 public class NonGeneric {
-	public int IntValue;
+	public ulong ULongValue;
 	public object Value;
 
 	public NonGeneric(object value) {
-		if (value is int intValue) {
-			IntValue = intValue;
+		if (value is ulong ulongValue) {
+			ULongValue = ulongValue;
 		}
 
 		Value = value;

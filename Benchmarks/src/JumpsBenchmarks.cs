@@ -7,16 +7,17 @@ namespace Benchmarks;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class JumpsBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 	//Return
 	//Throw
 
 	[Benchmark("Jump", "Tests breaking out of a loop")]
-	public static int Break() {
-		int count = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong Break() {
+		ulong count = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			count += 1 + i;
 			for (;;) {
 				if (count % 1 == 0) {
@@ -31,9 +32,9 @@ public class JumpsBenchmarks {
 	}
 
 	[Benchmark("Jump", "Tests continuing in a loop")]
-	public static int Continue() {
-		int count = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong Continue() {
+		ulong count = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			count += 1 + i;
 			if (count % 1 == 0) {
 				continue;
@@ -46,9 +47,9 @@ public class JumpsBenchmarks {
 	}
 
 	[Benchmark("Jump", "Tests using goto in a loop")]
-	public static int Goto() {
-		int count = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong Goto() {
+		ulong count = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			count += 1 + i;
 			if (count % 1 == 0) {
 				goto Iterate;
@@ -62,23 +63,23 @@ public class JumpsBenchmarks {
 	}
 
 	[Benchmark("ReturnJump", "Tests using return to return")]
-	public static int Return() {
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong Return() {
+		ulong result = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			result += ReturnHelper() + i;
 		}
 
 		return result;
 	}
 
-	public static int ReturnHelper() {
+	public static ulong ReturnHelper() {
 		return 4;
 	}
 
 	[Benchmark("ReturnJump", "Tests using Exception to return")]
-	public static int Throw() {
-		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong Throw() {
+		ulong result = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			try {
 				ThrowHelper();
 			}
@@ -90,7 +91,7 @@ public class JumpsBenchmarks {
 		return result;
 	}
 
-	public static int ThrowHelper() {
+	public static ulong ThrowHelper() {
 		throw new JumpHelperException();
 	}
 }

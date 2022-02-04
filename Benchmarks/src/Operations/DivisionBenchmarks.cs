@@ -6,15 +6,16 @@ namespace Benchmarks.Operations;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class DivisionBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 	[Benchmark("Division", "Tests simple division")]
-	public static int Divide() {
-		int a = 10;
-		int b = 2;
-		int res = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong Divide() {
+		ulong a = 10;
+		ulong b = 2;
+		ulong res = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			res = a / (b + i);
 		}
 
@@ -23,11 +24,11 @@ public class DivisionBenchmarks {
 
 
 	[Benchmark("Division", "Tests simple division where the parts are marked as constant")]
-	public static int Const() {
-		const int a = 10;
-		const int b = 2;
-		int res = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong Const() {
+		const ulong a = 10;
+		const ulong b = 2;
+		ulong res = 0;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			res = a / (b + i);
 		}
 
@@ -36,10 +37,10 @@ public class DivisionBenchmarks {
 
 
 	[Benchmark("Division", "Tests division using compound assignment")]
-	public static int CompAssign() {
-		int a = 10;
-		int res = 1;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong CompAssign() {
+		ulong a = 10;
+		ulong res = 1;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			res /= (a + i);
 		}
 
@@ -47,10 +48,10 @@ public class DivisionBenchmarks {
 	}
 
 	[Benchmark("Division", "Tests division without compound assignment")]
-	public static int Assign() {
-		int a = 10;
-		int res = 1;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong Assign() {
+		ulong a = 10;
+		ulong res = 1;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			res = res / (a + i);
 		}
 

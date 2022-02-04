@@ -8,8 +8,9 @@ namespace Benchmarks.Collections.Table;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class SortedDictionaryBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 	public static readonly SortedDictionary<int, int> Data = new();
 
@@ -22,7 +23,7 @@ public class SortedDictionaryBenchmarks {
 	[Benchmark("TableInsertion", "Tests insertion into a SortedDictionary")]
 	public static int SortedDictionaryInsertion() {
 		SortedDictionary<int, int> temp = new SortedDictionary<int, int>();
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			temp = new SortedDictionary<int, int>();
 			for (int j = 0; j < 1000; j++) {
 				temp.Add(CollectionsHelpers.SequentialIndices[j], CollectionsHelpers.RandomValues[j]);
@@ -35,7 +36,7 @@ public class SortedDictionaryBenchmarks {
 	[Benchmark("TableGet", "Tests getting values sequentially from a SortedDictionary")]
 	public static int SortedDictionaryGet() {
 		int sum = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				sum += Data[CollectionsHelpers.SequentialIndices[j]];
 			}
@@ -47,7 +48,7 @@ public class SortedDictionaryBenchmarks {
 	[Benchmark("TableGet", "Tests getting values randomly from a SortedDictionary")]
 	public static int SortedDictionaryGetRandom() {
 		int sum = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				sum += Data[CollectionsHelpers.RandomIndices[j]];
 			}
@@ -59,7 +60,7 @@ public class SortedDictionaryBenchmarks {
 	[Benchmark("TableRemoval", "Tests removal from a SortedDictionary")]
 	public static int SortedDictionaryRemoval() {
 		SortedDictionary<int, int> temp = new SortedDictionary<int, int>();
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < 1000; j++) {
 				temp.Add(CollectionsHelpers.SequentialIndices[j], CollectionsHelpers.RandomValues[j]);
 			}
@@ -75,7 +76,7 @@ public class SortedDictionaryBenchmarks {
 	[Benchmark("TableCreation", "Tests allocation and initialization of an SortedDictionary")]
 	public static int SortedDictionaryCreation() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			SortedDictionary<int, int> sortedDictionary = new SortedDictionary<int, int>();
 			for (int index = 0; index < Data.Count; index++) {
 				sortedDictionary.Add(index, index * 2);
@@ -90,7 +91,7 @@ public class SortedDictionaryBenchmarks {
 	[Benchmark("TableCopy", "Tests copying a SortedDictionary using a foreach loop looping through k/v pairs")]
 	public static int SortedDictionaryCopyManualForeach() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			SortedDictionary<int, int> target = new SortedDictionary<int, int>();
 
 			foreach (KeyValuePair<int, int> pair in Data) {
@@ -107,7 +108,7 @@ public class SortedDictionaryBenchmarks {
 	[Benchmark("TableCopy", "Tests copying a SortedDictionary using a foreach loop and looping through keys")]
 	public static int SortedDictionaryCopyManualForeachIndex() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			SortedDictionary<int, int> target = new SortedDictionary<int, int>();
 
 			foreach (int key in Data.Keys) {
@@ -124,7 +125,7 @@ public class SortedDictionaryBenchmarks {
 	[Benchmark("TableCopy", "Tests copying a SortedDictionary using a foreach loop using deconstruction")]
 	public static int SortedDictionaryCopyManualForeachDeconstruct() {
 		int result = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			SortedDictionary<int, int> target = new SortedDictionary<int, int>();
 
 			foreach ((int key, int value) in Data) {

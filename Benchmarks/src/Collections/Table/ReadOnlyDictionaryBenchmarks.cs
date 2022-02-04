@@ -9,8 +9,9 @@ namespace Benchmarks.Collections.Table;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class ReadOnlyDictionaryBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 	public static readonly ReadOnlyDictionary<int, int> Data;
 
@@ -22,7 +23,7 @@ public class ReadOnlyDictionaryBenchmarks {
 	[Benchmark("TableGet", "Tests getting values sequentially from a ReadOnlyDictionary")]
 	public static int ReadOnlyDictionaryGet() {
 		int sum = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				sum += Data[CollectionsHelpers.SequentialIndices[j]];
 			}
@@ -34,7 +35,7 @@ public class ReadOnlyDictionaryBenchmarks {
 	[Benchmark("TableGet", "Tests getting values randomly from a ReadOnlyDictionary")]
 	public static int ReadOnlyDictionaryGetRandom() {
 		int sum = 0;
-		for (int i = 0; i < LoopIterations; i++) {
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				sum += Data[CollectionsHelpers.RandomIndices[j]];
 			}

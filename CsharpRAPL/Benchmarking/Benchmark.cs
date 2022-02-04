@@ -16,7 +16,7 @@ using CsvHelper.Configuration;
 namespace CsharpRAPL.Benchmarking;
 
 public class Benchmark<T> : IBenchmark {
-	public int Iterations { get; private set; }
+	public ulong Iterations { get; private set; }
 	public string Name { get; }
 	public string? Group { get; }
 	public int Order { get; }
@@ -38,7 +38,7 @@ public class Benchmark<T> : IBenchmark {
 	private string? _normalizedReturnValue;
 
 
-	public Benchmark(string name, int iterations, Func<T> benchmark, bool silenceBenchmarkOutput = true,
+	public Benchmark(string name, ulong iterations, Func<T> benchmark, bool silenceBenchmarkOutput = true,
 		string? group = null, int order = 0) {
 		Name = name;
 		Group = group;
@@ -73,12 +73,15 @@ public class Benchmark<T> : IBenchmark {
 			return;
 		}
 
-		BenchmarkResult result = _rapl.GetResults() with {
+		ulong loopIterations = GetLoopIterations();
+
+		BenchmarkResult result = _rapl.GetResults(loopIterations) with {
 			BenchmarkReturnValue = benchmarkOutput?.ToString() ?? string.Empty
 		};
 
-		BenchmarkResult normalizedResult = _rapl.GetNormalizedResults(GetLoopIterations()) with {
-			BenchmarkReturnValue = _normalizedReturnValue ?? string.Empty
+		BenchmarkResult normalizedResult = _rapl.GetNormalizedResults(loopIterations) with {
+			BenchmarkReturnValue = _normalizedReturnValue ?? string.Empty,
+			LoopIterations = loopIterations
 		};
 		_rawResults.Add(result);
 		_normalizedResults.Add(normalizedResult);
@@ -108,7 +111,7 @@ public class Benchmark<T> : IBenchmark {
 		SetLoopIterations(10);
 		_normalizedReturnValue = _benchmark()?.ToString() ?? string.Empty;
 
-		for (var i = 0; i <= Iterations; i++) {
+		for (ulong i = 0; i <= Iterations; i++) {
 			if (Iterations != 1) {
 				if (CsharpRAPLCLI.Options.Verbose) {
 					Print(Console.Write,
@@ -130,13 +133,13 @@ public class Benchmark<T> : IBenchmark {
 
 			if (CsharpRAPLCLI.Options.UseLoopIterationScaling &&
 			    _rawResults[^1].ElapsedTime < TargetLoopIterationTime) {
-				int currentValue = GetLoopIterations();
+				ulong currentValue = GetLoopIterations();
 
 				switch (currentValue) {
-					case int.MaxValue:
+					case ulong.MaxValue:
 						break;
-					case >= int.MaxValue / 2:
-						SetLoopIterations(int.MaxValue);
+					case >= ulong.MaxValue / 2:
+						SetLoopIterations(ulong.MaxValue);
 						_rawResults.Clear();
 						_normalizedResults.Clear();
 						i = 0;
@@ -217,10 +220,10 @@ public class Benchmark<T> : IBenchmark {
 	/// </summary>
 	/// <param name="confidence">The confidence (from 0 to 1) that we want</param>
 	/// <returns>The amount of samples needed for the given confidence for all measurements</returns>
-	private int IterationCalculationAll(double confidence = 0.95) {
-		int dramIteration = IterationCalculation(confidence, BenchmarkResultType.DRAMEnergy);
-		int timeIteration = IterationCalculation(confidence, BenchmarkResultType.ElapsedTime);
-		int packageIteration = IterationCalculation(confidence);
+	private ulong IterationCalculationAll(double confidence = 0.95) {
+		ulong dramIteration = IterationCalculation(confidence, BenchmarkResultType.DRAMEnergy);
+		ulong timeIteration = IterationCalculation(confidence, BenchmarkResultType.ElapsedTime);
+		ulong packageIteration = IterationCalculation(confidence);
 		return Math.Max(dramIteration, Math.Max(timeIteration, packageIteration));
 	}
 
@@ -230,7 +233,7 @@ public class Benchmark<T> : IBenchmark {
 	/// <param name="confidence">The confidence (from 0 to 1) that we want</param>
 	/// <param name="resultType">The result type we should look for</param>
 	/// <returns>The amount of samples needed for the given confidence</returns>
-	private int IterationCalculation(double confidence = 0.95,
+	private ulong IterationCalculation(double confidence = 0.95,
 		BenchmarkResultType resultType = BenchmarkResultType.PackageEnergy) {
 		// If we have less than 10 results, we return 10 so we can get a sample to calculate from
 		if (_rawResults.Count < 10) {
@@ -268,17 +271,17 @@ public class Benchmark<T> : IBenchmark {
 		// 0.005 is the relative margin of error we want (0.5%)
 		// We want the ZScore at the alpha/2 number, so we get the range at that point, take the highest and 
 		// calculate from there
-		return (int)Math.Ceiling(Math.Pow(nd.ZScore(nd.GetRange(alpha / 2).Max) * stdDeviation / (0.005 * mean),
+		return (ulong)Math.Ceiling(Math.Pow(nd.ZScore(nd.GetRange(alpha / 2).Max) * stdDeviation / (0.005 * mean),
 			2));
 	}
 
-	private int GetLoopIterations() {
-		return (int)(_loopIterationsFieldInfo.GetValue(null) ??
-		             throw new InvalidOperationException(
-			             $"Your class '{_benchmark.Method.DeclaringType?.Name}' must have the field 'LoopIterations'."));
+	private ulong GetLoopIterations() {
+		return (ulong)(_loopIterationsFieldInfo.GetValue(null) ??
+		               throw new InvalidOperationException(
+			               $"Your class '{_benchmark.Method.DeclaringType?.Name}' must have the field 'LoopIterations'."));
 	}
 
-	private void SetLoopIterations(int value) {
+	private void SetLoopIterations(ulong value) {
 		_loopIterationsFieldInfo.SetValue(null, value);
 	}
 }

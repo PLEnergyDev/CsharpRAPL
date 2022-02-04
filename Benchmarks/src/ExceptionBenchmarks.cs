@@ -7,14 +7,15 @@ namespace Benchmarks;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class ExceptionBenchmarks {
-	public static int Iterations;
-	public static int LoopIterations;
+	public static ulong Iterations;
+	public static ulong LoopIterations;
+
 
 	[Benchmark("Exception", "Tests try-catch no exception thrown")]
-	public static int TryCatchNoE() {
-		int a = 1;
-		int b = 2;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong TryCatchNoE() {
+		ulong a = 1;
+		ulong b = 2;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			try {
 				a *= 2;
 				a += 2;
@@ -31,10 +32,10 @@ public class ExceptionBenchmarks {
 	}
 
 	[Benchmark("ExceptionFinally", "Tests try-finally no exception thrown")]
-	public static int TryFinallyNoE() {
-		int a = 1;
-		int b = 2;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong TryFinallyNoE() {
+		ulong a = 1;
+		ulong b = 2;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			try {
 				a *= 2;
 				a += 2;
@@ -49,10 +50,10 @@ public class ExceptionBenchmarks {
 	}
 
 	[Benchmark("ExceptionFinally", "Tests try-finally equivalent no exception thrown")]
-	public static int TryFinallyEquivNoE() {
-		int a = 1;
-		int b = 2;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong TryFinallyEquivNoE() {
+		ulong a = 1;
+		ulong b = 2;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			a *= 2;
 			a += 2;
 			a %= 20;
@@ -65,10 +66,10 @@ public class ExceptionBenchmarks {
 
 	[Benchmark("Exception",
 		"Tests try-catch exception thrown with catch all statement, throws floor(LoopIterations / 2) exceptions")]
-	public static int TryCatchAllE() {
-		int a = 1;
-		int b = 2;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong TryCatchAllE() {
+		ulong a = 1;
+		ulong b = 2;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			try {
 				a *= 2;
 				a += 2;
@@ -87,10 +88,10 @@ public class ExceptionBenchmarks {
 
 	[Benchmark("Exception",
 		"Tests try-catch exception thrown with specific catch statement, throws floor(LoopIterations / 2) exceptions")]
-	public static int TryCatchSpecificE() {
-		int a = 1;
-		int b = 2;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong TryCatchSpecificE() {
+		ulong a = 1;
+		ulong b = 2;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			try {
 				a *= 2;
 				a += 2;
@@ -108,10 +109,10 @@ public class ExceptionBenchmarks {
 	}
 
 	[Benchmark("Exception", "Tests try-catch exception thrown, throws floor(LoopIterations / 2) exceptions")]
-	public static int TryCatchEWMessage() {
-		int a = 1;
-		int b = 2;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong TryCatchEWMessage() {
+		ulong a = 1;
+		ulong b = 2;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			try {
 				if (b == 0) {
 					throw new ArgumentException("I'm an exception message");
@@ -128,10 +129,10 @@ public class ExceptionBenchmarks {
 	}
 
 	[Benchmark("Exception", "Tests try-catch exception thrown, throws floor(LoopIterations / 2) exception")]
-	public static int TryCatchEWOMessage() {
-		int a = 1;
-		int b = 2;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong TryCatchEWOMessage() {
+		ulong a = 1;
+		ulong b = 2;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			try {
 				if (b == 0) {
 					throw new ArgumentException();
@@ -148,10 +149,10 @@ public class ExceptionBenchmarks {
 	}
 
 	[Benchmark("Exception", "Tests try-catch 'equivalent' using an if statement to check for exception")]
-	public static int TryCatchEWithIf() {
-		int a = 1;
-		int b = 2;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong TryCatchEWithIf() {
+		ulong a = 1;
+		ulong b = 2;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			a *= 2;
 			a += 2;
 			a %= 20;
@@ -171,10 +172,10 @@ public class ExceptionBenchmarks {
 
 	[Benchmark("ExceptionCatchFinally",
 		"Tests try-catch-finally 'equivalent' using an if statement to check for exception")]
-	public static int TryCatchEFinallyWithIf() {
-		int a = 1;
-		int b = 2;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong TryCatchEFinallyWithIf() {
+		ulong a = 1;
+		ulong b = 2;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			a *= 2;
 			a += 2;
 			a %= 20;
@@ -196,10 +197,10 @@ public class ExceptionBenchmarks {
 
 	[Benchmark("ExceptionCatchFinally",
 		"Tests try-catch-finally exception thrown with catch all statement, throws floor(LoopIterations / 2) exceptions")]
-	public static int TryCatchFinallyAllE() {
-		int a = 1;
-		int b = 2;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong TryCatchFinallyAllE() {
+		ulong a = 1;
+		ulong b = 2;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			try {
 				a *= 2;
 				a += 2;
@@ -220,10 +221,10 @@ public class ExceptionBenchmarks {
 	}
 
 	[Benchmark("ExceptionCatchFinally", "Tests try-catch-finally no exception thrown")]
-	public static int TryCatchFinallyNoE() {
-		int a = 1;
-		int b = 2;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong TryCatchFinallyNoE() {
+		ulong a = 1;
+		ulong b = 2;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			try {
 				a *= 2;
 				a += 2;
@@ -246,10 +247,10 @@ public class ExceptionBenchmarks {
 	
 	[Benchmark("ExceptionCatchFinally",
 		"Tests try-catch-finally 'equivalent' using an if statement to check for exception")]
-	public static int TryCatchNoEFinallyWithIf() {
-		int a = 1;
-		int b = 2;
-		for (int i = 0; i < LoopIterations; i++) {
+	public static ulong TryCatchNoEFinallyWithIf() {
+		ulong a = 1;
+		ulong b = 2;
+		for (ulong i  = 0; i < LoopIterations; i++) {
 			a *= 2;
 			a += 2;
 			a %= 20;
