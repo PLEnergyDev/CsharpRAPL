@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace Benchmarks.Collections.List;
 
@@ -23,7 +24,7 @@ public class ListBenchmarks {
 	[Benchmark("ListGet", "Tests getting values sequentially from a List")]
 	public static int ListGet() {
 		int sum = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				sum += Data[CollectionsHelpers.SequentialIndices[j]];
 			}
@@ -35,7 +36,7 @@ public class ListBenchmarks {
 	[Benchmark("ListGet", "Tests getting values randomly from a List")]
 	public static int ListGetRandom() {
 		int sum = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				sum += Data[CollectionsHelpers.RandomIndices[j]];
 			}
@@ -49,7 +50,7 @@ public class ListBenchmarks {
 		int result = 0;
 		List<int> target = new List<int>();
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int index = 0; index < Data.Count; index++) {
 				target.Add(index);
 			}
@@ -66,7 +67,7 @@ public class ListBenchmarks {
 		int result = 0;
 		List<int> target = new List<int>();
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				target.Add(j);
 			}
@@ -84,7 +85,7 @@ public class ListBenchmarks {
 	[Benchmark("ListCreation", "Tests allocation and initialization of a List")]
 	public static int ListCreation() {
 		int result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			List<int> list = new List<int>();
 			for (int index = 0; index < Data.Count; index++) {
 				list.Add(index * 2);
@@ -92,14 +93,14 @@ public class ListBenchmarks {
 
 			result += list.Count;
 		}
-		
+
 		return result;
 	}
 
 	[Benchmark("ListCopy", "Tests copying a List using a foreach loop")]
 	public static int ListCopyManualForeach() {
 		int result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			List<int> target = new List<int>();
 			foreach (int element in Data) {
 				target.Add(element);
@@ -111,10 +112,11 @@ public class ListBenchmarks {
 
 		return result;
 	}
+
 	[Benchmark("ListCopy", "Tests copying a List using a for loop")]
 	public static int ListCopyManualFor() {
 		int result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			List<int> target = new List<int>();
 			for (int index = 0; index < Data.Count; index++) {
 				target.Add(Data[index]);
@@ -130,7 +132,7 @@ public class ListBenchmarks {
 	[Benchmark("ListCopy", "Tests copying a list using a loop where capacity is allocated from the beginning")]
 	public static int ListCopyPreAllocated() {
 		int result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			List<int> target = new List<int>(Data.Count);
 			for (int index = 0; index < Data.Count; index++) {
 				target.Add(index);
@@ -146,7 +148,7 @@ public class ListBenchmarks {
 	[Benchmark("ListCopy", "Tests copying a list using the list constructor")]
 	public static int ListCopyConstructor() {
 		List<int> target = new List<int>();
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			target = new List<int>(Data);
 		}
 
@@ -156,7 +158,7 @@ public class ListBenchmarks {
 	[Benchmark("ListCopy", "Tests copying a list using GetRange")]
 	public static int ListCopyGetRange() {
 		List<int> target = new List<int>();
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			target = Data.GetRange(0, Data.Count);
 		}
 
@@ -166,7 +168,7 @@ public class ListBenchmarks {
 	[Benchmark("ListCopy", "Tests copying a list using ToList from Linq")]
 	public static int ListCopyManualLinq() {
 		List<int> target = new List<int>();
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			target = Data.ToList();
 		}
 

@@ -1,6 +1,5 @@
-﻿namespace Benchmarks.HelperObjects.Inheritance; 
+﻿namespace Benchmarks.HelperObjects.Inheritance;
 
 public interface IDoable {
-
 	ulong UpdateAndGetValue();
 }

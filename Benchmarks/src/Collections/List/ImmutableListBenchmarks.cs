@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace Benchmarks.Collections.List;
 
@@ -20,7 +21,7 @@ public class ImmutableListBenchmarks {
 	[Benchmark("ListGet", "Tests getting values sequentially from a ImmutableList")]
 	public static int ImmutableListGet() {
 		int sum = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				sum += Data[CollectionsHelpers.SequentialIndices[j]];
 			}
@@ -32,7 +33,7 @@ public class ImmutableListBenchmarks {
 	[Benchmark("ListGet", "Tests getting values randomly from a ImmutableList")]
 	public static int ImmutableListGetRandom() {
 		int sum = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				sum += Data[CollectionsHelpers.RandomIndices[j]];
 			}
@@ -47,7 +48,7 @@ public class ImmutableListBenchmarks {
 		int result = 0;
 		ImmutableList<int> target = ImmutableList<int>.Empty;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int index = 0; index < Data.Count; index++) {
 				target = target.Add(index);
 			}
@@ -64,7 +65,7 @@ public class ImmutableListBenchmarks {
 		int result = 0;
 		ImmutableList<int> target = ImmutableList<int>.Empty;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				target = target.Add(j);
 			}
@@ -82,7 +83,7 @@ public class ImmutableListBenchmarks {
 	[Benchmark("ListCreation", "Tests allocation and initialization of an ImmutableList")]
 	public static int ImmutableListCreation() {
 		int result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			ImmutableList<int> immutableList = ImmutableList<int>.Empty;
 			for (int index = 0; index < Data.Count; index++) {
 				immutableList = immutableList.Add(index * 2);
@@ -98,7 +99,7 @@ public class ImmutableListBenchmarks {
 	[Benchmark("ListCopy", "Tests copying an ImmutableList using a foreach loop")]
 	public static int ImmutableListCopyManualForeach() {
 		int result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			ImmutableList<int> target = ImmutableList<int>.Empty;
 			foreach (int element in Data) {
 				target = target.Add(element);
@@ -114,7 +115,7 @@ public class ImmutableListBenchmarks {
 	[Benchmark("ListCopy", "Tests copying an ImmutableList using a for loop")]
 	public static int ImmutableListCopyManualFor() {
 		int result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			ImmutableList<int> target = ImmutableList<int>.Empty;
 			for (int index = 0; index < Data.Count; index++) {
 				target = target.Add(Data[index]);

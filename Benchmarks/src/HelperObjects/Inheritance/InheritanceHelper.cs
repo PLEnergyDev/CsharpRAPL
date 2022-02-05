@@ -1,5 +1,3 @@
 ﻿namespace Benchmarks.HelperObjects.Inheritance;
 
-public class InheritanceHelper : ClassHelper {
-
-}
+public class InheritanceHelper : ClassHelper { }

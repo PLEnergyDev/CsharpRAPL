@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Benchmarks.HelperObjects;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace Benchmarks.Invocation;
 
@@ -28,7 +29,7 @@ public class DelegateBenchmarks {
 	public static ulong Delegate() {
 		ulong result = 0;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += DelegatePrototypeInstance.Invoke();
 		}
 
@@ -39,7 +40,7 @@ public class DelegateBenchmarks {
 	public static ulong DelegateStatic() {
 		ulong result = 0;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += DelegatePrototypeStatic.Invoke();
 		}
 
@@ -50,7 +51,7 @@ public class DelegateBenchmarks {
 	public static ulong DelegateLambda() {
 		ulong result = 0;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += DelegatePrototypeLambdaInstance.Invoke();
 		}
 
@@ -61,7 +62,7 @@ public class DelegateBenchmarks {
 	public static ulong DelegateLambdaStatic() {
 		ulong result = 0;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += DelegatePrototypeLambdaStatic.Invoke();
 		}
 

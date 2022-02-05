@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Benchmarks.HelperObjects;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace Benchmarks.Invocation;
 
@@ -22,7 +23,7 @@ public class LocalFunctionBenchmarks {
 
 		ulong result = 0;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += Calc() + i;
 		}
 
@@ -38,7 +39,7 @@ public class LocalFunctionBenchmarks {
 
 		ulong result = 0;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += Calc() + i;
 		}
 
@@ -53,7 +54,7 @@ public class LocalFunctionBenchmarks {
 
 		ulong result = 0;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += Calc() + i;
 		}
 
@@ -68,7 +69,7 @@ public class LocalFunctionBenchmarks {
 
 		ulong result = 0;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += Calc() + i;
 		}
 

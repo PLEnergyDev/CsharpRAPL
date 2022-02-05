@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Benchmarks.HelperObjects;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace Benchmarks;
 
@@ -17,7 +18,7 @@ public class JumpsBenchmarks {
 	[Benchmark("Jump", "Tests breaking out of a loop")]
 	public static ulong Break() {
 		ulong count = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			count += 1 + i;
 			for (;;) {
 				if (count % 1 == 0) {
@@ -34,7 +35,7 @@ public class JumpsBenchmarks {
 	[Benchmark("Jump", "Tests continuing in a loop")]
 	public static ulong Continue() {
 		ulong count = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			count += 1 + i;
 			if (count % 1 == 0) {
 				continue;
@@ -49,7 +50,7 @@ public class JumpsBenchmarks {
 	[Benchmark("Jump", "Tests using goto in a loop")]
 	public static ulong Goto() {
 		ulong count = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			count += 1 + i;
 			if (count % 1 == 0) {
 				goto Iterate;
@@ -65,7 +66,7 @@ public class JumpsBenchmarks {
 	[Benchmark("ReturnJump", "Tests using return to return")]
 	public static ulong Return() {
 		ulong result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += ReturnHelper() + i;
 		}
 
@@ -79,7 +80,7 @@ public class JumpsBenchmarks {
 	[Benchmark("ReturnJump", "Tests using Exception to return")]
 	public static ulong Throw() {
 		ulong result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			try {
 				ThrowHelper();
 			}

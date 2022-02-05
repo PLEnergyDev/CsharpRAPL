@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace Benchmarks;
 
@@ -14,7 +15,7 @@ public class SelectionBenchmarks {
 	public static ulong If() {
 		ulong halfLoopIteration = LoopIterations / 2;
 		ulong count = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			if (i < halfLoopIteration) {
 				count++;
 				continue;
@@ -24,7 +25,7 @@ public class SelectionBenchmarks {
 				count += 10;
 				continue;
 			}
-			
+
 			count--;
 			continue;
 		}
@@ -35,7 +36,7 @@ public class SelectionBenchmarks {
 	[Benchmark("SelectionSwitch", "Tests if statement compared to switch")]
 	public static ulong IfComparableWithSwitch() {
 		ulong count = 1;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			if (count == 1) {
 				count = 2;
 				continue;
@@ -91,7 +92,7 @@ public class SelectionBenchmarks {
 	public static ulong IfElse() {
 		ulong count = 0;
 		ulong halfLoopIteration = LoopIterations / 2;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			if (i < halfLoopIteration) {
 				count++;
 				continue;
@@ -115,7 +116,7 @@ public class SelectionBenchmarks {
 	{
 		ulong count = 0;
 		ulong halfLoopIteration = LoopIterations / 2;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			if (i < halfLoopIteration) {
 				count++;
 				continue;
@@ -136,7 +137,7 @@ public class SelectionBenchmarks {
 	[Benchmark("SelectionSwitch", "Tests switch statement")]
 	public static ulong Switch() {
 		ulong count = 1;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			switch (count) {
 				case 1:
 					count = 2;
@@ -178,7 +179,7 @@ public class SelectionBenchmarks {
 	public static ulong SwitchConstNumber() {
 		ulong count = 1;
 		const ulong halfLoopIteration = 25000;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			switch (i) {
 				case < halfLoopIteration:
 					count++;
@@ -199,7 +200,7 @@ public class SelectionBenchmarks {
 	public static ulong IfConstNumber() {
 		const ulong halfLoopIteration = 25000;
 		ulong count = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			if (i < halfLoopIteration) {
 				count++;
 				continue;
@@ -224,7 +225,7 @@ public class SelectionBenchmarks {
 	[Benchmark("SelectionConditional", "Tests if else comparable with conditional operator")]
 	public static ulong IfElseComparableWithConditional() {
 		ulong count = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			if (i <= LoopIterations) {
 				count = 1;
 			}
@@ -240,7 +241,7 @@ public class SelectionBenchmarks {
 	[Benchmark("SelectionConditional", "Tests if conditional operator")]
 	public static ulong ConditionalOperator() {
 		ulong count = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			count = i <= LoopIterations ? 1ul : 2ul;
 		}
 

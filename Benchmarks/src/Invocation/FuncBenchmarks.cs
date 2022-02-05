@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Benchmarks.HelperObjects;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace Benchmarks.Invocation;
 
@@ -20,7 +21,7 @@ public class FuncBenchmarks {
 	public static ulong Func() {
 		ulong result = 0;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += FuncLong() + i;
 		}
 
@@ -31,7 +32,7 @@ public class FuncBenchmarks {
 	public static ulong FuncStatic() {
 		ulong result = 0;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += StaticFuncInt() + i;
 		}
 

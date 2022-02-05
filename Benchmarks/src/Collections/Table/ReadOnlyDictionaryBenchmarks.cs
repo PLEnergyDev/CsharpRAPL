@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CsharpRAPL;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace Benchmarks.Collections.Table;
 
@@ -23,7 +24,7 @@ public class ReadOnlyDictionaryBenchmarks {
 	[Benchmark("TableGet", "Tests getting values sequentially from a ReadOnlyDictionary")]
 	public static int ReadOnlyDictionaryGet() {
 		int sum = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				sum += Data[CollectionsHelpers.SequentialIndices[j]];
 			}
@@ -35,7 +36,7 @@ public class ReadOnlyDictionaryBenchmarks {
 	[Benchmark("TableGet", "Tests getting values randomly from a ReadOnlyDictionary")]
 	public static int ReadOnlyDictionaryGetRandom() {
 		int sum = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				sum += Data[CollectionsHelpers.RandomIndices[j]];
 			}
