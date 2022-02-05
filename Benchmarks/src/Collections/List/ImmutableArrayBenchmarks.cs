@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace Benchmarks.Collections.List;
 

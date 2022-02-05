@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Benchmarks.HelperObjects;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace Benchmarks;
 
@@ -15,7 +16,7 @@ public class GetterSetterBenchmarks {
 	public static ulong Property() {
 		GetterSetterHelper helper = new GetterSetterHelper();
 		ulong result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			helper.Property++;
 		}
 
@@ -26,7 +27,7 @@ public class GetterSetterBenchmarks {
 	public static ulong PropertyGet() {
 		GetterSetterHelper helper = new GetterSetterHelper();
 		ulong result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += helper.Property + 2;
 		}
 
@@ -37,7 +38,7 @@ public class GetterSetterBenchmarks {
 	public static ulong PropertySet() {
 		GetterSetterHelper helper = new GetterSetterHelper();
 		ulong result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			helper.Property = i + 2;
 		}
 
@@ -48,7 +49,7 @@ public class GetterSetterBenchmarks {
 	public static ulong PropertyWithBackingField() {
 		GetterSetterHelper helper = new GetterSetterHelper();
 		ulong result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			helper.PropertyWithBackingField++;
 		}
 
@@ -59,7 +60,7 @@ public class GetterSetterBenchmarks {
 	public static ulong PropertyWithBackingFieldGet() {
 		GetterSetterHelper helper = new GetterSetterHelper();
 		ulong result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += helper.PropertyWithBackingField + 2;
 		}
 
@@ -70,7 +71,7 @@ public class GetterSetterBenchmarks {
 	public static ulong PropertyWithBackingFieldSet() {
 		GetterSetterHelper helper = new GetterSetterHelper();
 		ulong result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			helper.PropertyWithBackingField = i + 2;
 		}
 
@@ -81,7 +82,7 @@ public class GetterSetterBenchmarks {
 	public static ulong GetterSetter() {
 		GetterSetterHelper helper = new GetterSetterHelper();
 		ulong result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			helper.SetValue(helper.GetValue() + 1);
 		}
 
@@ -92,7 +93,7 @@ public class GetterSetterBenchmarks {
 	public static ulong GetterSetterGet() {
 		GetterSetterHelper helper = new GetterSetterHelper();
 		ulong result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += helper.GetValue() + 2;
 		}
 
@@ -103,7 +104,7 @@ public class GetterSetterBenchmarks {
 	public static ulong GetterSetterSet() {
 		GetterSetterHelper helper = new GetterSetterHelper();
 		ulong result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			helper.SetValue(i + 2);
 		}
 
@@ -114,7 +115,7 @@ public class GetterSetterBenchmarks {
 	public static ulong Field() {
 		GetterSetterHelper helper = new GetterSetterHelper();
 		ulong result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			helper.Field++;
 		}
 
@@ -125,7 +126,7 @@ public class GetterSetterBenchmarks {
 	public static ulong FieldGet() {
 		GetterSetterHelper helper = new GetterSetterHelper();
 		ulong result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += helper.Field + 2;
 		}
 
@@ -136,7 +137,7 @@ public class GetterSetterBenchmarks {
 	public static ulong FieldSet() {
 		GetterSetterHelper helper = new GetterSetterHelper();
 		ulong result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			helper.Field = i + 2;
 		}
 

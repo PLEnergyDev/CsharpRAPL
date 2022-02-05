@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Benchmarks.HelperObjects;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace Benchmarks.Invocation;
 
@@ -49,7 +50,7 @@ public class ReflectionBenchmarks {
 	public static ulong Reflection() {
 		ulong result = 0;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += (ulong)MethodReflection.Invoke(InstanceObject, Array.Empty<object>())! + i;
 		}
 
@@ -60,7 +61,7 @@ public class ReflectionBenchmarks {
 	public static ulong ReflectionStatic() {
 		ulong result = 0;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += (ulong)StaticMethodReflection.Invoke(null, Array.Empty<object>())! + i;
 		}
 
@@ -71,7 +72,7 @@ public class ReflectionBenchmarks {
 	public static ulong ReflectionFlags() {
 		ulong result = 0;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += (ulong)MethodReflectionFlags.Invoke(InstanceObject, Array.Empty<object>())! + i;
 		}
 
@@ -82,7 +83,7 @@ public class ReflectionBenchmarks {
 	public static ulong ReflectionStaticFlags() {
 		ulong result = 0;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += (ulong)StaticMethodReflectionFlags.Invoke(null, Array.Empty<object>())! + i;
 		}
 
@@ -93,7 +94,7 @@ public class ReflectionBenchmarks {
 	public static ulong ReflectionDelegate() {
 		ulong result = 0;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += ReflectionDelegateInt(InstanceObject) + i;
 		}
 
@@ -104,7 +105,7 @@ public class ReflectionBenchmarks {
 	public static ulong ReflectionDelegateStatic() {
 		ulong result = 0;
 
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			result += StaticReflectionDelegateInt() + i;
 		}
 

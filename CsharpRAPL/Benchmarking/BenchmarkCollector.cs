@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using CsharpRAPL.Benchmarking.Attributes;
 using CsharpRAPL.CommandLine;
 
 namespace CsharpRAPL.Benchmarking;

@@ -1,4 +1,4 @@
-﻿namespace Benchmarks.HelperObjects; 
+﻿namespace Benchmarks.HelperObjects;
 
 public class Generic<T> {
 	public T Value;

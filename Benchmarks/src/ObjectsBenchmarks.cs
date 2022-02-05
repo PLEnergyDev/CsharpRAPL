@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Benchmarks.HelperObjects.Objects;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace Benchmarks;
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CsharpRAPL.Benchmarking;
+namespace CsharpRAPL.Benchmarking.Attributes;
 
 [AttributeUsage(AttributeTargets.Method)]
 public class BenchmarkAttribute : Attribute {

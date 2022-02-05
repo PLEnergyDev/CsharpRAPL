@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using CsharpRAPL;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace Benchmarks.Collections.Table;
 
@@ -24,7 +25,7 @@ public class SortedListBenchmarks {
 	[Benchmark("TableInsertion", "Tests insertion into a SortedList")]
 	public static int SortedListInsertion() {
 		SortedList<int, int> temp = new SortedList<int, int>();
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			temp = new SortedList<int, int>();
 			for (int j = 0; j < 1000; j++) {
 				temp.Add(CollectionsHelpers.SequentialIndices[j], CollectionsHelpers.RandomValues[j]);
@@ -37,7 +38,7 @@ public class SortedListBenchmarks {
 	[Benchmark("TableGet", "Tests getting values sequentially from a SortedList")]
 	public static int SortedListGet() {
 		int sum = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				sum += Data[CollectionsHelpers.SequentialIndices[j]];
 			}
@@ -49,7 +50,7 @@ public class SortedListBenchmarks {
 	[Benchmark("TableGet", "Tests getting values randomly from a SortedList")]
 	public static int SortedListGetRandom() {
 		int sum = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < Data.Count; j++) {
 				sum += Data[CollectionsHelpers.RandomIndices[j]];
 			}
@@ -61,7 +62,7 @@ public class SortedListBenchmarks {
 	[Benchmark("TableRemoval", "Tests removal from a SortedList")]
 	public static int SortedListRemoval() {
 		SortedList<int, int> temp = new SortedList<int, int>();
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			for (int j = 0; j < 1000; j++) {
 				temp.Add(CollectionsHelpers.SequentialIndices[j], CollectionsHelpers.RandomValues[j]);
 			}
@@ -77,7 +78,7 @@ public class SortedListBenchmarks {
 	[Benchmark("TableCreation", "Tests allocation and initialization of an SortedList")]
 	public static int SortedListCreation() {
 		int result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			SortedList<int, int> sortedList = new SortedList<int, int>();
 			for (int index = 0; index < Data.Count; index++) {
 				sortedList.Add(index, index * 2);
@@ -92,7 +93,7 @@ public class SortedListBenchmarks {
 	[Benchmark("TableCopy", "Tests copying a SortedList using a foreach loop looping through k/v pairs")]
 	public static int SortedListCopyManualForeach() {
 		int result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			SortedList<int, int> target = new SortedList<int, int>();
 
 			foreach (KeyValuePair<int, int> pair in Data) {
@@ -109,7 +110,7 @@ public class SortedListBenchmarks {
 	[Benchmark("TableCopy", "Tests copying a SortedList using a foreach loop and looping through keys")]
 	public static int SortedListCopyManualForeachIndex() {
 		int result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			SortedList<int, int> target = new SortedList<int, int>();
 
 			foreach (int key in Data.Keys) {
@@ -126,7 +127,7 @@ public class SortedListBenchmarks {
 	[Benchmark("TableCopy", "Tests copying a SortedList using a foreach loop using deconstruction")]
 	public static int SortedListCopyManualForeachDeconstruct() {
 		int result = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			SortedList<int, int> target = new SortedList<int, int>();
 
 			foreach ((int key, int value) in Data) {

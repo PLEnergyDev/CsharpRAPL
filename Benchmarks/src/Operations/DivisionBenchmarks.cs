@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace Benchmarks.Operations;
 
@@ -15,7 +16,7 @@ public class DivisionBenchmarks {
 		ulong a = 10;
 		ulong b = 2;
 		ulong res = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			res = a / (b + i);
 		}
 
@@ -28,7 +29,7 @@ public class DivisionBenchmarks {
 		const ulong a = 10;
 		const ulong b = 2;
 		ulong res = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			res = a / (b + i);
 		}
 
@@ -40,7 +41,7 @@ public class DivisionBenchmarks {
 	public static ulong CompAssign() {
 		ulong a = 10;
 		ulong res = 1;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			res /= (a + i);
 		}
 
@@ -51,7 +52,7 @@ public class DivisionBenchmarks {
 	public static ulong Assign() {
 		ulong a = 10;
 		ulong res = 1;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			res = res / (a + i);
 		}
 

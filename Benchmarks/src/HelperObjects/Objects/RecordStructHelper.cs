@@ -8,7 +8,7 @@ public record struct RecordStructHelper {
 		Field++;
 		return Field + 2;
 	}
-	
+
 	public static ulong CalculateStatic() {
 		StaticField++;
 		return StaticField + 2;

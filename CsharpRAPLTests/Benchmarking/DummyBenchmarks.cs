@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace CsharpRAPL.Tests.Benchmarking;
 

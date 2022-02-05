@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace Benchmarks;
 
@@ -15,7 +16,7 @@ public class ExceptionBenchmarks {
 	public static ulong TryCatchNoE() {
 		ulong a = 1;
 		ulong b = 2;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			try {
 				a *= 2;
 				a += 2;
@@ -35,7 +36,7 @@ public class ExceptionBenchmarks {
 	public static ulong TryFinallyNoE() {
 		ulong a = 1;
 		ulong b = 2;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			try {
 				a *= 2;
 				a += 2;
@@ -53,7 +54,7 @@ public class ExceptionBenchmarks {
 	public static ulong TryFinallyEquivNoE() {
 		ulong a = 1;
 		ulong b = 2;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			a *= 2;
 			a += 2;
 			a %= 20;
@@ -69,7 +70,7 @@ public class ExceptionBenchmarks {
 	public static ulong TryCatchAllE() {
 		ulong a = 1;
 		ulong b = 2;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			try {
 				a *= 2;
 				a += 2;
@@ -91,7 +92,7 @@ public class ExceptionBenchmarks {
 	public static ulong TryCatchSpecificE() {
 		ulong a = 1;
 		ulong b = 2;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			try {
 				a *= 2;
 				a += 2;
@@ -112,7 +113,7 @@ public class ExceptionBenchmarks {
 	public static ulong TryCatchEWMessage() {
 		ulong a = 1;
 		ulong b = 2;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			try {
 				if (b == 0) {
 					throw new ArgumentException("I'm an exception message");
@@ -132,7 +133,7 @@ public class ExceptionBenchmarks {
 	public static ulong TryCatchEWOMessage() {
 		ulong a = 1;
 		ulong b = 2;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			try {
 				if (b == 0) {
 					throw new ArgumentException();
@@ -152,7 +153,7 @@ public class ExceptionBenchmarks {
 	public static ulong TryCatchEWithIf() {
 		ulong a = 1;
 		ulong b = 2;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			a *= 2;
 			a += 2;
 			a %= 20;
@@ -175,7 +176,7 @@ public class ExceptionBenchmarks {
 	public static ulong TryCatchEFinallyWithIf() {
 		ulong a = 1;
 		ulong b = 2;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			a *= 2;
 			a += 2;
 			a %= 20;
@@ -200,7 +201,7 @@ public class ExceptionBenchmarks {
 	public static ulong TryCatchFinallyAllE() {
 		ulong a = 1;
 		ulong b = 2;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			try {
 				a *= 2;
 				a += 2;
@@ -224,7 +225,7 @@ public class ExceptionBenchmarks {
 	public static ulong TryCatchFinallyNoE() {
 		ulong a = 1;
 		ulong b = 2;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			try {
 				a *= 2;
 				a += 2;
@@ -244,13 +245,13 @@ public class ExceptionBenchmarks {
 
 		return a;
 	}
-	
+
 	[Benchmark("ExceptionCatchFinally",
 		"Tests try-catch-finally 'equivalent' using an if statement to check for exception")]
 	public static ulong TryCatchNoEFinallyWithIf() {
 		ulong a = 1;
 		ulong b = 2;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			a *= 2;
 			a += 2;
 			a %= 20;

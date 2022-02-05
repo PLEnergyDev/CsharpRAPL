@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace Benchmarks.Operations;
 
@@ -14,7 +15,7 @@ public class MultiplyBenchmarks {
 	public static ulong Multiply() {
 		ulong a = 5;
 		ulong res = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			res = a * i;
 		}
 
@@ -25,7 +26,7 @@ public class MultiplyBenchmarks {
 	public static ulong Const() {
 		const ulong a = 5;
 		ulong res = 0;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			res = a * i;
 		}
 
@@ -36,7 +37,7 @@ public class MultiplyBenchmarks {
 	public static ulong MultiplyAssign() {
 		ulong a = 5;
 		ulong res = 1;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			res *= (a + i);
 		}
 
@@ -47,7 +48,7 @@ public class MultiplyBenchmarks {
 	public static ulong Assign() {
 		ulong a = 5;
 		ulong res = 1;
-		for (ulong i  = 0; i < LoopIterations; i++) {
+		for (ulong i = 0; i < LoopIterations; i++) {
 			res = res * (a + i);
 		}
 
