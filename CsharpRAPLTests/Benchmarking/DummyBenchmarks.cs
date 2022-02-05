@@ -77,4 +77,13 @@ public class DummyBenchmarks {
 			--res;
 		}
 	}
+
+	public static int ParamTest(int a) {
+		int res = 0;
+		for (ulong i = 0; i < LoopIterations; i++) {
+			--res;
+		}
+
+		return res;
+	}
 }

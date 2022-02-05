@@ -96,7 +96,7 @@ public class Benchmark<T> : IBenchmark {
 		_rapl = new RAPL();
 
 		if (_rapl is null) {
-			throw new NotSupportedException("Rapl has not been initialized");
+			throw new RAPLNotInitializedException();
 		}
 
 		ElapsedTime = 0;
