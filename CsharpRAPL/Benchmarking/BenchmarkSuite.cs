@@ -67,7 +67,7 @@ public class BenchmarkSuite {
 		}
 	}
 
-	public static void SetField(Type benchmarkClass, string name, ulong value) {
+	protected static void SetField(Type benchmarkClass, string name, ulong value) {
 		CheckFieldValidity(benchmarkClass, name);
 		benchmarkClass.GetField(name, BindingFlags.Public | BindingFlags.Static)?.SetValue(null, value);
 	}
@@ -83,6 +83,10 @@ public class BenchmarkSuite {
 		}
 
 		List<IBenchmark> benchmarks = Benchmarks.OrderBy(benchmark => benchmark.Order).ToList();
+		if (benchmarks.Count == 0) {
+			Console.WriteLine("There are no benchmarks to run.");
+			return;
+		}
 
 		Warmup();
 

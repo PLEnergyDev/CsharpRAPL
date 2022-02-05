@@ -27,7 +27,11 @@ public class BenchmarkCollector : BenchmarkSuite {
 	public BenchmarkCollector(ulong iterations, ulong loopIterations, bool onlyCallingAssembly = true) :
 		base(iterations, loopIterations) {
 		if (onlyCallingAssembly) {
-			CollectBenchmarks(Assembly.GetCallingAssembly());
+#if DEBUG
+			CollectBenchmarks(Assembly.GetEntryAssembly() ?? throw new InvalidOperationException());
+#else
+			CollectBenchmarks(Assembly.GetCallingAssembly() ?? throw new InvalidOperationException());
+#endif
 		}
 		else {
 			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()) {
@@ -41,7 +45,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 			type.GetMethods().Where(info => info.GetCustomAttribute<BenchmarkAttribute>() != null))) {
 			//Try to get the benchmark attribute
 			var benchmarkAttribute = benchmarkMethod.GetCustomAttribute<BenchmarkAttribute>()!;
-			
+
 			SetField(benchmarkMethod.DeclaringType!, nameof(LoopIterations), LoopIterations);
 			SetField(benchmarkMethod.DeclaringType!, nameof(Iterations), Iterations);
 
@@ -75,6 +79,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 		}
 	}
 
+
 	/// <summary>
 	/// Checks if the method is public and does not have void as the return type.
 	/// </summary>
@@ -89,6 +94,10 @@ public class BenchmarkCollector : BenchmarkSuite {
 		if (benchmark.ReturnType == typeof(void)) {
 			throw new NotSupportedException(
 				"The benchmark attribute is only supported and supposed to be used on methods with a non void return type.");
+		}
+
+		if (benchmark.GetParameters().Length != 0) {
+			throw new NotSupportedException("Benchmarks having parameters isn't supported.");
 		}
 	}
 

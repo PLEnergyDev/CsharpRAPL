@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using CommandLine;
 
@@ -9,8 +9,8 @@ public class Options {
 	private const ulong DefaultIterations = 50;
 	private const ulong DefaultLoopIterations = 10000000;
 
-	private ulong _iterations = 0;
-	private ulong _loopIterations = 0;
+	private ulong _iterations;
+	private ulong _loopIterations;
 
 	[Option('g', nameof(SkipPlotGroups), Required = false,
 		HelpText = "If plotting each benchmark group should be skipped.")]
