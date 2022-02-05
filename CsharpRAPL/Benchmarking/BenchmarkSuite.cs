@@ -78,7 +78,7 @@ public class BenchmarkSuite {
 	}
 
 	public void RunAll() {
-		if (Environment.OSVersion.Platform != PlatformID.Unix) {
+		if (Environment.OSVersion.Platform != PlatformID.Unix && !CsharpRAPLCLI.Options.OnlyTime) {
 			throw new NotSupportedException("Running the benchmarks is only supported on Unix.");
 		}
 

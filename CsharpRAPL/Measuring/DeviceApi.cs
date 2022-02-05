@@ -2,7 +2,7 @@
 using System.IO;
 using CsharpRAPL.Data;
 
-namespace CsharpRAPL;
+namespace CsharpRAPL.Measuring;
 
 public abstract class DeviceApi {
 	public double Delta { get; private set; }
@@ -24,7 +24,7 @@ public abstract class DeviceApi {
 		if (Directory.Exists("/sys/class/powercap/intel-rapl/intel-rapl:0")) {
 			return "/sys/class/powercap/intel-rapl/intel-rapl:0";
 		}
-
+		
 		throw new Exception(
 			"Failed to assess the path '/sys/class/powercap/intel-rapl/intel-rapl:0', make sure that you have rapl available on your computer.");
 	}

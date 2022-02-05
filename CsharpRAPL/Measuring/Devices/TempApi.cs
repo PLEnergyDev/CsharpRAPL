@@ -1,8 +1,7 @@
-using System;
 using System.IO;
 using CsharpRAPL.Data;
 
-namespace CsharpRAPL.Devices;
+namespace CsharpRAPL.Measuring.Devices;
 
 public sealed class TempApi : DeviceApi {
 	public TempApi() : base(CollectionApproach.Average) { }
@@ -20,6 +19,6 @@ public sealed class TempApi : DeviceApi {
 			thermalId++;
 		}
 
-		throw new Exception("No thermal zone found for the package");
+		throw new FileNotFoundException("No thermal zone found for the package");
 	}
 }

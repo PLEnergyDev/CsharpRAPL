@@ -10,6 +10,7 @@ using Accord.Statistics.Distributions.Univariate;
 using CsharpRAPL.Analysis;
 using CsharpRAPL.CommandLine;
 using CsharpRAPL.Data;
+using CsharpRAPL.Measuring;
 using CsvHelper;
 using CsvHelper.Configuration;
 
@@ -34,7 +35,8 @@ public class Benchmark<T> : IBenchmark {
 	private readonly List<BenchmarkResult> _normalizedResults = new();
 	private readonly FieldInfo _loopIterationsFieldInfo;
 
-	private RAPL _rapl;
+	//TODO: Check if using a interface here hurts measurements
+	private IMeasureApi _measureApiApi;
 	private string? _normalizedReturnValue;
 
 
@@ -44,10 +46,10 @@ public class Benchmark<T> : IBenchmark {
 		Group = group;
 		Iterations = iterations;
 		Order = order;
+		_measureApiApi = null!;
 
 		_benchmark = benchmark;
 		_stdout = Console.Out;
-		_rapl = null!;
 
 		Debug.Assert(_benchmark.Method.DeclaringType != null, "_benchmark.Method.DeclaringType != null");
 		_loopIterationsFieldInfo =
@@ -61,27 +63,26 @@ public class Benchmark<T> : IBenchmark {
 	}
 
 	private void Start() {
-		_rapl.Start();
+		_measureApiApi.Start();
 	}
 
 	private void End(T benchmarkOutput) {
-		_rapl.End();
+		_measureApiApi.End();
 
 		//Result only valid if all results are valid
 		//Only then is the result added and duration is incremented
-		if (!_rapl.IsValid()) {
+		if (!_measureApiApi.IsValid()) {
 			return;
 		}
 
 		ulong loopIterations = GetLoopIterations();
 
-		BenchmarkResult result = _rapl.GetResults(loopIterations) with {
+		BenchmarkResult result = _measureApiApi.GetResults(loopIterations) with {
 			BenchmarkReturnValue = benchmarkOutput?.ToString() ?? string.Empty
 		};
 
-		BenchmarkResult normalizedResult = _rapl.GetNormalizedResults(loopIterations) with {
-			BenchmarkReturnValue = _normalizedReturnValue ?? string.Empty,
-			LoopIterations = loopIterations
+		BenchmarkResult normalizedResult = _measureApiApi.GetNormalizedResults(loopIterations) with {
+			BenchmarkReturnValue = _normalizedReturnValue ?? string.Empty
 		};
 		_rawResults.Add(result);
 		_normalizedResults.Add(normalizedResult);
@@ -93,9 +94,9 @@ public class Benchmark<T> : IBenchmark {
 	public void Run() {
 		//Sets console to write to null
 		Console.SetOut(_benchmarkOutputStream);
-		_rapl = new RAPL();
+		_measureApiApi = CsharpRAPLCLI.Options.OnlyTime ? new TimerOnly() : new RAPL();
 
-		if (_rapl is null) {
+		if (_measureApiApi is null) {
 			throw new RAPLNotInitializedException();
 		}
 
@@ -221,8 +222,12 @@ public class Benchmark<T> : IBenchmark {
 	/// <param name="confidence">The confidence (from 0 to 1) that we want</param>
 	/// <returns>The amount of samples needed for the given confidence for all measurements</returns>
 	private ulong IterationCalculationAll(double confidence = 0.95) {
-		ulong dramIteration = IterationCalculation(confidence, BenchmarkResultType.DRAMEnergy);
 		ulong timeIteration = IterationCalculation(confidence, BenchmarkResultType.ElapsedTime);
+		if (CsharpRAPLCLI.Options.OnlyTime) {
+			return timeIteration;
+		}
+
+		ulong dramIteration = IterationCalculation(confidence, BenchmarkResultType.DRAMEnergy);
 		ulong packageIteration = IterationCalculation(confidence);
 		return Math.Max(dramIteration, Math.Max(timeIteration, packageIteration));
 	}

@@ -1,8 +1,7 @@
-using System;
 using System.IO;
 using CsharpRAPL.Data;
 
-namespace CsharpRAPL.Devices;
+namespace CsharpRAPL.Measuring.Devices;
 
 public sealed class DRAMApi : DeviceApi {
 	public DRAMApi() : base(CollectionApproach.Difference) { }
@@ -23,6 +22,6 @@ public sealed class DRAMApi : DeviceApi {
 			raplDeviceId += 1;
 		}
 
-		throw new Exception("Failed to access the DRAM rapl files, make sure your computer can access these files.");
+		throw new FileNotFoundException("Failed to access the DRAM rapl files, make sure your computer can access these files.");
 	}
 }

@@ -126,6 +126,7 @@ We have provided the scripts:
     -z, --ZipResults             Zips the CSV results and plots into a single zip file.
     --OnlyPlot                   Plots the results in the output path.
     --OnlyAnalysis               Analysis the results in the output path.
+    --OnlyTime                   Only measures time.
     --help                       Display this help screen.
     --version                    Display version information.
     --Verbose                    Enables debug information.

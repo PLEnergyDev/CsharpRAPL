@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using CsharpRAPL.Data;
 
-namespace CsharpRAPL.Devices; 
+namespace CsharpRAPL.Measuring.Devices; 
 
 public sealed class TimerApi : DeviceApi {
 	private readonly Stopwatch _sw = new();

@@ -1,6 +1,6 @@
 using CsharpRAPL.Data;
 
-namespace CsharpRAPL.Devices; 
+namespace CsharpRAPL.Measuring.Devices; 
 
 public sealed class PackageApi : DeviceApi {
 	public PackageApi() : base(CollectionApproach.Difference) { }

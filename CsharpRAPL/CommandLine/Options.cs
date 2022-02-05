@@ -58,6 +58,8 @@ public class Options {
 	[Option(nameof(Verbose), HelpText = "Enables debug information.")]
 	public bool Verbose { get; set; }
 
+	[Option(nameof(OnlyTime), HelpText = "Only measures time.")]
+	public bool OnlyTime { get; set; } = false;
 
 	public bool UseIterationCalculation => _iterations == 0;
 
