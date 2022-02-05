@@ -78,6 +78,7 @@ public class CLITest {
 		"--OnlyPlot                   Plots the results in the output path.",
 		"--OnlyAnalysis               Analysis the results in the output path.",
 		"--Verbose                    Enables debug information.",
+		"--OnlyTime                   Only measures time.",
 		"--help                       Display this help screen.",
 		"--version                    Display version information."
 	};
