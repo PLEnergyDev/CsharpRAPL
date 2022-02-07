@@ -19,7 +19,7 @@ public sealed class TimerOnly : IMeasureApi {
 	}
 
 	public bool IsValid() {
-		return  _timerApi.IsValid();
+		return _timerApi.IsValid();
 	}
 
 	public BenchmarkResult GetResults(ulong loopIterations) {

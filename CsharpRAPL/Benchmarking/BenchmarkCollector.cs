@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using CsharpRAPL.Benchmarking.Attributes;
+using CsharpRAPL.Benchmarking.Variation;
 using CsharpRAPL.CommandLine;
 
 namespace CsharpRAPL.Benchmarking;
@@ -63,6 +64,11 @@ public class BenchmarkCollector : BenchmarkSuite {
 
 			(MethodInfo genericRegisterBenchmark, Type funcType) =
 				_registeredBenchmarkVariations[benchmarkMethod.ReturnType];
+
+
+			if (!benchmarkMethod.IsStatic) {
+				VariationGenerator.CreateVariations(this, benchmarkAttribute, benchmarkMethod);
+			}
 
 			//If the benchmark method is static, we don't need an instance to call the method.
 			//So if it is we use Activator to create a new instance which we use for calling the method.
