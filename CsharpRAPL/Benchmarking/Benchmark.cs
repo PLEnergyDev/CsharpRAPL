@@ -8,6 +8,7 @@ using System.Reflection;
 using Accord.Statistics;
 using Accord.Statistics.Distributions.Univariate;
 using CsharpRAPL.Analysis;
+using CsharpRAPL.Benchmarking.Variation;
 using CsharpRAPL.CommandLine;
 using CsharpRAPL.Data;
 using CsharpRAPL.Measuring;
@@ -23,6 +24,7 @@ public class Benchmark<T> : IBenchmark {
 	public int Order { get; }
 	public bool HasRun { get; private set; }
 	public double ElapsedTime { get; private set; }
+	public VariationInstance Parameters { get; set; }
 
 	private const int MaxExecutionTime = 2700; //In seconds
 	private const int TargetLoopIterationTime = 250; //In milliseconds
@@ -50,6 +52,7 @@ public class Benchmark<T> : IBenchmark {
 
 		_benchmark = benchmark;
 		_stdout = Console.Out;
+		Parameters = new VariationInstance();
 
 		Debug.Assert(_benchmark.Method.DeclaringType != null, "_benchmark.Method.DeclaringType != null");
 		_loopIterationsFieldInfo =

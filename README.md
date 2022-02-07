@@ -40,26 +40,23 @@ The results can be visualized using Box Plots an example of this can be seen on 
 
 
 # Usage
-To make use of Dynamic Iteration Calculation and Dynamic Loop Iteration Scaling your class must contain the following fields:
-
-
+Each of your benchmark class must contain the following fields:
 ```csharp
-public static int Iterations;
-public static int LoopIterations;
+public static ulong Iterations;
+public static ulong LoopIterations;
 ```
+This is needed to make use of Dynamic Iteration Calculation and Dynamic Loop Iteration Scaling. 
 
-Without these fields, Dynamic Iteration Calculation and Dynamic Loop Iteration Scaling won't be able to be used.
+Note that both ulong and unit is supported.
 
-Your benchmark class doesn't have to be static same goes for benchmarks themselves.
-
-## Registring Benchmarks
+## Registering Benchmarks
 There are two ways of registering benchmarks, either using Attributes or doing it manually.
 The most tested method is using Attributes.
 
 ### Attributes
 We can register a benchmark by adding the Benchmark attribute where the first argument is the benchmark group and the second is the description for the benchmark.
 An example can be seen below.
-```csharp
+```c#
 [Benchmark("Addition", "Tests simple addition")]
 public static int Add() {
     int a = 10;
@@ -72,14 +69,35 @@ public static int Add() {
 }
 
 ```
-Here you have to use BenchmarkCollector which collects all methods with the Benchmark attribute except for those where skip is true.
+
+The attribute also has options for order and if it should skip the benchmark.
+
+To take advantage of  using the Attributes you have to use the ``BenchmarkCollector`` which collects all methods with the Benchmark attribute.
+
+When using the attributes you can also make use of ``Variations`` attribute, which creates variations of a field or property.
+Example:
+```c#
+[Variations(10, 15)] public int TestProp { get; set; }
+[Variations(21, 12)] public int TestProp2 { get; set; }
+```
+
+Here we have two properties which will create 4 variations like seen below:
+```c#
+Variation 1: TestProp = 10, TestProp2 = 21
+Variation 2: TestProp = 10, TestProp2 = 12
+Variation 3: TestProp = 15, TestProp2 = 21
+Variation 4: TestProp = 15, TestProp2 = 12
+```
+So it will create an instance of the benchmark where each these values are set according to the table above.
+
+
 
 ### Manual
 
-You can add benchmarks manually by either using BenchmarkCollector or BenchmarkSuite to do that use the RegisterBenchmark method.
+You can add benchmarks manually by either using ``BenchmarkCollector`` or ``BenchmarkSuite`` to do that use the RegisterBenchmark method.
 
 Example of manual registration:
-```csharp
+```c#
 public static void Main(string[] args){
     var benchmarkSuit = new BenchmarkSuite();
     benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark);
@@ -91,7 +109,7 @@ public static int DummyBenchmark() {
 ```
 
 ## Running the Benchmarks 
-To run the benchmarks simply call ``RunAll`` on either your BenchmarkSuite or BenchmarkCollector instance.
+To run the benchmarks simply call ``RunAll`` on either your ``BenchmarkSuite`` or ``BenchmarkCollector`` instance.
 
 For more examples look at [Suite.cs](https://gitlab.com/Plagiatdrengene/CsharpRAPL/-/blob/main/Benchmarks/Suite.cs) or at the tests.
 

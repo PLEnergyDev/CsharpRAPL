@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using CsharpRAPL.Benchmarking.Variation;
 using CsharpRAPL.CommandLine;
 using CsharpRAPL.Plotting;
 
@@ -41,6 +42,21 @@ public class BenchmarkSuite {
 		}
 
 		Benchmarks.Add(new Benchmark<T>(benchmark.Method.Name, Iterations, benchmark, true, group, order));
+	}
+
+	public void RegisterBenchmarkVariation<T>(string? group, Func<T> benchmark, VariationInstance parameters,
+		int order = 0, string namePostfix = "") {
+		if (benchmark.Method.IsAnonymous()) {
+			throw new NotSupportedException("Adding benchmarks through anonymous methods is not supported");
+		}
+
+		if (!_registeredBenchmarkClasses.Contains(benchmark.Method.DeclaringType!)) {
+			RegisterBenchmarkClass(benchmark.Method.DeclaringType!);
+		}
+
+		var bench = new Benchmark<T>($"{benchmark.Method.Name}{namePostfix}", Iterations, benchmark, true, group, order)
+			{ Parameters = parameters };
+		Benchmarks.Add(bench);
 	}
 
 	private void RegisterBenchmarkClass(Type benchmarkClass) {
