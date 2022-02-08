@@ -6,16 +6,17 @@ using System.IO.Compression;
 using CsharpRAPL.Analysis;
 using CsharpRAPL.Benchmarking;
 using CsharpRAPL.CommandLine;
+using CsharpRAPL.Data.Export;
 using CsvHelper;
 using CsvHelper.Configuration;
-
-CsharpRAPLCLI.SetAnalysisCallback(_ => { });
 
 Options options = CsharpRAPLCLI.Parse(args);
 
 var suite = new BenchmarkCollector();
 
 suite.RunAll();
+
+Analysis.CheckExecutionTime();
 
 foreach ((string group, List<IBenchmark> benchmarks) in suite.GetBenchmarksByGroup()) {
 	Dictionary<string, double> result = Analysis.CalculatePValueForGroup(benchmarks);
@@ -38,4 +39,6 @@ foreach (string file in Directory.EnumerateFiles(Path.Join(options.OutputPath, "
 archive.Dispose();
 zipToOpen.Dispose();
 
-CsharpRAPLCLI.StartAnalysis(suite.GetBenchmarksByGroup());
+LatexExporter.GenerateAverageTable();
+LatexExporter.GenerateTexImages();
+LatexExporter.GeneratePValueTables();
