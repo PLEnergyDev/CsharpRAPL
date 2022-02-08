@@ -107,7 +107,7 @@ public class BenchmarkSuite {
 		Warmup();
 
 		foreach ((int index, IBenchmark bench) in benchmarks.WithIndex()) {
-			Console.WriteLine($"Starting {bench.Name} which is the {index + 1} out of {benchmarks.Count} tests");
+			Console.WriteLine($"Starting {bench.Name} which is the {index + 1} benchmark out of {benchmarks.Count} benchmarks");
 			bench.Run();
 			Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
 			Console.WriteLine(

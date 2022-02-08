@@ -69,7 +69,7 @@ public static class VariationGenerator {
 				benchmark,
 				instance,
 				benchmarkAttribute.Order,
-				$"Variation:{index + 1}"
+				$"Variation-{index + 1}"
 			});
 		}
 	}

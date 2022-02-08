@@ -4,7 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.1.0</PackageVersion>
+        <PackageVersion>0.1.1</PackageVersion>
         <Title>CsharpRAPL</Title>
         <Authors>Dreamer, Rasmus, Milton</Authors>
         <Description>CSharpRAPL is a framework for benchmarking C# in regards to energy.

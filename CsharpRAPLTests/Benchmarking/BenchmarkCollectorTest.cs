@@ -8,13 +8,8 @@ namespace CsharpRAPL.Tests.Benchmarking;
 public class BenchmarkCollectorTest {
 	[Test, Order(0)]
 	public void BenchmarkCollectorTest01() {
-		//Flag has to be false otherwise we can't discover tests since
-		//in debug mode we need the Entry assembly
-#if DEBUG
-		var collector = new BenchmarkCollector(1000L, 1001L, false);
-#else
 		var collector = new BenchmarkCollector(1000L, 1001L);
-#endif
+
 		Assert.AreEqual(3, collector.GetBenchmarks().Count);
 		Assert.AreEqual(1000, DummyBenchmarks.Iterations);
 		Assert.AreEqual(1001, DummyBenchmarks.LoopIterations);
