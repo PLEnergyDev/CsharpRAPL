@@ -29,11 +29,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 	public BenchmarkCollector(ulong iterations, ulong loopIterations, bool onlyCallingAssembly = true) :
 		base(iterations, loopIterations) {
 		if (onlyCallingAssembly) {
-#if DEBUG
-			CollectBenchmarks(Assembly.GetEntryAssembly() ?? throw new InvalidOperationException());
-#else
 			CollectBenchmarks(Assembly.GetCallingAssembly() ?? throw new InvalidOperationException());
-#endif
 		}
 		else {
 			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()) {
@@ -45,6 +41,10 @@ public class BenchmarkCollector : BenchmarkSuite {
 	private void CollectBenchmarks(Assembly assembly) {
 		foreach (MethodInfo benchmarkMethod in assembly.GetTypes().SelectMany(type =>
 			type.GetMethods().Where(info => info.GetCustomAttribute<BenchmarkAttribute>() != null))) {
+			if (benchmarkMethod.DeclaringType!.GetCustomAttribute<SkipBenchmarksAttribute>() != null) {
+				continue;
+			}
+
 			//Try to get the benchmark attribute
 			var benchmarkAttribute = benchmarkMethod.GetCustomAttribute<BenchmarkAttribute>()!;
 
