@@ -24,16 +24,14 @@ public sealed class TimerOnly : IMeasureApi {
 
 	public BenchmarkResult GetResults(ulong loopIterations) {
 		BenchmarkResult result = new() {
-			ElapsedTime = _timerApi.Delta,
-			LoopIterations = loopIterations
+			ElapsedTime = _timerApi.Delta
 		};
 		return result;
 	}
 
 	public BenchmarkResult GetNormalizedResults(ulong loopIterations, int normalizedIterations = 1000000) {
 		BenchmarkResult result = new() {
-			ElapsedTime = _timerApi.Delta / ((double)loopIterations / normalizedIterations),
-			LoopIterations = loopIterations
+			ElapsedTime = _timerApi.Delta / ((double)loopIterations / normalizedIterations)
 		};
 		return result;
 	}
@@ -75,8 +73,7 @@ public sealed class RAPL : IMeasureApi {
 			DRAMEnergy = _dramApi.Delta,
 			Temperature = _tempApi.Delta,
 			ElapsedTime = _timerApi.Delta,
-			PackageEnergy = _packageApi.Delta,
-			LoopIterations = loopIterations
+			PackageEnergy = _packageApi.Delta
 		};
 		return result;
 	}

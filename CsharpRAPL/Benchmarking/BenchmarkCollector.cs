@@ -23,10 +23,10 @@ public class BenchmarkCollector : BenchmarkSuite {
 		.GetMethods(RegisterBenchmarkFlags)
 		.First(info => info.Name == nameof(RegisterBenchmark) && info.GetParameters().Length == 3);
 
-	public BenchmarkCollector(bool onlyCallingAssembly = true) : this(CsharpRAPLCLI.Options.Iterations,
+	public BenchmarkCollector(bool onlyCallingAssembly = false) : this(CsharpRAPLCLI.Options.Iterations,
 		CsharpRAPLCLI.Options.LoopIterations, onlyCallingAssembly) { }
 
-	public BenchmarkCollector(ulong iterations, ulong loopIterations, bool onlyCallingAssembly = true) :
+	public BenchmarkCollector(ulong iterations, ulong loopIterations, bool onlyCallingAssembly = false) :
 		base(iterations, loopIterations) {
 		if (onlyCallingAssembly) {
 			CollectBenchmarks(Assembly.GetCallingAssembly() ?? throw new InvalidOperationException());

@@ -49,6 +49,9 @@ public class Options {
 	[Option('z', nameof(ZipResults), HelpText = "Zips the CSV results and plots into a single zip file.")]
 	public bool ZipResults { get; set; }
 
+	[Option('j', nameof(Json), HelpText = "Uses json for output instead of CVS, includes more information.")]
+	public bool Json { get; set; } = false;
+
 	[Option(nameof(OnlyPlot), Required = false, HelpText = "Plots the results in the output path.")]
 	public bool OnlyPlot { get; set; }
 

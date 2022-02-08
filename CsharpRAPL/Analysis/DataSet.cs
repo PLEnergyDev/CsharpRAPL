@@ -26,7 +26,7 @@ public class DataSet {
 	}
 
 	public DataSet(IBenchmark benchmark) {
-		Name = benchmark.Name;
+		Name = benchmark.BenchmarkInfo.Name;
 		Data = benchmark.GetResults();
 	}
 

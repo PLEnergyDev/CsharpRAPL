@@ -18,13 +18,20 @@ public static class Helpers {
 		return GetAllCSVFilesFromPath(CsharpRAPLCLI.Options.OutputPath);
 	}
 
-	public static List<string> GetAllCSVFilesFromPath(string path) {
-		if (!Directory.Exists(path)) {
-			return new List<string>();
-		}
+	public static List<string> GetAllCSVFilesFromPath(string path, bool excludePValues = true) {
+		return excludePValues
+			? GetAllFilesFromPath(path, path).Where(s => !s.Contains("_pvalues")).ToList()
+			: GetAllFilesFromPath(path, path).ToList();
+	}
 
-		return Directory.EnumerateFiles(path, "*.csv", SearchOption.AllDirectories)
-			.Where(s => !s.Contains("_pvalues")).ToList();
+	public static List<string> GetAllJsonFilesFromPath(string path) {
+		return GetAllFilesFromPath(path, "*.json").ToList();
+	}
+
+	public static List<string> GetAllFilesFromPath(string path, string pattern) {
+		return !Directory.Exists(path)
+			? new List<string>()
+			: Directory.EnumerateFiles(path, pattern, SearchOption.AllDirectories).ToList();
 	}
 
 	public static List<string> GetAllPlotFiles() {
@@ -35,15 +42,14 @@ public static class Helpers {
 		return Directory.EnumerateFiles(CsharpRAPLCLI.Options.PlotOutputPath, "*.png", SearchOption.AllDirectories)
 			.ToList();
 	}
-	
+
 	/// <summary>
 	/// Checks if a method is anonymous.
 	/// </summary>
 	/// <param name="method">The method we want to check.</param>
 	/// <returns>Returns true if it is anonymous otherwise false</returns>
 	public static bool IsAnonymous(this MemberInfo method) {
-		var invalidChars = new[] {'<', '>'};
+		var invalidChars = new[] { '<', '>' };
 		return method.Name.Any(invalidChars.Contains);
 	}
-
 }

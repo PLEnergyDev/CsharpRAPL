@@ -52,7 +52,8 @@ public static class BenchmarkPlot {
 
 	public static void PlotResults(BenchmarkResultType resultType, IEnumerable<IBenchmark> dataSets,
 		PlotOptions? plotOptions = null) {
-		DataSet[] data = dataSets.Select(benchmark => new DataSet(benchmark.Name, benchmark.GetResults())).ToArray();
+		DataSet[] data = dataSets.Select(benchmark => new DataSet(benchmark.BenchmarkInfo.Name, benchmark.GetResults()))
+			.ToArray();
 		PlotResults(resultType, data, plotOptions);
 	}
 

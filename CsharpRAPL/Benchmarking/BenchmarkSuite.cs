@@ -55,7 +55,7 @@ public class BenchmarkSuite {
 		}
 
 		var bench = new Benchmark<T>($"{benchmark.Method.Name}{namePostfix}", Iterations, benchmark, true, group, order)
-			{ Parameters = parameters };
+			{ BenchmarkInfo = { Parameters = parameters } };
 		Benchmarks.Add(bench);
 	}
 
@@ -98,7 +98,7 @@ public class BenchmarkSuite {
 			throw new NotSupportedException("Running the benchmarks is only supported on Unix.");
 		}
 
-		List<IBenchmark> benchmarks = Benchmarks.OrderBy(benchmark => benchmark.Order).ToList();
+		List<IBenchmark> benchmarks = Benchmarks.OrderBy(benchmark => benchmark.BenchmarkInfo.Order).ToList();
 		if (benchmarks.Count == 0) {
 			Console.WriteLine("There are no benchmarks to run.");
 			return;
@@ -107,11 +107,12 @@ public class BenchmarkSuite {
 		Warmup();
 
 		foreach ((int index, IBenchmark bench) in benchmarks.WithIndex()) {
-			Console.WriteLine($"Starting {bench.Name} which is the {index + 1} benchmark out of {benchmarks.Count} benchmarks");
+			Console.WriteLine(
+				$"Starting {bench.BenchmarkInfo.Name} which is the {index + 1} benchmark out of {benchmarks.Count} benchmarks");
 			bench.Run();
 			Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
 			Console.WriteLine(
-				$"\rFinished {bench.Name} in {bench.ElapsedTime:F3}s with {bench.GetResults().Count} iterations\n");
+				$"\rFinished {bench.BenchmarkInfo.Name} in {bench.BenchmarkInfo.ElapsedTime:F3}s with {bench.GetResults().Count} iterations\n");
 		}
 
 		PlotGroups();
@@ -161,13 +162,13 @@ public class BenchmarkSuite {
 
 	public Dictionary<string, List<IBenchmark>> GetBenchmarksByGroup() {
 		Dictionary<string, List<IBenchmark>> groups = new();
-		foreach (IBenchmark benchmark in Benchmarks.Where(benchmark => benchmark.Group != null)) {
-			Debug.Assert(benchmark.Group != null, "benchmark.Group != null");
-			if (!groups.ContainsKey(benchmark.Group)) {
-				groups.Add(benchmark.Group, new List<IBenchmark>());
+		foreach (IBenchmark benchmark in Benchmarks.Where(benchmark => benchmark.BenchmarkInfo.Group != null)) {
+			Debug.Assert(benchmark.BenchmarkInfo.Group != null, "benchmark.Group != null");
+			if (!groups.ContainsKey(benchmark.BenchmarkInfo.Group)) {
+				groups.Add(benchmark.BenchmarkInfo.Group, new List<IBenchmark>());
 			}
 
-			groups[benchmark.Group].Add(benchmark);
+			groups[benchmark.BenchmarkInfo.Group].Add(benchmark);
 		}
 
 		return groups;
