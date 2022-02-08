@@ -18,13 +18,13 @@ public class Analysis {
 	}
 
 	public Analysis(IBenchmark firstBenchmark, IBenchmark secondBenchmark) {
-		if (!firstBenchmark.HasRun || !secondBenchmark.HasRun) {
+		if (!firstBenchmark.BenchmarkInfo.HasRun || !secondBenchmark.BenchmarkInfo.HasRun) {
 			throw new NotSupportedException(
 				"It's not supported to analyse results before the benchmarks have run. Use Analysis class instead if you have csv files.");
 		}
 
-		_firstDataset = new DataSet(firstBenchmark.Name, firstBenchmark.GetResults());
-		_secondDataset = new DataSet(secondBenchmark.Name, secondBenchmark.GetResults());
+		_firstDataset = new DataSet(firstBenchmark.BenchmarkInfo.Name, firstBenchmark.GetResults());
+		_secondDataset = new DataSet(secondBenchmark.BenchmarkInfo.Name, secondBenchmark.GetResults());
 	}
 
 	public Analysis(string firstBenchmarkName, List<BenchmarkResult> firstBenchmarkResults,
@@ -147,5 +147,23 @@ public class Analysis {
 		}
 
 		return groupToPValue;
+	}
+	
+	public static void CheckExecutionTime() {
+		List<(string Name, double minTimeElapsed)> valuesToInspect = Helpers.GetAllCSVFilesFromOutputPath()
+			.Select(path => new DataSet(path))
+			.Select(set => (set.Name, set.Data.Min(result => result.ElapsedTime)))
+			.OrderBy(tuple => tuple.Item2)
+			.Where(tuple => tuple.Item2 < 0.3).ToList();
+
+		if (valuesToInspect.Count == 0) {
+			Console.WriteLine("No results were below 0.3 seconds");
+		}
+		else {
+			foreach ((string name, double time) in valuesToInspect) {
+				Console.WriteLine(
+					$"{name} was found to be below 0.3 seconds ({time} seconds) so we might need to check if this gets compiled away");
+			}
+		}
 	}
 }

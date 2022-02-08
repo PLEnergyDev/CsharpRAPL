@@ -19,10 +19,10 @@ public class BenchmarkSuitTest {
 		benchmarkSuit.RegisterBenchmark(DummyBenchmark);
 
 		Assert.AreEqual(1, benchmarkSuit.GetBenchmarks().Count);
-		Assert.AreEqual(10, benchmarkSuit.GetBenchmarks()[0].Iterations);
-		Assert.False(benchmarkSuit.GetBenchmarks()[0].HasRun);
-		Assert.AreEqual("DummyBenchmark", benchmarkSuit.GetBenchmarks()[0].Name);
-		Assert.AreEqual(0, benchmarkSuit.GetBenchmarks()[0].Order);
+		Assert.AreEqual(10, benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Iterations);
+		Assert.False(benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.HasRun);
+		Assert.AreEqual("DummyBenchmark", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Name);
+		Assert.AreEqual(0, benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Order);
 	}
 
 	[Test]
@@ -33,12 +33,12 @@ public class BenchmarkSuitTest {
 		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark);
 
 
-		Assert.AreEqual("TestGroup", benchmarkSuit.GetBenchmarks()[0].Group);
+		Assert.AreEqual("TestGroup", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Group);
 		Assert.AreEqual(1, benchmarkSuit.GetBenchmarks().Count);
-		Assert.AreEqual(50, benchmarkSuit.GetBenchmarks()[0].Iterations);
-		Assert.False(benchmarkSuit.GetBenchmarks()[0].HasRun);
-		Assert.AreEqual("DummyBenchmark", benchmarkSuit.GetBenchmarks()[0].Name);
-		Assert.AreEqual(0, benchmarkSuit.GetBenchmarks()[0].Order);
+		Assert.AreEqual(50, benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Iterations);
+		Assert.False(benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.HasRun);
+		Assert.AreEqual("DummyBenchmark", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Name);
+		Assert.AreEqual(0, benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Order);
 	}
 
 
@@ -50,12 +50,12 @@ public class BenchmarkSuitTest {
 		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark, 42);
 
 
-		Assert.AreEqual("TestGroup", benchmarkSuit.GetBenchmarks()[0].Group);
+		Assert.AreEqual("TestGroup", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Group);
 		Assert.AreEqual(1, benchmarkSuit.GetBenchmarks().Count);
-		Assert.AreEqual(50, benchmarkSuit.GetBenchmarks()[0].Iterations);
-		Assert.False(benchmarkSuit.GetBenchmarks()[0].HasRun);
-		Assert.AreEqual("DummyBenchmark", benchmarkSuit.GetBenchmarks()[0].Name);
-		Assert.AreEqual(42, benchmarkSuit.GetBenchmarks()[0].Order);
+		Assert.AreEqual(50, benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Iterations);
+		Assert.False(benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.HasRun);
+		Assert.AreEqual("DummyBenchmark", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Name);
+		Assert.AreEqual(42, benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Order);
 	}
 
 	[Test]

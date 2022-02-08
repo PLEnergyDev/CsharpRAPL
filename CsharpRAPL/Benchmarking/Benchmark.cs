@@ -1,30 +1,30 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using Accord.Statistics;
 using Accord.Statistics.Distributions.Univariate;
 using CsharpRAPL.Analysis;
+using CsharpRAPL.Benchmarking.Serialization;
 using CsharpRAPL.Benchmarking.Variation;
 using CsharpRAPL.CommandLine;
 using CsharpRAPL.Data;
 using CsharpRAPL.Measuring;
-using CsvHelper;
-using CsvHelper.Configuration;
 
 namespace CsharpRAPL.Benchmarking;
 
 public class Benchmark<T> : IBenchmark {
-	public ulong Iterations { get; private set; }
-	public string Name { get; }
-	public string? Group { get; }
-	public int Order { get; }
-	public bool HasRun { get; private set; }
-	public double ElapsedTime { get; private set; }
-	public VariationInstance Parameters { get; set; }
+	public BenchmarkInfo BenchmarkInfo { get; }
+	private IMeasureApi MeasureApiApi { get; set; }
+	public IResultsSerializer ResultsSerializer { get; }
+
+	//TODO: Check if using a interface here hurts measurements
+	IMeasureApi IBenchmark.MeasureApiApi {
+		get => MeasureApiApi;
+		set => MeasureApiApi = value;
+	}
 
 	private const int MaxExecutionTime = 2700; //In seconds
 	private const int TargetLoopIterationTime = 250; //In milliseconds
@@ -33,26 +33,31 @@ public class Benchmark<T> : IBenchmark {
 	private readonly TextWriter _benchmarkOutputStream = new StreamWriter(Stream.Null);
 	private readonly TextWriter _stdout;
 	private readonly Func<T> _benchmark;
-	private readonly List<BenchmarkResult> _rawResults = new();
-	private readonly List<BenchmarkResult> _normalizedResults = new();
-	private readonly FieldInfo _loopIterationsFieldInfo;
 
-	//TODO: Check if using a interface here hurts measurements
-	private IMeasureApi _measureApiApi;
 	private string? _normalizedReturnValue;
-
+	private readonly FieldInfo _loopIterationsFieldInfo;
 
 	public Benchmark(string name, ulong iterations, Func<T> benchmark, bool silenceBenchmarkOutput = true,
 		string? group = null, int order = 0) {
-		Name = name;
-		Group = group;
-		Iterations = iterations;
-		Order = order;
-		_measureApiApi = null!;
+		BenchmarkInfo = new BenchmarkInfo() {
+			Name = name,
+			Group = group,
+			Iterations = iterations,
+			Order = order,
+			Parameters = new VariationInstance()
+		};
+
+		MeasureApiApi = null!;
+		if (CsharpRAPLCLI.Options.Json) {
+			ResultsSerializer = new JsonResultSerializer();
+		}
+		else {
+			ResultsSerializer = new CSVResultSerializer();
+		}
 
 		_benchmark = benchmark;
 		_stdout = Console.Out;
-		Parameters = new VariationInstance();
+
 
 		Debug.Assert(_benchmark.Method.DeclaringType != null, "_benchmark.Method.DeclaringType != null");
 		_loopIterationsFieldInfo =
@@ -66,30 +71,30 @@ public class Benchmark<T> : IBenchmark {
 	}
 
 	private void Start() {
-		_measureApiApi.Start();
+		MeasureApiApi.Start();
 	}
 
 	private void End(T benchmarkOutput) {
-		_measureApiApi.End();
+		MeasureApiApi.End();
 
 		//Result only valid if all results are valid
 		//Only then is the result added and duration is incremented
-		if (!_measureApiApi.IsValid()) {
+		if (!MeasureApiApi.IsValid()) {
 			return;
 		}
 
 		ulong loopIterations = GetLoopIterations();
 
-		BenchmarkResult result = _measureApiApi.GetResults(loopIterations) with {
+		BenchmarkResult result = MeasureApiApi.GetResults(loopIterations) with {
 			BenchmarkReturnValue = benchmarkOutput?.ToString() ?? string.Empty
 		};
 
-		BenchmarkResult normalizedResult = _measureApiApi.GetNormalizedResults(loopIterations) with {
+		BenchmarkResult normalizedResult = MeasureApiApi.GetNormalizedResults(loopIterations) with {
 			BenchmarkReturnValue = _normalizedReturnValue ?? string.Empty
 		};
-		_rawResults.Add(result);
-		_normalizedResults.Add(normalizedResult);
-		ElapsedTime += _rawResults[^1].ElapsedTime / 1_000;
+		BenchmarkInfo.RawResults.Add(result);
+		BenchmarkInfo.NormalizedResults.Add(normalizedResult);
+		BenchmarkInfo.ElapsedTime += BenchmarkInfo.RawResults[^1].ElapsedTime / 1_000;
 	}
 
 	//Performs benchmarking
@@ -97,34 +102,34 @@ public class Benchmark<T> : IBenchmark {
 	public void Run() {
 		//Sets console to write to null
 		Console.SetOut(_benchmarkOutputStream);
-		_measureApiApi = CsharpRAPLCLI.Options.OnlyTime ? new TimerOnly() : new RAPL();
+		MeasureApiApi = CsharpRAPLCLI.Options.OnlyTime ? new TimerOnly() : new RAPL();
 
-		if (_measureApiApi is null) {
+		if (MeasureApiApi is null) {
 			throw new RAPLNotInitializedException();
 		}
 
-		ElapsedTime = 0;
-		_rawResults.Clear();
-		_normalizedResults.Clear();
+		BenchmarkInfo.ElapsedTime = 0;
+		BenchmarkInfo.RawResults.Clear();
+		BenchmarkInfo.NormalizedResults.Clear();
 
 		if (CsharpRAPLCLI.Options.UseIterationCalculation) {
-			Iterations = IterationCalculationAll();
+			BenchmarkInfo.Iterations = IterationCalculationAll();
 		}
 
 		// Get normalized return value
 		SetLoopIterations(10);
 		_normalizedReturnValue = _benchmark()?.ToString() ?? string.Empty;
 
-		for (ulong i = 0; i <= Iterations; i++) {
-			if (Iterations != 1) {
+		for (ulong i = 0; i <= BenchmarkInfo.Iterations; i++) {
+			if (BenchmarkInfo.Iterations != 1) {
 				if (CsharpRAPLCLI.Options.Verbose) {
 					Print(Console.Write,
-						$"\r{i} of {Iterations} for {Name}. LoopIterations: {GetLoopIterations()}. " +
+						$"\r{i} of {BenchmarkInfo.Iterations} for {BenchmarkInfo.Name}. LoopIterations: {GetLoopIterations()}. " +
 						$"Time target: {TargetLoopIterationTime}. UseLoopScaling: {CsharpRAPLCLI.Options.UseLoopIterationScaling} UseIterationCalculation: {CsharpRAPLCLI.Options.UseIterationCalculation}" +
-						$" Last took: {(_rawResults.Count > 0 ? _rawResults[^1].ElapsedTime : 0.00):##,###}ms");
+						$" Last took: {(BenchmarkInfo.RawResults.Count > 0 ? BenchmarkInfo.RawResults[^1].ElapsedTime : 0.00):##,###}ms");
 				}
 				else {
-					Print(Console.Write, $"\r{i} of {Iterations} for {Name}");
+					Print(Console.Write, $"\r{i} of {BenchmarkInfo.Iterations} for {BenchmarkInfo.Name}");
 				}
 			}
 
@@ -136,7 +141,7 @@ public class Benchmark<T> : IBenchmark {
 
 
 			if (CsharpRAPLCLI.Options.UseLoopIterationScaling &&
-			    _rawResults[^1].ElapsedTime < TargetLoopIterationTime) {
+			    BenchmarkInfo.RawResults[^1].ElapsedTime < TargetLoopIterationTime) {
 				ulong currentValue = GetLoopIterations();
 
 				switch (currentValue) {
@@ -144,33 +149,34 @@ public class Benchmark<T> : IBenchmark {
 						break;
 					case >= ulong.MaxValue / 2:
 						SetLoopIterations(ulong.MaxValue);
-						_rawResults.Clear();
-						_normalizedResults.Clear();
+						BenchmarkInfo.RawResults.Clear();
+						BenchmarkInfo.NormalizedResults.Clear();
 						i = 0;
 						continue;
 					default:
 						SetLoopIterations(currentValue + currentValue);
-						_rawResults.Clear();
-						_normalizedResults.Clear();
+						BenchmarkInfo.RawResults.Clear();
+						BenchmarkInfo.NormalizedResults.Clear();
 						i = 0;
 						continue;
 				}
 			}
 
-			if (ElapsedTime < MaxExecutionTime) {
+			if (BenchmarkInfo.ElapsedTime < MaxExecutionTime) {
 				if (CsharpRAPLCLI.Options.UseIterationCalculation) {
-					Iterations = IterationCalculationAll();
+					BenchmarkInfo.Iterations = IterationCalculationAll();
 				}
 
 				continue;
 			}
 
-			Print(Console.WriteLine, $"\rEnding for {Name} benchmark due to time constraints");
+			Print(Console.WriteLine, $"\rEnding for {BenchmarkInfo.Name} benchmark due to time constraints");
 			break;
 		}
 
-		SaveResults();
-		HasRun = true;
+		BenchmarkInfo.HasRun = true;
+		BenchmarkInfo.LoopIterations = GetLoopIterations();
+		ResultsSerializer.SerializeResults(this);
 		SetLoopIterations(CsharpRAPLCLI.Options.LoopIterations);
 
 
@@ -187,35 +193,14 @@ public class Benchmark<T> : IBenchmark {
 		Console.SetOut(_benchmarkOutputStream);
 	}
 
-	/// <summary>
-	/// Saves Normalized Results to a file.
-	/// </summary>
-	private void SaveResults() {
-		DateTime dateTime = DateTime.Now;
-		string time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";
-		string outputPath = Group != null
-			? $"{CsharpRAPLCLI.Options.OutputPath}/{Group}/{Name}"
-			: $"{CsharpRAPLCLI.Options.OutputPath}/{Name}";
-
-		Directory.CreateDirectory(outputPath);
-		using var writer = new StreamWriter($"{outputPath}/{Name}-{time}.csv");
-		using var csv = new CsvWriter(writer, new CsvConfiguration(CultureInfo.InvariantCulture)
-			{ Delimiter = ";" });
-		csv.WriteRecords(GetResults());
-	}
-
 	//TODO: Figure out if we want to still ignore first
 	public List<BenchmarkResult> GetResults(bool ignoreFirst = true) {
-		return ignoreFirst
-			? new List<BenchmarkResult>(_normalizedResults.Skip(1))
-			: new List<BenchmarkResult>(_normalizedResults);
+		return new List<BenchmarkResult>(BenchmarkInfo.NormalizedResults.Skip(ignoreFirst ? 1 : 0));
 	}
 
 	//TODO: Figure out if we want to still ignore first
 	public List<BenchmarkResult> GetRawResults(bool ignoreFirst = true) {
-		return ignoreFirst
-			? new List<BenchmarkResult>(_rawResults.Skip(1))
-			: new List<BenchmarkResult>(_rawResults);
+		return new List<BenchmarkResult>(BenchmarkInfo.RawResults.Skip(ignoreFirst ? 1 : 0));
 	}
 
 	/// <summary>
@@ -244,7 +229,7 @@ public class Benchmark<T> : IBenchmark {
 	private ulong IterationCalculation(double confidence = 0.95,
 		BenchmarkResultType resultType = BenchmarkResultType.PackageEnergy) {
 		// If we have less than 10 results, we return 10 so we can get a sample to calculate from
-		if (_rawResults.Count < 10) {
+		if (BenchmarkInfo.RawResults.Count < 10) {
 			return 10;
 		}
 
@@ -254,13 +239,13 @@ public class Benchmark<T> : IBenchmark {
 		// Calculate the mean and standard deviation of the current sample
 		// We start by adding all the values to a double-array as this is used to calculate mean and standard
 		// deviation
-		var values = new double[_rawResults.Count];
-		for (var i = 0; i < _rawResults.Count; i++) {
+		var values = new double[BenchmarkInfo.RawResults.Count];
+		for (var i = 0; i < BenchmarkInfo.RawResults.Count; i++) {
 			values[i] = resultType switch {
-				BenchmarkResultType.Temperature => _rawResults[i].Temperature,
-				BenchmarkResultType.DRAMEnergy => _rawResults[i].DRAMEnergy,
-				BenchmarkResultType.ElapsedTime => _rawResults[i].ElapsedTime,
-				BenchmarkResultType.PackageEnergy => _rawResults[i].PackageEnergy,
+				BenchmarkResultType.Temperature => BenchmarkInfo.RawResults[i].Temperature,
+				BenchmarkResultType.DRAMEnergy => BenchmarkInfo.RawResults[i].DRAMEnergy,
+				BenchmarkResultType.ElapsedTime => BenchmarkInfo.RawResults[i].ElapsedTime,
+				BenchmarkResultType.PackageEnergy => BenchmarkInfo.RawResults[i].PackageEnergy,
 				_ => throw new ArgumentOutOfRangeException(nameof(resultType),
 					$"The benchmark result, {resultType}, has not been implemented in IterationCalculation")
 			};

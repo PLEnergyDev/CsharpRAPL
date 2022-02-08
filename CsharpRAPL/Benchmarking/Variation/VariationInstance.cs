@@ -3,11 +3,11 @@
 namespace CsharpRAPL.Benchmarking.Variation;
 
 public class VariationInstance {
-	public readonly List<MemberInfo> Values = new();
+	public List<MemberInfo> Values { get; } = new();
 
 	public class MemberInfo {
-		public readonly string Name;
-		public readonly object Value;
+		public string Name { get; }
+		public object Value { get; }
 		public readonly bool IsField;
 
 		public MemberInfo(string name, object value, bool isField) {
