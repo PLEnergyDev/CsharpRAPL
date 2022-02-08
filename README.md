@@ -142,6 +142,7 @@ We have provided the scripts:
     -p, --PlotOutputPath         (Default: _plots/) Sets the output path for plots.
     -a, --BenchmarksToAnalyse    The names of the benchmarks to analyse.
     -z, --ZipResults             Zips the CSV results and plots into a single zip file.
+    -j, --Json                   Uses json for output instead of CVS, includes more information.
     --OnlyPlot                   Plots the results in the output path.
     --OnlyAnalysis               Analysis the results in the output path.
     --OnlyTime                   Only measures time.

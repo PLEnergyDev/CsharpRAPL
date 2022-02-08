@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.CommandLine;
 using CsharpRAPL.Data;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -31,6 +33,11 @@ public class DataSet {
 	}
 
 	private static DataSet ReadData(string path) {
+		if (CsharpRAPLCLI.Options.Json) {
+			var info = JsonSerializer.Deserialize<BenchmarkInfo>(File.ReadAllText(path));
+			return new DataSet(info.Name, info.NormalizedResults);
+		}
+
 		using var reader = new StreamReader(path);
 		using var csv = new CsvReader(reader,
 			new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" });
