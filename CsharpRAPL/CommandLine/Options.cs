@@ -30,18 +30,17 @@ public class Options {
 		set => _loopIterations = value;
 	}
 
-	[Option('r', nameof(RemoveOldResults), Required = false,
-		HelpText = "If set removes all files from the output folder and the plot folder.")]
-	public bool RemoveOldResults { get; set; }
+	[Option('k', nameof(KeepOldResults), Required = false,
+		HelpText = "If not set removes all files from the output folder and the plot folder.")]
+	public bool KeepOldResults { get; set; } = false;
 
 	[Option('o', nameof(OutputPath), Required = false, HelpText = "Set the output path for results.",
 		Default = "results/")]
 	public string OutputPath { get; set; } = "results/";
 
-	[Option('p', nameof(PlotOutputPath), Required = false, HelpText = "Sets the output path for plots.",
-		Default = "_plots/")]
-	public string PlotOutputPath { get; set; } = "_plots/";
 
+	[Option('p', nameof(PlotResults), Required = false, HelpText = "Should the results be plotted?")]
+	public bool PlotResults { get; set; } = false;
 
 	[Option('a', nameof(BenchmarksToAnalyse), HelpText = "The names of the benchmarks to analyse.")]
 	public IEnumerable<string> BenchmarksToAnalyse { get; set; } = Array.Empty<string>();
@@ -51,6 +50,10 @@ public class Options {
 
 	[Option('j', nameof(Json), HelpText = "Uses json for output instead of CVS, includes more information.")]
 	public bool Json { get; set; } = false;
+
+	[Option(nameof(PlotOutputPath), Required = false, HelpText = "Sets the output path for plots.",
+		Default = "_plots/")]
+	public string PlotOutputPath { get; set; } = "_plots/";
 
 	[Option(nameof(OnlyPlot), Required = false, HelpText = "Plots the results in the output path.")]
 	public bool OnlyPlot { get; set; }

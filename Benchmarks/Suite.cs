@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -7,16 +8,22 @@ using CsharpRAPL.Analysis;
 using CsharpRAPL.Benchmarking;
 using CsharpRAPL.CommandLine;
 using CsharpRAPL.Data.Export;
+using CsharpRAPL.Plotting;
 using CsvHelper;
 using CsvHelper.Configuration;
+using ScottPlot.Drawing;
 
 Options options = CsharpRAPLCLI.Parse(args);
 
-var suite = new BenchmarkCollector();
+var suite = new BenchmarkCollector {
+	PlotOptions = new PlotOptions {
+		GrayScale = false,
+		FillColor = Color.LightPink,
+		HatchStyle = HatchStyle.DottedDiamond
+	}
+};
 
 suite.RunAll();
-
-Analysis.CheckExecutionTime();
 
 foreach ((string group, List<IBenchmark> benchmarks) in suite.GetBenchmarksByGroup()) {
 	Dictionary<string, double> result = Analysis.CalculatePValueForGroup(benchmarks);

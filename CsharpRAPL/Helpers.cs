@@ -20,8 +20,8 @@ public static class Helpers {
 
 	public static List<string> GetAllCSVFilesFromPath(string path, bool excludePValues = true) {
 		return excludePValues
-			? GetAllFilesFromPath(path, path).Where(s => !s.Contains("_pvalues")).ToList()
-			: GetAllFilesFromPath(path, path).ToList();
+			? GetAllFilesFromPath(path, "*.csv").Where(s => !s.Contains("_pvalues")).ToList()
+			: GetAllFilesFromPath(path, "*.csv").ToList();
 	}
 
 	public static List<string> GetAllJsonFilesFromPath(string path) {

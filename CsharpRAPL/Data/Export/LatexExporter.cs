@@ -69,6 +69,9 @@ public static class LatexExporter {
 	public static void GeneratePValueTables(double threshold = 0.05) {
 		foreach ((string group, List<string> values) in GetPValueGroups()) {
 			var pValues = new Dictionary<BenchmarkResultType, Dictionary<string, Dictionary<string, double>>>();
+			if (values.Count == 0 || (values.Count == 1 && values[0] == "")) {
+				return;
+			}
 
 			foreach (string result in values.SelectMany(str => str.Split("\n"))) {
 				string baseValue = result.Split(' ')[0];

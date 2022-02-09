@@ -89,15 +89,17 @@ public static class BenchmarkPlot {
 				$"{dataSet.Name}\nMax: {boxPlot.MaxValue:F4} Min: {boxPlot.MinValue:F4}\nLowerPQ: {boxPlot.LowerPValueQuantile:F4} UpperPQ: {boxPlot.UpperPValueQuantile:F4}\n Average: {boxPlot.Average:F4} Median: {boxPlot.Median:F4}";
 
 			if (hatchIndex > 9) {
-				hatchIndex = 0;
+				hatchIndex = 1;
 			}
 
 			if (boxPlot.PlotOptions.UseColorRange) {
 				boxPlot.PlotOptions.FillColor = plt.GetSettings().GetNextColor();
 			}
 
-			boxPlot.PlotOptions.HatchStyle = (HatchStyle)hatchIndex;
-			boxPlot.PlotOptions.HatchColor = Color.Gray;
+			if (plotOptions.HatchStyle != HatchStyle.None) {
+				boxPlot.PlotOptions.HatchStyle = (HatchStyle)hatchIndex;
+				boxPlot.PlotOptions.HatchColor = Color.Gray;
+			}
 
 			hatchIndex++;
 		}

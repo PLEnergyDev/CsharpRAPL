@@ -14,6 +14,7 @@ namespace CsharpRAPL.Benchmarking;
 public class BenchmarkSuite {
 	public ulong Iterations { get; }
 	public ulong LoopIterations { get; }
+	public PlotOptions PlotOptions { get; set; } = new();
 	private List<IBenchmark> Benchmarks { get; } = new();
 
 	private readonly HashSet<Type> _registeredBenchmarkClasses = new();
@@ -115,7 +116,11 @@ public class BenchmarkSuite {
 				$"\rFinished {bench.BenchmarkInfo.Name} in {bench.BenchmarkInfo.ElapsedTime:F3}s with {bench.GetResults().Count} iterations\n");
 		}
 
-		PlotGroups();
+		if (CsharpRAPLCLI.Options.PlotResults) {
+			PlotGroups();
+		}
+
+		Analysis.Analysis.CheckExecutionTime();
 
 		if (CsharpRAPLCLI.Options.ZipResults) {
 			ZipResults();
@@ -176,7 +181,9 @@ public class BenchmarkSuite {
 
 	public void PlotGroups() {
 		foreach ((string? group, List<IBenchmark>? benchmarks) in GetBenchmarksByGroup()) {
-			BenchmarkPlot.PlotAllResults(benchmarks.ToArray(), new PlotOptions { Name = group });
+			PlotOptions options = PlotOptions;
+			options.Name = group;
+			BenchmarkPlot.PlotAllResults(benchmarks.ToArray(), options);
 		}
 	}
 }

@@ -65,7 +65,7 @@ public static class CsharpRAPLCLI {
 			Options.PlotOutputPath += "/";
 		}
 
-		if (!Options.RemoveOldResults) {
+		if (Options.KeepOldResults) {
 			return;
 		}
 
