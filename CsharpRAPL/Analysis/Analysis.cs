@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Accord.Statistics.Testing;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.CommandLine;
 using CsharpRAPL.Data;
 using CsharpRAPL.Plotting;
 
@@ -73,6 +74,12 @@ public class Analysis {
 
 		// Test if first is significantly different from the second
 		var timeTTest = new TwoSampleTTest(firstDataSet.TimesValues, secondDataSet.TimesValues);
+		if (CsharpRAPLCLI.Options.OnlyTime) {
+			return new List<(string Message, double Value)> {
+				($"{firstDataSet.Name} significantly different from {secondDataSet.Name} - Time", timeTTest.PValue)
+			};
+		}
+
 		var pkgTTest = new TwoSampleTTest(firstDataSet.PackageValues, secondDataSet.PackageValues);
 		var dramTTest = new TwoSampleTTest(firstDataSet.DRAMValues, secondDataSet.DRAMValues);
 
@@ -148,7 +155,7 @@ public class Analysis {
 
 		return groupToPValue;
 	}
-	
+
 	public static void CheckExecutionTime() {
 		List<(string Name, double minTimeElapsed)> valuesToInspect = Helpers.GetAllCSVFilesFromOutputPath()
 			.Select(path => new DataSet(path))

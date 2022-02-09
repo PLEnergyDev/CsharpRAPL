@@ -70,12 +70,13 @@ public class CLITest {
 		"-g, --SkipPlotGroups         If plotting each benchmark group should be skipped.",
 		"-i, --Iterations             (Default: 0) Sets the target iterations. (Disables Dynamic Iteration Calculation)",
 		"-l, --LoopIterations         (Default: 0) Sets the target loop iterations. (Disables Dynamic Loop Iteration Scaling)",
-		"-r, --RemoveOldResults       If set removes all files from the output folder and the plot folder.",
+		"-k, --KeepOldResults         If not set removes all files from the output folder and the plot folder.",
 		"-o, --OutputPath             (Default: results/) Set the output path for results.",
-		"-p, --PlotOutputPath         (Default: _plots/) Sets the output path for plots.",
+		"-p, --PlotResults            Should the results be plotted?",
 		"-a, --BenchmarksToAnalyse    The names of the benchmarks to analyse.",
 		"-z, --ZipResults             Zips the CSV results and plots into a single zip file.",
 		"-j, --Json                   Uses json for output instead of CVS, includes more information.",
+		"--PlotOutputPath             (Default: _plots/) Sets the output path for plots.",
 		"--OnlyPlot                   Plots the results in the output path.",
 		"--OnlyAnalysis               Analysis the results in the output path.",
 		"--Verbose                    Enables debug information.",
@@ -114,7 +115,7 @@ public class CLITest {
 		Options.ShouldExit = true;
 		Directory.Delete("TestData", true);
 	}
-	
+
 	[Test]
 	[Order(0)]
 	public void TestParse01() {
@@ -212,7 +213,7 @@ public class CLITest {
 
 	[Test]
 	public void TestParse09() {
-		string[] args = { "-p", "Plots" };
+		string[] args = { "--PlotOutputPath", "Plots" };
 		Options options = CsharpRAPLCLI.Parse(args, 1000);
 
 		Assert.AreEqual("results/", options.OutputPath);
@@ -221,7 +222,7 @@ public class CLITest {
 
 	[Test]
 	public void TestParse10() {
-		string[] args = { "-o", "Data", "-p", "Plots" };
+		string[] args = { "-o", "Data", "--PlotOutputPath", "Plots" };
 		Options options = CsharpRAPLCLI.Parse(args, 1000);
 
 		Assert.AreEqual("Data/", options.OutputPath);
@@ -230,7 +231,7 @@ public class CLITest {
 
 	[Test]
 	public void TestParse11() {
-		string[] args = { "-o", "Data\\Test", "-p", "Plots\\Test" };
+		string[] args = { "-o", "Data\\Test", "--PlotOutputPath", "Plots\\Test" };
 		Options options = CsharpRAPLCLI.Parse(args, 1000);
 
 		Assert.AreEqual("Data/Test/", options.OutputPath);
@@ -254,11 +255,14 @@ public class CLITest {
 	public void TestParse14() {
 		Directory.CreateDirectory("testFolder");
 		Directory.CreateDirectory("testPlots");
-		string[] args = { "-o", "testFolder", "-p", "testPlots", "-r" };
+		string[] args = { "-o", "testFolder", "--PlotOutputPath", "testPlots", "-k" };
 		CsharpRAPLCLI.Parse(args, 1000);
 
-		Assert.False(Directory.Exists("testFolder"));
-		Assert.False(Directory.Exists("testPlots"));
+		Assert.True(Directory.Exists("testFolder"));
+		Assert.True(Directory.Exists("testPlots"));
+
+		Directory.Delete("testFolder");
+		Directory.Delete("testPlots");
 	}
 
 	[Test]
@@ -278,7 +282,7 @@ public class CLITest {
 		Assert.True(options.OnlyPlot);
 		Assert.True(hasPlotted);
 	}
-	
+
 	[Test]
 	public void TestSetAnalysis01() {
 		string[] args = { "--OnlyAnalysis" };
@@ -290,7 +294,7 @@ public class CLITest {
 	[Test]
 	public void TestSetAnalysis02() {
 		string[] args =
-			{ "-o", "TestData", "--OnlyAnalysis", "-a", "AddSet.csv", "SubtractSet.csv", "SubtractSet2.csv" };
+			{ "-k", "-o", "TestData", "--OnlyAnalysis", "-a", "AddSet.csv", "SubtractSet.csv", "SubtractSet2.csv" };
 		var exception = Assert.Throws<NotSupportedException>(() => CsharpRAPLCLI.Parse(args));
 		Assert.NotNull(exception);
 		Assert.AreEqual("You need to pass an even number of benchmarks to analyse.", exception?.Message);
@@ -299,7 +303,7 @@ public class CLITest {
 
 	[Test]
 	public void TestSetAnalysis03() {
-		string[] args = { "-o", "TestData", "--OnlyAnalysis", "-a", "AddSet.csv", "SubtractSet.csv" };
+		string[] args = { "-k", "-o", "TestData", "--OnlyAnalysis", "-a", "AddSet.csv", "SubtractSet.csv" };
 		var analysed = false;
 		CsharpRAPLCLI.SetAnalysisCallback(_ => analysed = true);
 		CsharpRAPLCLI.Parse(args);
@@ -308,7 +312,7 @@ public class CLITest {
 
 	[Test]
 	public void TestSetAnalysis04() {
-		string[] args = { "-o", "TestData", "--OnlyAnalysis", "-a", "Test/", "SubtractSet.csv" };
+		string[] args = { "-k", "-o", "TestData", "--OnlyAnalysis", "-a", "Test/", "SubtractSet.csv" };
 		var analysed = false;
 		CsharpRAPLCLI.SetAnalysisCallback(_ => analysed = true);
 		CsharpRAPLCLI.Parse(args);
@@ -320,7 +324,7 @@ public class CLITest {
 	public void TestSetAnalysis05() {
 		using var sw = new StringWriter();
 		Console.SetOut(sw);
-		string[] args = { "-o", "TestData", "--OnlyAnalysis", "-a", "Test/", "SubtractSet.csv" };
+		string[] args = { "-k", "-o", "TestData", "--OnlyAnalysis", "-a", "Test/", "SubtractSet.csv" };
 		CsharpRAPLCLI.Parse(args);
 
 		string result = sw.ToString().Trim();
