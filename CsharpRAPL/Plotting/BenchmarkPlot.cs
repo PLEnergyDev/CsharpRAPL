@@ -25,7 +25,11 @@ public static class BenchmarkPlot {
 		PlotOptions? plotOptions = null) {
 		var groups = new Dictionary<string, List<DataSet>>();
 
-		foreach (string file in Helpers.GetAllCSVFilesFromPath(path)) {
+		List<string> files = CsharpRAPLCLI.Options.Json
+			? Helpers.GetAllJsonFilesFromPath(path)
+			: Helpers.GetAllCSVFilesFromPath(path);
+
+		foreach (string file in files) {
 			string group = Path.GetRelativePath(Directory.GetCurrentDirectory(), file)
 				.Split(Path.DirectorySeparatorChar)[1];
 			if (!groups.ContainsKey(group)) {
@@ -63,6 +67,9 @@ public static class BenchmarkPlot {
 			return;
 		}
 
+		var info = CultureInfo.CreateSpecificCulture("da-DK");
+		info.NumberFormat = new NumberFormatInfo
+			{ NumberDecimalSeparator = ",", NumberGroupSeparator = "." };
 		plotOptions ??= new PlotOptions();
 
 		var plt = new Plot(plotOptions.Width, plotOptions.Height);
@@ -110,8 +117,9 @@ public static class BenchmarkPlot {
 
 		plt.XTicks(Enumerable.Range(0, dataSets.Length).Select(i1 => (double)i1).ToArray(), names);
 		plt.XLabel("Benchmark");
+
 		plt.YLabel(GetYLabel(resultType));
-		plt.YAxis.TickLabelFormat(d => Math.Round(d, 5).ToString("G", CultureInfo.CreateSpecificCulture("da-DK")));
+		plt.YAxis.TickLabelFormat(d => Math.Round(d, 5).ToString("N", info));
 		plt.Title(string.IsNullOrEmpty(plotOptions.Name)
 			? $"{resultType}"
 			: $"{plotOptions.Name.Humanize(LetterCasing.Title)}");
