@@ -99,8 +99,8 @@ You can add benchmarks manually by either using ``BenchmarkCollector`` or ``Benc
 Example of manual registration:
 ```c#
 public static void Main(string[] args){
-    var benchmarkSuit = new BenchmarkSuite();
-    benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark);
+    var benchmarkSuite = new BenchmarkSuite();
+    benchmarkSuite.RegisterBenchmark("TestGroup", DummyBenchmark);
 }
 
 public static int DummyBenchmark() {
@@ -137,15 +137,18 @@ We have provided the scripts:
     -g, --SkipPlotGroups         If plotting each benchmark group should be skipped.
     -i, --Iterations             (Default: 0) Sets the target iterations. (Disables Dynamic Iteration Calculation)
     -l, --LoopIterations         (Default: 0) Sets the target loop iterations. (Disables Dynamic Loop Iteration Scaling)
-    -r, --RemoveOldResults       If set removes all files from the output folder and the plot folder.
+    -k, --KeepOldResults         If not set removes all files from the output folder and the plot folder.
     -o, --OutputPath             (Default: results/) Set the output path for results.
-    -p, --PlotOutputPath         (Default: _plots/) Sets the output path for plots.
+    -p, --PlotResults            Should the results be plotted?
     -a, --BenchmarksToAnalyse    The names of the benchmarks to analyse.
     -z, --ZipResults             Zips the CSV results and plots into a single zip file.
     -j, --Json                   Uses json for output instead of CVS, includes more information.
+    --TryTurnOffGC               Tries to turn off GC during running of benchmarks.
+    --GCMemory                   (Default: 250000000) Sets the amount of memory in bytes allowed to be used when turning off garbage collection.
+    --PlotOutputPath             (Default: _plots/) Sets the output path for plots.
     --OnlyPlot                   Plots the results in the output path.
     --OnlyAnalysis               Analysis the results in the output path.
+    --Verbose                    Enables debug information.
     --OnlyTime                   Only measures time.
     --help                       Display this help screen.
     --version                    Display version information.
-    --Verbose                    Enables debug information.

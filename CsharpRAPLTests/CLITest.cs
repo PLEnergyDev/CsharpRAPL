@@ -76,6 +76,8 @@ public class CLITest {
 		"-a, --BenchmarksToAnalyse    The names of the benchmarks to analyse.",
 		"-z, --ZipResults             Zips the CSV results and plots into a single zip file.",
 		"-j, --Json                   Uses json for output instead of CVS, includes more information.",
+		"--TryTurnOffGC               Tries to turn off GC during running of benchmarks.",
+		"--GCMemory                   (Default: 250000000) Sets the amount of memory in bytes allowed to be used when turning off garbage collection.",
 		"--PlotOutputPath             (Default: _plots/) Sets the output path for plots.",
 		"--OnlyPlot                   Plots the results in the output path.",
 		"--OnlyAnalysis               Analysis the results in the output path.",
@@ -347,5 +349,19 @@ public class CLITest {
 		var standardOutput = new StreamWriter(Console.OpenStandardOutput());
 		standardOutput.AutoFlush = true;
 		Console.SetOut(standardOutput);
+	}
+
+	[Test]
+	public void TestGC01() {
+		string[] args = { "--TryTurnOffGC" };
+		Options options = CsharpRAPLCLI.Parse(args, 1000);
+		Assert.True(options.TryTurnOffGC);
+	}
+	
+	[Test]
+	public void TestGC02() {
+		string[] args = { "--TryTurnOffGC", "--GCMemory", "4000000000" };
+		Options options = CsharpRAPLCLI.Parse(args, 1000);
+		Assert.AreEqual(4000000000, options.GCMemory);
 	}
 }
