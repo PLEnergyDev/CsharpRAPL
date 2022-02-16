@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using CommandLine;
 
 namespace CsharpRAPL.CommandLine;
@@ -11,6 +12,7 @@ public class Options {
 
 	private ulong _iterations;
 	private ulong _loopIterations;
+	private long _memoryForTurningOffGarbageCollection;
 
 	[Option('g', nameof(SkipPlotGroups), Required = false,
 		HelpText = "If plotting each benchmark group should be skipped.")]
@@ -51,6 +53,16 @@ public class Options {
 	[Option('j', nameof(Json), HelpText = "Uses json for output instead of CVS, includes more information.")]
 	public bool Json { get; set; } = false;
 
+	[Option(nameof(TryTurnOffGC), Required = false, HelpText = "Tries to turn off GC during running of benchmarks.")]
+	[SuppressMessage("ReSharper", "InconsistentNaming")]
+	public bool TryTurnOffGC { get; set; }
+
+	[Option(nameof(GCMemory), Required = false, HelpText = "Sets the amount of memory in bytes allowed to be used when turning off garbage collection.", Default = 250000000)]
+	public long GCMemory {
+		get => _memoryForTurningOffGarbageCollection;
+		set => _memoryForTurningOffGarbageCollection = value;
+	}
+	
 	[Option(nameof(PlotOutputPath), Required = false, HelpText = "Sets the output path for plots.",
 		Default = "_plots/")]
 	public string PlotOutputPath { get; set; } = "_plots/";

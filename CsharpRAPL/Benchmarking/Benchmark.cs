@@ -134,10 +134,25 @@ public class Benchmark<T> : IBenchmark {
 			}
 
 
+			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
+				GC.TryStartNoGCRegion(CsharpRAPLCLI.Options.GCMemory, false);
+			}
+
 			//Actually performing benchmark and resulting IO
 			Start();
 			T benchmarkOutput = _benchmark();
 			End(benchmarkOutput);
+			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
+				try {
+					GC.EndNoGCRegion();
+				}
+				catch (InvalidOperationException e) {
+					Print(Console.WriteLine, "");
+					Print(Console.WriteLine, e.Message);
+					Print(Console.WriteLine,
+						"Unless this happens at a lot of iterations, unlikely to mean more than an outlier");
+				}
+			}
 
 
 			if (CsharpRAPLCLI.Options.UseLoopIterationScaling &&
