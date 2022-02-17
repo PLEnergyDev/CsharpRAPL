@@ -23,7 +23,9 @@ public static class Helpers {
 			? GetAllFilesFromPath(path, "*.csv").Where(s => !s.Contains("_pvalues")).ToList()
 			: GetAllFilesFromPath(path, "*.csv").ToList();
 	}
-
+	public static List<string> GetAllJsonFilesFromOutputPath() {
+		return GetAllJsonFilesFromPath(CsharpRAPLCLI.Options.OutputPath);
+	}
 	public static List<string> GetAllJsonFilesFromPath(string path) {
 		return GetAllFilesFromPath(path, "*.json").ToList();
 	}
