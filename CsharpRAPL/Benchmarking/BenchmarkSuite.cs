@@ -152,7 +152,9 @@ public class BenchmarkSuite {
 	private static void ZipResults() {
 		using var zipToOpen = new FileStream("results.zip", FileMode.Create);
 		using var archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update);
-		foreach (string file in Helpers.GetAllCSVFilesFromOutputPath()) {
+		foreach (string file in CsharpRAPLCLI.Options.Json
+			? Helpers.GetAllJsonFilesFromOutputPath()
+			: Helpers.GetAllCSVFilesFromOutputPath()) {
 			archive.CreateEntryFromFile(file, file);
 		}
 
