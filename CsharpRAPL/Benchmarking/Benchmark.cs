@@ -135,6 +135,7 @@ public class Benchmark<T> : IBenchmark {
 
 
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
+				GC.Collect();
 				GC.TryStartNoGCRegion(CsharpRAPLCLI.Options.GCMemory, false);
 			}
 
