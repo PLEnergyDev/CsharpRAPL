@@ -17,10 +17,12 @@ public static class VariationGenerator {
 	private static List<VariationParameter> GetFields(Type declaringType) {
 		List<FieldInfo> fieldVariations = declaringType
 			.GetFields(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Public | BindingFlags.Instance)
-			.Where(info => info.GetCustomAttribute<VariationsAttribute>() != null).ToList();
+			.Where(info => info.GetCustomAttribute<VariationsAttribute>() != null ||
+			               info.GetCustomAttribute<TypeVariationsAttribute>() != null).ToList();
 		List<PropertyInfo> propertyVariations = declaringType
 			.GetProperties(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Public | BindingFlags.Instance)
-			.Where(info => info.GetCustomAttribute<VariationsAttribute>() != null).ToList();
+			.Where(info => info.GetCustomAttribute<VariationsAttribute>() != null ||
+			               info.GetCustomAttribute<TypeVariationsAttribute>() != null).ToList();
 
 		if (declaringType.IsAbstract || declaringType.IsInterface) {
 			throw new NotSupportedException(
@@ -31,14 +33,31 @@ public static class VariationGenerator {
 
 		var input = new List<VariationParameter>();
 		foreach (FieldInfo field in fieldVariations) {
-			List<object> values = field.GetCustomAttribute<VariationsAttribute>()!.Values.ToList();
-			input.Add(new VariationParameter(field.Name, values, true));
+			if (field.GetCustomAttribute<VariationsAttribute>() != null) {
+				List<object> values = field.GetCustomAttribute<VariationsAttribute>()!.Values.ToList();
+				input.Add(new VariationParameter(field.Name, values, true));
+			}
+
+			if (field.GetCustomAttribute<TypeVariationsAttribute>() != null) {
+				var attribute = field.GetCustomAttribute<TypeVariationsAttribute>();
+				List<object> values = attribute!.Types.Select(o => Activator.CreateInstance(o)).ToList().ToList();
+				input.Add(new VariationParameter(field.Name, values, true));
+			}
 		}
 
 		foreach (PropertyInfo property in propertyVariations) {
-			List<object> values = property.GetCustomAttribute<VariationsAttribute>()!.Values.ToList();
-			input.Add(
-				new VariationParameter(property.Name, values, false));
+			if (property.GetCustomAttribute<VariationsAttribute>() != null) {
+				List<object> values = property.GetCustomAttribute<VariationsAttribute>()!.Values.ToList();
+				input.Add(new VariationParameter(property.Name, values, false));
+			}
+
+			if (property.GetCustomAttribute<TypeVariationsAttribute>() != null) {
+				var attribute = property.GetCustomAttribute<TypeVariationsAttribute>();
+				List<object> values = attribute!.Types
+					.Select(o => Activator.CreateInstance(o)).ToList();
+
+				input.Add(new VariationParameter(property.Name, values, false));
+			}
 		}
 
 		return input;
