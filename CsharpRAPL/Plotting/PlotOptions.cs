@@ -24,6 +24,8 @@ public class PlotOptions {
 	public bool GrayScale { get; set; } = true;
 
 	public bool UseColorRange { get; set; }
+	
+	public bool ForceRotatedText { get; set; }
 
 	public HatchStyle HatchStyle {
 		get => GrayScale ? HatchStyle.None : _hatchStyle;
@@ -57,5 +59,6 @@ public class PlotOptions {
 		StartFromZero = plotOptions.StartFromZero;
 		GrayScale = plotOptions.GrayScale;
 		UseColorRange = plotOptions.UseColorRange;
+		ForceRotatedText = plotOptions.ForceRotatedText;
 	}
 }
