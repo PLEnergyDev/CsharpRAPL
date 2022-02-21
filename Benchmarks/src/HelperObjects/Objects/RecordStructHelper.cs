@@ -4,6 +4,8 @@ public record struct RecordStructHelper {
 	public static ulong StaticField = 4;
 	public ulong Field = 4;
 
+	public RecordStructHelper() { }
+
 	public ulong Calculate() {
 		Field++;
 		return Field + 2;

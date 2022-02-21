@@ -8,7 +8,7 @@ namespace CsharpRAPL.CommandLine;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class Options {
 	private const ulong DefaultIterations = 50;
-	private const ulong DefaultLoopIterations = 10000000;
+	private const ulong DefaultLoopIterations = 1;
 
 	private ulong _iterations;
 	private ulong _loopIterations;
