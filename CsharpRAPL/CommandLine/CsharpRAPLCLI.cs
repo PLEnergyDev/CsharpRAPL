@@ -26,21 +26,6 @@ public static class CsharpRAPLCLI {
 		});
 		parser.ParseArguments<Options>(args).WithParsed(RunOptions).WithNotParsed(HandleParseError);
 
-		if (Options.OnlyPlot) {
-			if (_plotCallback == null) {
-				BenchmarkPlot.PlotAllResultsGroupsFromFolder(Options.OutputPath);
-			}
-			else {
-				_plotCallback.Invoke(Options.OutputPath);
-			}
-
-			if (Options.ShouldExit) {
-				Environment.Exit(0);
-			}
-
-			return Options;
-		}
-
 		if (!Options.OnlyAnalysis) {
 			return Options;
 		}
@@ -65,6 +50,20 @@ public static class CsharpRAPLCLI {
 			Options.PlotOutputPath += "/";
 		}
 
+		if (Options.OnlyPlot) {
+			if (_plotCallback == null) {
+				BenchmarkPlot.PlotAllResultsGroupsFromFolder(Options.OutputPath);
+			}
+			else {
+				_plotCallback.Invoke(Options.OutputPath);
+			}
+
+			if (Options.ShouldExit) {
+				Environment.Exit(0);
+			}
+			return;
+		}
+		
 		if (Options.KeepOldResults) {
 			return;
 		}

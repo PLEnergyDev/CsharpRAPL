@@ -29,7 +29,7 @@ ElapsedTime;PackageEnergy;DramEnergy;Temperature;BenchmarkReturnValue
 
 The results can be visualized using Box Plots an example of this can be seen on the following image (Note that the following image is only for illustrative purposes and the results might not be correct):
 
-![Example Plot](https://media.discordapp.net/attachments/702101593449037844/908033950922993725/PrimitiveInteger-2021-11-10T17-20-47-400.png?width=540&height=405)
+![Example Plot](https://i.imgur.com/52YHoH4.png)
 
 
 
@@ -75,6 +75,10 @@ The attribute also has options for order and if it should skip the benchmark.
 To take advantage of  using the Attributes you have to use the ``BenchmarkCollector`` which collects all methods with the Benchmark attribute.
 
 When using the attributes you can also make use of ``Variations`` attribute, which creates variations of a field or property.
+
+A `VariationBenchmark` must be present on the methods which uses the variations.
+This is to avoid creating lots of extra variations that aren't needed.
+
 Example:
 ```c#
 [Variations(10, 15)] public int TestProp { get; set; }
@@ -90,8 +94,17 @@ Variation 4: TestProp = 15, TestProp2 = 12
 ```
 So it will create an instance of the benchmark where each these values are set according to the table above.
 
+Another attribute that is available is the `TypeVariations` attribute which is used for creating benchmark variations where we want to use different instances of a class like so:
 
+```c#
+[TypeVariations(typeof(ArgumentException), typeof(ArgumentNullException), typeof(ArgumentOutOfRangeException))]
+private Exception Exception = new Exception();
+```
+The above code if used will create 3 variations where in each variation `Exception` is assigned to a new instance for each of the types in the attribute.
 
+The field/property should have a default value as to not give null-reference expectations when running the no-variation benchmark.
+
+To use this the method must be marked with `VariationBenchmark` attribute.
 ### Manual
 
 You can add benchmarks manually by either using ``BenchmarkCollector`` or ``BenchmarkSuite`` to do that use the RegisterBenchmark method.

@@ -66,7 +66,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 				_registeredBenchmarkVariations[benchmarkMethod.ReturnType];
 
 
-			if (!benchmarkMethod.IsStatic) {
+			if (benchmarkMethod.GetCustomAttribute<VariationBenchmark>() != null && !benchmarkMethod.IsStatic) {
 				VariationGenerator.CreateVariations(this, benchmarkAttribute, benchmarkMethod);
 			}
 
