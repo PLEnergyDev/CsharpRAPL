@@ -116,10 +116,12 @@ public class Benchmark<T> : IBenchmark {
 			BenchmarkInfo.Iterations = IterationCalculationAll();
 		}
 
+		var oldLoopIter = GetLoopIterations();
 		// Get normalized return value
-		SetLoopIterations(10);
+		SetLoopIterations(10); //TODO: Macrobenchmarks??	
 		_normalizedReturnValue = _benchmark()?.ToString() ?? string.Empty;
-
+		SetLoopIterations(oldLoopIter);
+		
 		for (ulong i = 0; i <= BenchmarkInfo.Iterations; i++) {
 			if (BenchmarkInfo.Iterations != 1) {
 				if (CsharpRAPLCLI.Options.Verbose) {
