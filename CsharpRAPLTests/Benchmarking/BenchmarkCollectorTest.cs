@@ -34,9 +34,7 @@ public class BenchmarkCollectorTest {
 	public void CheckMethodValidityTest02() {
 		MethodInfo? methodInfo =
 			typeof(DummyBenchmarks).GetMethod("PrivateTest", BindingFlags.NonPublic | BindingFlags.Static);
-		var exception = Assert.Throws<NotSupportedException>(() => BenchmarkCollector.CheckMethodValidity(methodInfo!));
-		Assert.AreEqual("The benchmark attribute is only supported and supposed to be used on public methods.",
-			exception?.Message);
+		Assert.DoesNotThrow(() => BenchmarkCollector.CheckMethodValidity(methodInfo!));
 	}
 
 	[Test]

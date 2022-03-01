@@ -97,9 +97,7 @@ public class Benchmark<T> : IBenchmark {
 		BenchmarkInfo.ElapsedTime += BenchmarkInfo.RawResults[^1].ElapsedTime / 1_000;
 	}
 
-	//Performs benchmarking
-	//Writes progress to stdout if there is more than one iteration
-	public void Run() {
+	private void Setup() {
 		//Sets console to write to null
 		Console.SetOut(_benchmarkOutputStream);
 		MeasureApiApi = CsharpRAPLCLI.Options.OnlyTime ? new TimerOnly() : new RAPL();
@@ -116,12 +114,19 @@ public class Benchmark<T> : IBenchmark {
 			BenchmarkInfo.Iterations = IterationCalculationAll();
 		}
 
-		var oldLoopIter = GetLoopIterations();
+		ulong oldLoopIter = GetLoopIterations();
 		// Get normalized return value
 		SetLoopIterations(10); //TODO: Macrobenchmarks??	
 		_normalizedReturnValue = _benchmark()?.ToString() ?? string.Empty;
 		SetLoopIterations(oldLoopIter);
-		
+	}
+
+
+	//Performs benchmarking
+	//Writes progress to stdout if there is more than one iteration
+	public void Run() {
+		Setup();
+
 		for (ulong i = 0; i <= BenchmarkInfo.Iterations; i++) {
 			if (BenchmarkInfo.Iterations != 1) {
 				if (CsharpRAPLCLI.Options.Verbose) {
@@ -145,6 +150,8 @@ public class Benchmark<T> : IBenchmark {
 			Start();
 			T benchmarkOutput = _benchmark();
 			End(benchmarkOutput);
+
+
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
 				try {
 					GC.EndNoGCRegion();
@@ -160,23 +167,8 @@ public class Benchmark<T> : IBenchmark {
 
 			if (CsharpRAPLCLI.Options.UseLoopIterationScaling &&
 			    BenchmarkInfo.RawResults[^1].ElapsedTime < TargetLoopIterationTime) {
-				ulong currentValue = GetLoopIterations();
-
-				switch (currentValue) {
-					case ulong.MaxValue:
-						break;
-					case >= ulong.MaxValue / 2:
-						SetLoopIterations(ulong.MaxValue);
-						BenchmarkInfo.RawResults.Clear();
-						BenchmarkInfo.NormalizedResults.Clear();
-						i = 0;
-						continue;
-					default:
-						SetLoopIterations(currentValue + currentValue);
-						BenchmarkInfo.RawResults.Clear();
-						BenchmarkInfo.NormalizedResults.Clear();
-						i = 0;
-						continue;
+				if (ScaleLoopIterations()) {
+					i = 0;
 				}
 			}
 
@@ -200,6 +192,29 @@ public class Benchmark<T> : IBenchmark {
 
 		//Resets console output
 		Console.SetOut(_stdout);
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns>Returns true if we should reset the loop iterations</returns>
+	private bool ScaleLoopIterations() {
+		ulong currentValue = GetLoopIterations();
+
+		switch (currentValue) {
+			case ulong.MaxValue:
+				return false;
+			case >= ulong.MaxValue / 2:
+				SetLoopIterations(ulong.MaxValue);
+				BenchmarkInfo.RawResults.Clear();
+				BenchmarkInfo.NormalizedResults.Clear();
+				return true;
+			default:
+				SetLoopIterations(currentValue + currentValue);
+				BenchmarkInfo.RawResults.Clear();
+				BenchmarkInfo.NormalizedResults.Clear();
+				return true;
+		}
 	}
 
 

@@ -39,21 +39,20 @@ public class BenchmarkCollector : BenchmarkSuite {
 	}
 
 	private void CollectBenchmarks(Assembly assembly) {
-		foreach (MethodInfo benchmarkMethod in assembly.GetTypes().SelectMany(type =>
-			type.GetMethods().Where(info => info.GetCustomAttribute<BenchmarkAttribute>() != null))) {
-			if (benchmarkMethod.DeclaringType!.GetCustomAttribute<SkipBenchmarksAttribute>() != null) {
+		IEnumerable<MethodInfo> methods = assembly.GetTypes().SelectMany(type => type
+			.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+			.Where(info => info.GetCustomAttribute<BenchmarkAttribute>() != null));
+
+		foreach (MethodInfo benchmarkMethod in methods) {
+			var benchmarkAttribute = benchmarkMethod.GetCustomAttribute<BenchmarkAttribute>()!;
+			if (benchmarkAttribute.Skip ||
+			    benchmarkMethod.DeclaringType!.GetCustomAttribute<SkipBenchmarksAttribute>() != null) {
 				continue;
 			}
 
-			//Try to get the benchmark attribute
-			var benchmarkAttribute = benchmarkMethod.GetCustomAttribute<BenchmarkAttribute>()!;
 
 			SetField(benchmarkMethod.DeclaringType!, nameof(LoopIterations), LoopIterations);
 			SetField(benchmarkMethod.DeclaringType!, nameof(Iterations), Iterations);
-
-			if (benchmarkAttribute.Skip) {
-				continue;
-			}
 
 			CheckMethodValidity(benchmarkMethod);
 
@@ -88,16 +87,11 @@ public class BenchmarkCollector : BenchmarkSuite {
 
 
 	/// <summary>
-	/// Checks if the method is public and does not have void as the return type.
+	/// Checks if the method has no parameters and does not have void as the return type.
 	/// </summary>
 	/// <param name="benchmark"></param>
-	/// <exception cref="NotSupportedException">Throws NotSupportedException if the method isn't public or if the method returns void</exception>
+	/// <exception cref="NotSupportedException">Throws NotSupportedException if the method has parameters or if the method returns void</exception>
 	public static void CheckMethodValidity(MethodInfo benchmark) {
-		if (!benchmark.IsPublic) {
-			throw new NotSupportedException(
-				"The benchmark attribute is only supported and supposed to be used on public methods.");
-		}
-
 		if (benchmark.ReturnType == typeof(void)) {
 			throw new NotSupportedException(
 				"The benchmark attribute is only supported and supposed to be used on methods with a non void return type.");
