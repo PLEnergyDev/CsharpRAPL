@@ -5,14 +5,14 @@ using System.Reflection;
 using CsharpRAPL.Benchmarking.Attributes;
 
 namespace CsharpRAPL.Benchmarking.Variation;
-
+//TODO: Add so that groups separate variations
 public static class VariationGenerator {
 	private const BindingFlags RegisterBenchmarkFlags =
 		BindingFlags.Instance | BindingFlags.Public | BindingFlags.InvokeMethod;
 
 	private static readonly MethodInfo RegisterBenchmarkVariationGenericMethod = typeof(BenchmarkSuite)
 		.GetMethods(RegisterBenchmarkFlags)
-		.First(info => info.Name == nameof(RegisterBenchmarkVariation) && info.GetParameters().Length == 5);
+		.First(info => info.Name == nameof(RegisterBenchmarkVariation) && info.GetParameters().Length == 6);
 
 	private static List<VariationParameter> GetFields(Type declaringType) {
 		List<FieldInfo> fieldVariations = declaringType
@@ -40,7 +40,7 @@ public static class VariationGenerator {
 
 			if (field.GetCustomAttribute<TypeVariationsAttribute>() != null) {
 				var attribute = field.GetCustomAttribute<TypeVariationsAttribute>();
-				List<object> values = attribute!.Types.Select(o => Activator.CreateInstance(o)).ToList().ToList();
+				List<object> values = attribute!.Types.Select(o => Activator.CreateInstance(o)).ToList();
 				input.Add(new VariationParameter(field.Name, values, true));
 			}
 		}
@@ -83,6 +83,7 @@ public static class VariationGenerator {
 
 			Delegate benchmark = benchmarkMethod.CreateDelegate(funcType, inst);
 			genericAddBenchmark.Invoke(benchmarkCollector, new object[] {
+				benchmarkAttribute.Name == "" ? benchmark.Method.Name : benchmarkAttribute.Name,
 				benchmarkAttribute.Group!,
 				benchmark,
 				instance,

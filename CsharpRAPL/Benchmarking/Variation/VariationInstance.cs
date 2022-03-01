@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace CsharpRAPL.Benchmarking.Variation;
 
-public class VariationInstance {
+public record VariationInstance {
 	public List<MemberInfo> Values { get; } = new();
 
-	public class MemberInfo {
+	public record MemberInfo {
 		public string Name { get; }
 		public object Value { get; }
 		public readonly bool IsField;
@@ -16,11 +17,7 @@ public class VariationInstance {
 			Value = value;
 			IsField = isField;
 		}
-
-		public override string ToString() {
-			return $"{nameof(Name)}: {Name}, {nameof(Value)}: {Value}";
-		}
-
+		
 		public void Deconstruct(out string name, out object value, out bool isField) {
 			name = Name;
 			value = Value;
