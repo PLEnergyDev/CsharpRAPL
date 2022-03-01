@@ -33,4 +33,10 @@ public record BenchmarkResult {
 	/// </summary>
 	[Index(4)]
 	public string BenchmarkReturnValue { get; init; } = string.Empty;
+	
+	/// <summary>
+	/// Optional memory measurement. Only present in JSON
+	/// </summary>
+	[Ignore]
+	public MemoryMeasurement? MemoryMeasurement { get; set; }
 }

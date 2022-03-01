@@ -67,24 +67,25 @@ public class CLITest {
 	};
 
 	private static readonly string[] HelpText = {
-		"-g, --SkipPlotGroups         If plotting each benchmark group should be skipped.",
-		"-i, --Iterations             (Default: 0) Sets the target iterations. (Disables Dynamic Iteration Calculation)",
-		"-l, --LoopIterations         (Default: 0) Sets the target loop iterations. (Disables Dynamic Loop Iteration Scaling)",
-		"-k, --KeepOldResults         If not set removes all files from the output folder and the plot folder.",
-		"-o, --OutputPath             (Default: results/) Set the output path for results.",
-		"-p, --PlotResults            Should the results be plotted?",
-		"-a, --BenchmarksToAnalyse    The names of the benchmarks to analyse.",
-		"-z, --ZipResults             Zips the CSV results and plots into a single zip file.",
-		"-j, --Json                   Uses json for output instead of CVS, includes more information.",
-		"--TryTurnOffGC               Tries to turn off GC during running of benchmarks.",
-		"--GCMemory                   (Default: 250000000) Sets the amount of memory in bytes allowed to be used when turning off garbage collection.",
-		"--PlotOutputPath             (Default: _plots/) Sets the output path for plots.",
-		"--OnlyPlot                   Plots the results in the output path.",
-		"--OnlyAnalysis               Analysis the results in the output path.",
-		"--Verbose                    Enables debug information.",
-		"--OnlyTime                   Only measures time.",
-		"--help                       Display this help screen.",
-		"--version                    Display version information."
+		"-g, --SkipPlotGroups              If plotting each benchmark group should be skipped.",
+		"-i, --Iterations                  (Default: 0) Sets the target iterations. (Disables Dynamic Iteration Calculation)",
+		"-l, --LoopIterations              (Default: 0) Sets the target loop iterations. (Disables Dynamic Loop Iteration Scaling)",
+		"-k, --KeepOldResults              If not set removes all files from the output folder and the plot folder.",
+		"-o, --OutputPath                  (Default: results/) Set the output path for results.",
+		"-p, --PlotResults                 Should the results be plotted?",
+		"-a, --BenchmarksToAnalyse         The names of the benchmarks to analyse.",
+		"-z, --ZipResults                  Zips the CSV results and plots into a single zip file.",
+		"-j, --Json                        Uses json for output instead of CVS, includes more information.",
+		"-m, --CollectMemoryInformation    Collects memory information before and after each benchmark.",
+		"--TryTurnOffGC                    Tries to turn off GC during running of benchmarks.",
+		"--GCMemory                        (Default: 250000000) Sets the amount of memory in bytes allowed to be used when turning off garbage collection.",
+		"--PlotOutputPath                  (Default: _plots/) Sets the output path for plots.",
+		"--OnlyPlot                        Plots the results in the output path.",
+		"--OnlyAnalysis                    Analyse the results in the output path.",
+		"--Verbose                         Enables debug information.",
+		"--OnlyTime                        Only measures time.",
+		"--help                            Display this help screen.",
+		"--version                         Display version information."
 	};
 
 	[OneTimeSetUp]
@@ -124,7 +125,7 @@ public class CLITest {
 		string[] args = { "--help" };
 		using var sw = new StringWriter();
 		Console.SetOut(sw);
-
+		
 		CsharpRAPLCLI.Parse(args, 1000);
 
 		string result = sw.ToString().Trim();
