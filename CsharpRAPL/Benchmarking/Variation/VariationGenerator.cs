@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -26,7 +26,7 @@ public static class VariationGenerator {
 
 		if (declaringType.IsAbstract || declaringType.IsInterface) {
 			throw new NotSupportedException(
-				"Having Variations in interfaces, static or abstract classes isn't supported");
+				$"Having Variations in interfaces, static or abstract classes isn't supported as in {declaringType.Name}.");
 		}
 
 		CheckFieldVariationValidity(fieldVariations, propertyVariations);
@@ -53,8 +53,7 @@ public static class VariationGenerator {
 
 			if (property.GetCustomAttribute<TypeVariationsAttribute>() != null) {
 				var attribute = property.GetCustomAttribute<TypeVariationsAttribute>();
-				List<object> values = attribute!.Types
-					.Select(o => Activator.CreateInstance(o)).ToList();
+				List<object> values = attribute!.Types.Select(o => Activator.CreateInstance(o)).ToList();
 
 				input.Add(new VariationParameter(property.Name, values, false));
 			}
