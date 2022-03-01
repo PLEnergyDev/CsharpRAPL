@@ -34,6 +34,10 @@ public class BenchmarkSuite {
 	}
 
 	public void RegisterBenchmark<T>(string? group, Func<T> benchmark, int order = 0) {
+		RegisterBenchmark(benchmark.Method.Name, group, benchmark, order);
+	}
+
+	public void RegisterBenchmark<T>(string name, string? group, Func<T> benchmark, int order = 0) {
 		if (benchmark.Method.IsAnonymous()) {
 			throw new NotSupportedException("Adding benchmarks through anonymous methods is not supported");
 		}
@@ -42,22 +46,27 @@ public class BenchmarkSuite {
 			RegisterBenchmarkClass(benchmark.Method.DeclaringType!);
 		}
 
-		Benchmarks.Add(new Benchmark<T>(benchmark.Method.Name, Iterations, benchmark, true, group, order));
+		Benchmarks.Add(new Benchmark<T>(name, Iterations, benchmark, true, group, order));
+	}
+
+	public void RegisterBenchmarkVariation<T>(string name, string? group, Func<T> benchmark,
+		VariationInstance parameters, int order = 0, string namePostfix = "") {
+		if (benchmark.Method.IsAnonymous()) {
+			throw new NotSupportedException("Adding benchmarks through anonymous methods is not supported");
+		}
+
+		if (!_registeredBenchmarkClasses.Contains(benchmark.Method.DeclaringType!)) {
+			RegisterBenchmarkClass(benchmark.Method.DeclaringType!);
+		}
+
+		var bench = new Benchmark<T>($"{name}{namePostfix}", Iterations, benchmark, true, group, order)
+			{ BenchmarkInfo = { Parameters = parameters } };
+		Benchmarks.Add(bench);
 	}
 
 	public void RegisterBenchmarkVariation<T>(string? group, Func<T> benchmark, VariationInstance parameters,
 		int order = 0, string namePostfix = "") {
-		if (benchmark.Method.IsAnonymous()) {
-			throw new NotSupportedException("Adding benchmarks through anonymous methods is not supported");
-		}
-
-		if (!_registeredBenchmarkClasses.Contains(benchmark.Method.DeclaringType!)) {
-			RegisterBenchmarkClass(benchmark.Method.DeclaringType!);
-		}
-
-		var bench = new Benchmark<T>($"{benchmark.Method.Name}{namePostfix}", Iterations, benchmark, true, group, order)
-			{ BenchmarkInfo = { Parameters = parameters } };
-		Benchmarks.Add(bench);
+		RegisterBenchmarkVariation(benchmark.Method.Name, group, benchmark, parameters, order, namePostfix);
 	}
 
 	private void RegisterBenchmarkClass(Type benchmarkClass) {
@@ -94,7 +103,7 @@ public class BenchmarkSuite {
 		benchmarkClass.GetField(name, BindingFlags.Public | BindingFlags.Static)?.SetValue(null, value);
 	}
 
-	public void RunAll() {
+	public void RunAll(bool warmup = true) {
 		if (Environment.OSVersion.Platform != PlatformID.Unix && !CsharpRAPLCLI.Options.OnlyTime) {
 			throw new NotSupportedException("Running the benchmarks is only supported on Unix.");
 		}
@@ -105,7 +114,9 @@ public class BenchmarkSuite {
 			return;
 		}
 
-		Warmup();
+		if (warmup) {
+			Warmup();
+		}
 
 		foreach ((int index, IBenchmark bench) in benchmarks.WithIndex()) {
 			Console.WriteLine(
