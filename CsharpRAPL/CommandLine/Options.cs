@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using CommandLine;
 
 namespace CsharpRAPL.CommandLine;
@@ -40,7 +39,6 @@ public class Options {
 		Default = "results/")]
 	public string OutputPath { get; set; } = "results/";
 
-
 	[Option('p', nameof(PlotResults), Required = false, HelpText = "Should the results be plotted?")]
 	public bool PlotResults { get; set; } = false;
 
@@ -53,16 +51,21 @@ public class Options {
 	[Option('j', nameof(Json), HelpText = "Uses json for output instead of CVS, includes more information.")]
 	public bool Json { get; set; } = false;
 
+	[Option('m', nameof(CollectMemoryInformation),
+		HelpText = "Collects memory information before and after each benchmark.")]
+	public bool CollectMemoryInformation { get; set; } = false;
+
 	[Option(nameof(TryTurnOffGC), Required = false, HelpText = "Tries to turn off GC during running of benchmarks.")]
-	[SuppressMessage("ReSharper", "InconsistentNaming")]
 	public bool TryTurnOffGC { get; set; }
 
-	[Option(nameof(GCMemory), Required = false, HelpText = "Sets the amount of memory in bytes allowed to be used when turning off garbage collection.", Default = 250000000)]
+	[Option(nameof(GCMemory), Required = false,
+		HelpText = "Sets the amount of memory in bytes allowed to be used when turning off garbage collection.",
+		Default = 250000000)]
 	public long GCMemory {
 		get => _memoryForTurningOffGarbageCollection;
 		set => _memoryForTurningOffGarbageCollection = value;
 	}
-	
+
 	[Option(nameof(PlotOutputPath), Required = false, HelpText = "Sets the output path for plots.",
 		Default = "_plots/")]
 	public string PlotOutputPath { get; set; } = "_plots/";
@@ -70,7 +73,7 @@ public class Options {
 	[Option(nameof(OnlyPlot), Required = false, HelpText = "Plots the results in the output path.")]
 	public bool OnlyPlot { get; set; }
 
-	[Option(nameof(OnlyAnalysis), Required = false, HelpText = "Analysis the results in the output path.")]
+	[Option(nameof(OnlyAnalysis), Required = false, HelpText = "Analyse the results in the output path.")]
 	public bool OnlyAnalysis { get; set; }
 
 	[Option(nameof(Verbose), HelpText = "Enables debug information.")]

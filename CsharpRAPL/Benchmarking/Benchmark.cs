@@ -139,11 +139,18 @@ public class Benchmark<T> : IBenchmark {
 					Print(Console.Write, $"\r{i} of {BenchmarkInfo.Iterations} for {BenchmarkInfo.Name}");
 				}
 			}
-
+			
 
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
 				GC.Collect();
 				GC.TryStartNoGCRegion(CsharpRAPLCLI.Options.GCMemory, false);
+			}
+
+			MemoryApi? memoryMeasurement = null;
+
+			if (CsharpRAPLCLI.Options.CollectMemoryInformation) {
+				memoryMeasurement = new MemoryApi();
+				memoryMeasurement.Start();
 			}
 
 			//Actually performing benchmark and resulting IO
@@ -164,6 +171,11 @@ public class Benchmark<T> : IBenchmark {
 				}
 			}
 
+			if (CsharpRAPLCLI.Options.CollectMemoryInformation) {
+				MemoryMeasurement measure = memoryMeasurement!.End();
+				BenchmarkInfo.RawResults[^1].MemoryMeasurement = measure;
+				BenchmarkInfo.NormalizedResults[^1].MemoryMeasurement = measure;
+			}
 
 			if (CsharpRAPLCLI.Options.UseLoopIterationScaling &&
 			    BenchmarkInfo.RawResults[^1].ElapsedTime < TargetLoopIterationTime) {

@@ -47,6 +47,10 @@ public static class CsharpRAPLCLI {
 			Options.PlotOutputPath += "/";
 		}
 
+		if (!Options.Json && Options.CollectMemoryInformation) {
+			Console.Error.WriteLine("Memory information can only be collected/saved when using JSON output.");
+		}
+
 		if (Options.OnlyPlot) {
 			if (_plotCallback == null) {
 				BenchmarkPlot.PlotAllResultsGroupsFromFolder(Options.OutputPath);
