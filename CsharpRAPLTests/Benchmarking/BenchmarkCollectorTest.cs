@@ -43,7 +43,7 @@ public class BenchmarkCollectorTest {
 			typeof(DummyBenchmarks).GetMethod("VoidTest");
 		var exception = Assert.Throws<NotSupportedException>(() => BenchmarkCollector.CheckMethodValidity(methodInfo!));
 		Assert.AreEqual(
-			"The benchmark attribute is only supported and supposed to be used on methods with a non void return type.",
+			"The benchmark 'VoidTest' is retuning void which isn't supported.",
 			exception?.Message);
 	}
 
@@ -51,7 +51,7 @@ public class BenchmarkCollectorTest {
 	public void CheckMethodValidityTest04() {
 		var methodInfo = typeof(DummyBenchmarks).GetMethod(nameof(DummyBenchmarks.ParamTest));
 		var exception = Assert.Throws<NotSupportedException>(() => BenchmarkCollector.CheckMethodValidity(methodInfo!));
-		Assert.AreEqual("Benchmarks having parameters isn't supported.", exception?.Message);
+		Assert.AreEqual("The Benchmark 'ParamTest' has parameters which isn't supported.", exception?.Message);
 	}
 
 	[Test]

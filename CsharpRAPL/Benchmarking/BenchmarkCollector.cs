@@ -94,11 +94,11 @@ public class BenchmarkCollector : BenchmarkSuite {
 	public static void CheckMethodValidity(MethodInfo benchmark) {
 		if (benchmark.ReturnType == typeof(void)) {
 			throw new NotSupportedException(
-				"The benchmark attribute is only supported and supposed to be used on methods with a non void return type.");
+				$"The benchmark '{benchmark.Name}' is retuning void which isn't supported.");
 		}
 
 		if (benchmark.GetParameters().Length != 0) {
-			throw new NotSupportedException("Benchmarks having parameters isn't supported.");
+			throw new NotSupportedException($"The Benchmark '{benchmark.Name}' has parameters which isn't supported.");
 		}
 	}
 
