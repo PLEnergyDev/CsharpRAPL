@@ -43,7 +43,7 @@ public class BenchmarkCollectorTest {
 			typeof(DummyBenchmarks).GetMethod("VoidTest");
 		var exception = Assert.Throws<NotSupportedException>(() => BenchmarkCollector.CheckMethodValidity(methodInfo!));
 		Assert.AreEqual(
-			"The benchmark 'VoidTest' is retuning void which isn't supported.",
+			"The benchmark 'VoidTest' is returning void which isn't supported.",
 			exception?.Message);
 	}
 
