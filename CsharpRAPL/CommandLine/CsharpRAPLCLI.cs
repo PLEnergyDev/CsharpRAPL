@@ -26,13 +26,10 @@ public static class CsharpRAPLCLI {
 		});
 		parser.ParseArguments<Options>(args).WithParsed(RunOptions).WithNotParsed(HandleParseError);
 
-		if (!Options.OnlyAnalysis) {
+		if (Options.OnlyAnalysis) {
+			StartAnalysis(Options.BenchmarksToAnalyse.ToArray());
+			Exit();
 			return Options;
-		}
-
-		StartAnalysis(Options.BenchmarksToAnalyse.ToArray());
-		if (Options.ShouldExit) {
-			Environment.Exit(0);
 		}
 
 		return Options;
@@ -58,12 +55,9 @@ public static class CsharpRAPLCLI {
 				_plotCallback.Invoke(Options.OutputPath);
 			}
 
-			if (Options.ShouldExit) {
-				Environment.Exit(0);
-			}
-			return;
+			Exit();
 		}
-		
+
 		if (Options.KeepOldResults) {
 			return;
 		}
@@ -80,9 +74,7 @@ public static class CsharpRAPLCLI {
 	private static void HandleParseError(IEnumerable<Error> errs) {
 		foreach (Error error in errs) {
 			if (error.Tag is ErrorType.HelpRequestedError or ErrorType.VersionRequestedError) {
-				if (Options.ShouldExit) {
-					Environment.Exit(0);
-				}
+				Exit();
 			}
 			else {
 				throw new NotSupportedException(ParseError(error));
@@ -231,5 +223,11 @@ public static class CsharpRAPLCLI {
 				$"Option '{repeatedOptionError.NameInfo.NameText}' is defined multiple times.",
 			_ => throw new ArgumentOutOfRangeException($"{error.Tag} is out of range.")
 		};
+	}
+
+	private static void Exit() {
+		if (Options.ShouldExit) {
+			Environment.Exit(0);
+		}
 	}
 }
