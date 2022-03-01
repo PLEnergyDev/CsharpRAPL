@@ -94,7 +94,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 	public static void CheckMethodValidity(MethodInfo benchmark) {
 		if (benchmark.ReturnType == typeof(void)) {
 			throw new NotSupportedException(
-				$"The benchmark '{benchmark.Name}' is retuning void which isn't supported.");
+				$"The benchmark '{benchmark.Name}' is returning void which isn't supported.");
 		}
 
 		if (benchmark.GetParameters().Length != 0) {
