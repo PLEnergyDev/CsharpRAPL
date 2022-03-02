@@ -27,61 +27,62 @@ test-with-coverage:
         - build
     stage: test
     variables:
-      CONFIGURATION: "Debug"
-      COVERAGE_FLAG: "XPlat Code Coverage"
-      LOGGER_FLAG: "junit;LogFilePath=$CI_PROJECT_DIR/junit/junit-test-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
+        CONFIGURATION: "Debug"
+        COVERAGE_FLAG: "XPlat Code Coverage"
+        LOGGER_FLAG: "junit;LogFilePath=$CI_PROJECT_DIR/junit/junit-test-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
     script:
-       - dotnet test
+        - apt update
+        - apt install libgdiplus -y
+        - apt install bc -y
+        - dotnet test
             -c $CONFIGURATION
             -r $CI_PROJECT_DIR/cobertura
             --collect:"$COVERAGE_FLAG"
             --test-adapter-path:.
             --logger:"$LOGGER_FLAG"
-       - apt update
-       - apt install bc -y
-       - chmod +x ./Scripts/print-dotnet-coverage.sh
-       - ./Scripts/print-dotnet-coverage.sh $CI_PROJECT_DIR/cobertura
-        # To use the report we have to define it as an artifact of the job.
+        - chmod +x ./Scripts/print-dotnet-coverage.sh
+        - ./Scripts/print-dotnet-coverage.sh $CI_PROJECT_DIR/cobertura
+          # To use the report we have to define it as an artifact of the job.
         # So where we just tells it where to save it.
     coverage: /TOTAL_COVERAGE=(\d+.\d+)/
     artifacts:
-       paths:
-        - $CI_PROJECT_DIR/cobertura/*/coverage.cobertura.xml
-        - $CI_PROJECT_DIR/junit/junit-test-result.xml
-       reports:
-        cobertura:
+        paths:
             - $CI_PROJECT_DIR/cobertura/*/coverage.cobertura.xml
-        junit:
             - $CI_PROJECT_DIR/junit/junit-test-result.xml
+        reports:
+            cobertura:
+                - $CI_PROJECT_DIR/cobertura/*/coverage.cobertura.xml
+            junit:
+                - $CI_PROJECT_DIR/junit/junit-test-result.xml
 
 
 deploy:
-  needs:
-    - test-with-coverage
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "main"'
-  stage: deploy
-  script: 
-    - cd CsharpRAPL
-    - dotnet build CsharpRAPL.csproj -c Release
-    - dotnet pack "CsharpRAPL.csproj" -c Release -o .
-    - dotnet nuget push *.nupkg -k ${NUGET_KEY} --source "https://api.nuget.org/v3/index.json"
+    needs:
+        - test-with-coverage
+    rules:
+        - if: '$CI_COMMIT_REF_NAME == "main"'
+    stage: deploy
+    script:
+        - cd CsharpRAPL
+        - dotnet build CsharpRAPL.csproj -c Release
+        - dotnet pack "CsharpRAPL.csproj" -c Release -o .
+        - dotnet nuget push *.nupkg -k ${NUGET_KEY} --source "https://api.nuget.org/v3/index.json"
 
 
 deploy-coverage-report:
-  stage: deploy
-  needs:
-    - job: test-with-coverage
-      artifacts: true
-  variables:
-    PUBLIC_URL: "/-/$CI_PROJECT_NAME/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public"
-  environment:
-    name: Coverage/CsharpRAPL
-    url: "https://$CI_PROJECT_ROOT_NAMESPACE.gitlab.io/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public/index.html"
-  script:
-    - dotnet tool install --tool-path . dotnet-reportgenerator-globaltool
-    - mkdir -p public
-    - ./reportgenerator "-reports:$CI_PROJECT_DIR/cobertura/*/coverage.cobertura.xml" "-targetdir:public" "-reporttypes:Html"
-  artifacts:
-    paths:
-      - public
+    stage: deploy
+    needs:
+        - job: test-with-coverage
+          artifacts: true
+    variables:
+        PUBLIC_URL: "/-/$CI_PROJECT_NAME/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public"
+    environment:
+        name: Coverage/CsharpRAPL
+        url: "https://$CI_PROJECT_ROOT_NAMESPACE.gitlab.io/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public/index.html"
+    script:
+        - dotnet tool install --tool-path . dotnet-reportgenerator-globaltool
+        - mkdir -p public
+        - ./reportgenerator "-reports:$CI_PROJECT_DIR/cobertura/*/coverage.cobertura.xml" "-targetdir:public" "-reporttypes:Html"
+    artifacts:
+        paths:
+            - public

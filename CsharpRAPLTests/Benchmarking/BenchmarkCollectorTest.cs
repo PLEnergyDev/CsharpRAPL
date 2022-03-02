@@ -10,16 +10,16 @@ public class BenchmarkCollectorTest {
 	public void BenchmarkCollectorTest01() {
 		var collector = new BenchmarkCollector(1000L, 1001L);
 
-		Assert.AreEqual(3, collector.GetBenchmarks().Count);
+		Assert.AreEqual(11, collector.GetBenchmarks().Count);
 		Assert.AreEqual(1000, DummyBenchmarks.Iterations);
 		Assert.AreEqual(1001, DummyBenchmarks.LoopIterations);
 	}
 
 	[Test, Order(1)]
 	public void BenchmarkCollectorTest02() {
-		var collector = new BenchmarkCollector(999, 1003, false);
+		var collector = new BenchmarkCollector(999, 1003, true);
 
-		Assert.AreEqual(3, collector.GetBenchmarks().Count);
+		Assert.AreEqual(11, collector.GetBenchmarks().Count);
 		Assert.AreEqual(999, DummyBenchmarks.Iterations);
 		Assert.AreEqual(1003, DummyBenchmarks.LoopIterations);
 	}
