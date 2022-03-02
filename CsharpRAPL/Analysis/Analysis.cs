@@ -115,11 +115,6 @@ public class Analysis {
 			return secondEnsure;
 		}
 
-		if (first.Count != second.Count) {
-			return (false,
-				$"The two data sets have an unequal number of results. {_firstDataset.Name}: [{string.Join(", ", first)}], {_secondDataset.Name}: [{string.Join(", ", second)}]");
-		}
-
 		for (var i = 0; i < first.Count; i++) {
 			if (first[i] != second[i]) {
 				return (false, $"The to datasets differ in {first[i]} and {second[i]}");
@@ -142,6 +137,7 @@ public class Analysis {
 		});
 	}
 
+
 	public static Dictionary<string, double> CalculatePValueForGroup(List<IBenchmark> dataSets) {
 		var groupToPValue = new Dictionary<string, double>();
 		for (var i = 0; i < dataSets.Count; i++) {
@@ -156,20 +152,28 @@ public class Analysis {
 		return groupToPValue;
 	}
 
-	public static void CheckExecutionTime() {
-		List<(string Name, double minTimeElapsed)> valuesToInspect = Helpers.GetAllCSVFilesFromOutputPath()
-			.Select(path => new DataSet(path))
-			.Select(set => (set.Name, set.Data.Min(result => result.ElapsedTime)))
-			.OrderBy(tuple => tuple.Item2)
-			.Where(tuple => tuple.Item2 < 0.3).ToList();
+	public static void CheckExecutionTime(DataSet dataSet) {
+		(string name, List<double> minTimeElapsed) = (dataSet.Name,
+			dataSet.Data.Select(set => set.ElapsedTime).Where(tuple => tuple < 0.3).ToList());
 
-		if (valuesToInspect.Count == 0) {
+		if (minTimeElapsed.Count == 0) {
 			Console.WriteLine("No results were below 0.3 seconds");
 		}
 		else {
-			foreach ((string name, double time) in valuesToInspect) {
-				Console.WriteLine(
-					$"{name} was found to be below 0.3 seconds ({time} seconds) so we might need to check if this gets compiled away");
+			Console.WriteLine(
+				$"{name} was found to be below 0.3 seconds ({minTimeElapsed.Min()} seconds) so we might need to check if this gets compiled away");
+		}
+	}
+
+	public static void CheckExecutionTime() {
+		if (CsharpRAPLCLI.Options.Json) {
+			foreach (string pathToDataSet in Helpers.GetAllJsonFilesFromOutputPath()) {
+				CheckExecutionTime(new DataSet(pathToDataSet));
+			}
+		}
+		else {
+			foreach (string pathToDataSet in Helpers.GetAllCSVFilesFromOutputPath()) {
+				CheckExecutionTime(new DataSet(pathToDataSet));
 			}
 		}
 	}
