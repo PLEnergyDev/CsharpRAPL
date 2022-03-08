@@ -152,6 +152,30 @@ public class Analysis {
 		return groupToPValue;
 	}
 
+	public static Dictionary<string, double> CalculatePValueForGroup(List<DataSet> dataSets) {
+		var groupToPValue = new Dictionary<string, double>();
+		for (var i = 0; i < dataSets.Count; i++) {
+			for (int j = i + 1; j < dataSets.Count; j++) {
+				var analysis = new Analysis(dataSets[i], dataSets[j]);
+				foreach ((string message, double value) in analysis.CalculatePValue()) {
+					groupToPValue.Add(message, value);
+				}
+			}
+		}
+
+		return groupToPValue;
+	}
+
+	public static Dictionary<string, double> CalculatePValueForOutput() {
+		var result = new List<DataSet>();
+
+		result.AddRange(CsharpRAPLCLI.Options.Json
+			? Helpers.GetAllJsonFilesFromOutputPath().Select(data => new DataSet(data))
+			: Helpers.GetAllCSVFilesFromOutputPath().Select(data => new DataSet(data)));
+
+		return CalculatePValueForGroup(result);
+	}
+
 	public static void CheckExecutionTime(DataSet dataSet) {
 		(string name, List<double> minTimeElapsed) = (dataSet.Name,
 			dataSet.Data.Select(set => set.ElapsedTime).Where(tuple => tuple < 0.3).ToList());
