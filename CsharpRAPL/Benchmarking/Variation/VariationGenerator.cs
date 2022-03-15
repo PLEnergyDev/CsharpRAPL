@@ -12,7 +12,7 @@ public static class VariationGenerator {
 
 	private static readonly MethodInfo RegisterBenchmarkVariationGenericMethod = typeof(BenchmarkSuite)
 		.GetMethods(RegisterBenchmarkFlags)
-		.First(info => info.Name == nameof(RegisterBenchmarkVariation) && info.GetParameters().Length == 6);
+		.First(info => info.Name == nameof(RegisterBenchmarkVariation) && info.GetParameters().Length == 7);
 
 	private static List<VariationParameter> GetFields(Type declaringType) {
 		List<FieldInfo> fieldVariations = declaringType
@@ -88,6 +88,7 @@ public static class VariationGenerator {
 				benchmark,
 				instance,
 				benchmarkAttribute.Order,
+				benchmarkAttribute.PlotOrder,
 				$"Variation-{index + 1}"
 			});
 		}

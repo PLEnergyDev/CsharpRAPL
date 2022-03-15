@@ -56,7 +56,7 @@ public static class BenchmarkPlot {
 
 	public static void PlotResults(BenchmarkResultType resultType, IEnumerable<IBenchmark> dataSets,
 		PlotOptions? plotOptions = null) {
-		DataSet[] data = dataSets.Select(benchmark => new DataSet(benchmark.BenchmarkInfo.Name, benchmark.GetResults()))
+		DataSet[] data = dataSets.Select(benchmark => new DataSet(benchmark))
 			.ToArray();
 		PlotResults(resultType, data, plotOptions);
 	}
@@ -73,8 +73,7 @@ public static class BenchmarkPlot {
 		plotOptions ??= new PlotOptions();
 
 		var plt = new Plot(plotOptions.Width, plotOptions.Height);
-
-		dataSets = dataSets.OrderBy(set => set.Name).ToArray();
+		dataSets = dataSets.OrderBy(set => set.Order).ThenBy(set => set.Name).ToArray();
 
 		string[] names = dataSets.Select(set => set.Name.Humanize(LetterCasing.Title)).ToArray();
 

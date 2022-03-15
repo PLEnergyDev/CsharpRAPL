@@ -5,7 +5,7 @@ namespace CsharpRAPL.Benchmarking.Attributes;
 [AttributeUsage(AttributeTargets.Method)]
 public class BenchmarkAttribute : Attribute {
 	public string Name { get; }
-	
+
 	public string? Group { get; }
 
 	public string Description { get; }
@@ -14,10 +14,14 @@ public class BenchmarkAttribute : Attribute {
 
 	public bool Skip { get; }
 
-	public BenchmarkAttribute(string? group, string description, int order = 0, bool skip = false, string name = "") {
+	public int PlotOrder { get; }
+
+	public BenchmarkAttribute(string? group, string description, int order = 0, bool skip = false,
+		string name = "", int plotOrder = 0) {
 		Group = group;
 		Description = description;
 		Order = order;
+		PlotOrder = plotOrder;
 		Skip = skip;
 		Name = name;
 	}

@@ -15,6 +15,7 @@ namespace CsharpRAPL.Analysis;
 public class DataSet {
 	public string Name { get; }
 	public List<BenchmarkResult> Data { get; }
+	public int Order { get; }
 
 	public DataSet(string name, List<BenchmarkResult> data) {
 		Name = name;
@@ -30,6 +31,7 @@ public class DataSet {
 	public DataSet(IBenchmark benchmark) {
 		Name = benchmark.BenchmarkInfo.Name;
 		Data = benchmark.GetResults();
+		Order = benchmark.BenchmarkInfo.PlotOrder;
 	}
 
 	private static DataSet ReadData(string path) {
