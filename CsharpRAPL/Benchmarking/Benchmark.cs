@@ -38,13 +38,14 @@ public class Benchmark<T> : IBenchmark {
 	private readonly FieldInfo _loopIterationsFieldInfo;
 
 	public Benchmark(string name, ulong iterations, Func<T> benchmark, bool silenceBenchmarkOutput = true,
-		string? group = null, int order = 0) {
+		string? group = null, int order = 0, int plotOrder = 0) {
 		BenchmarkInfo = new BenchmarkInfo() {
 			Name = name,
 			Group = group,
 			Iterations = iterations,
 			Order = order,
-			Parameters = new VariationInstance()
+			Parameters = new VariationInstance(),
+			PlotOrder = plotOrder
 		};
 
 		MeasureApiApi = null!;
@@ -139,7 +140,7 @@ public class Benchmark<T> : IBenchmark {
 					Print(Console.Write, $"\r{i} of {BenchmarkInfo.Iterations} for {BenchmarkInfo.Name}");
 				}
 			}
-			
+
 
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
 				GC.Collect();

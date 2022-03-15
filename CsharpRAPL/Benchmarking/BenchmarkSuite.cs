@@ -37,7 +37,7 @@ public class BenchmarkSuite {
 		RegisterBenchmark(benchmark.Method.Name, group, benchmark, order);
 	}
 
-	public void RegisterBenchmark<T>(string name, string? group, Func<T> benchmark, int order = 0) {
+	public void RegisterBenchmark<T>(string name, string? group, Func<T> benchmark, int order = 0, int plotOrder = 0) {
 		if (benchmark.Method.IsAnonymous()) {
 			throw new NotSupportedException("Adding benchmarks through anonymous methods is not supported");
 		}
@@ -46,11 +46,11 @@ public class BenchmarkSuite {
 			RegisterBenchmarkClass(benchmark.Method.DeclaringType!);
 		}
 
-		Benchmarks.Add(new Benchmark<T>(name, Iterations, benchmark, true, group, order));
+		Benchmarks.Add(new Benchmark<T>(name, Iterations, benchmark, true, group, order, plotOrder));
 	}
 
 	public void RegisterBenchmarkVariation<T>(string name, string? group, Func<T> benchmark,
-		VariationInstance parameters, int order = 0, string namePostfix = "") {
+		VariationInstance parameters, int order = 0, int plotOrder = 0, string namePostfix = "") {
 		if (benchmark.Method.IsAnonymous()) {
 			throw new NotSupportedException("Adding benchmarks through anonymous methods is not supported");
 		}
@@ -59,14 +59,14 @@ public class BenchmarkSuite {
 			RegisterBenchmarkClass(benchmark.Method.DeclaringType!);
 		}
 
-		var bench = new Benchmark<T>($"{name}{namePostfix}", Iterations, benchmark, true, group, order)
+		var bench = new Benchmark<T>($"{name}{namePostfix}", Iterations, benchmark, true, group, order, plotOrder)
 			{ BenchmarkInfo = { Parameters = parameters } };
 		Benchmarks.Add(bench);
 	}
 
 	public void RegisterBenchmarkVariation<T>(string? group, Func<T> benchmark, VariationInstance parameters,
-		int order = 0, string namePostfix = "") {
-		RegisterBenchmarkVariation(benchmark.Method.Name, group, benchmark, parameters, order, namePostfix);
+		int order = 0, int plotOrder = 0, string namePostfix = "") {
+		RegisterBenchmarkVariation(benchmark.Method.Name, group, benchmark, parameters, order, plotOrder, namePostfix);
 	}
 
 	private void RegisterBenchmarkClass(Type benchmarkClass) {

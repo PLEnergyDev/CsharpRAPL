@@ -21,7 +21,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 	//Get the correct version of add benchmark method
 	private static readonly MethodInfo RegisterBenchmarkGenericMethod = typeof(BenchmarkSuite)
 		.GetMethods(RegisterBenchmarkFlags)
-		.First(info => info.Name == nameof(RegisterBenchmark) && info.GetParameters().Length == 4);
+		.First(info => info.Name == nameof(RegisterBenchmark) && info.GetParameters().Length == 5);
 
 	public BenchmarkCollector(bool onlyCallingAssembly = false) : this(CsharpRAPLCLI.Options.Iterations,
 		CsharpRAPLCLI.Options.LoopIterations, onlyCallingAssembly) { }
@@ -81,7 +81,8 @@ public class BenchmarkCollector : BenchmarkSuite {
 				benchmarkAttribute.Name == "" ? benchmarkMethod.Name : benchmarkAttribute.Name,
 				benchmarkAttribute.Group!,
 				benchmarkDelegate,
-				benchmarkAttribute.Order
+				benchmarkAttribute.Order,
+				benchmarkAttribute.PlotOrder
 			});
 		}
 	}
