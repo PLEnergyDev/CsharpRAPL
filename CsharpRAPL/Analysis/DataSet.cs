@@ -26,6 +26,9 @@ public class DataSet {
 		DataSet temp = ReadData(pathToDataSet);
 		Name = temp.Name;
 		Data = temp.Data;
+		if (CsharpRAPLCLI.Options.Json) {
+			Order = temp.Order;
+		}
 	}
 
 	public DataSet(IBenchmark benchmark) {
