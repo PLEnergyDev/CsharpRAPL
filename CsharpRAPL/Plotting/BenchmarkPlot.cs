@@ -73,7 +73,7 @@ public static class BenchmarkPlot {
 		plotOptions ??= new PlotOptions();
 
 		var plt = new Plot(plotOptions.Width, plotOptions.Height);
-		dataSets = dataSets.OrderBy(set => set.Order).ThenBy(set => set.Name).ToArray();
+		dataSets = dataSets.OrderBy(set => set.PlotOrder).ThenBy(set => set.Name).ToArray();
 
 		string[] names = dataSets.Select(set => set.Name.Humanize(LetterCasing.Title)).ToArray();
 
