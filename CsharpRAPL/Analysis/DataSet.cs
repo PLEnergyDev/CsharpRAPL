@@ -15,11 +15,17 @@ namespace CsharpRAPL.Analysis;
 public class DataSet {
 	public string Name { get; }
 	public List<BenchmarkResult> Data { get; }
-	public int Order { get; }
+	public int PlotOrder { get; }
 
 	public DataSet(string name, List<BenchmarkResult> data) {
 		Name = name;
 		Data = data;
+	}
+
+	public DataSet(string name, List<BenchmarkResult> data, int plotOrder) {
+		Name = name;
+		Data = data;
+		PlotOrder = plotOrder;
 	}
 
 	public DataSet(string pathToDataSet) {
@@ -27,20 +33,20 @@ public class DataSet {
 		Name = temp.Name;
 		Data = temp.Data;
 		if (CsharpRAPLCLI.Options.Json) {
-			Order = temp.Order;
+			PlotOrder = temp.PlotOrder;
 		}
 	}
 
 	public DataSet(IBenchmark benchmark) {
 		Name = benchmark.BenchmarkInfo.Name;
 		Data = benchmark.GetResults();
-		Order = benchmark.BenchmarkInfo.PlotOrder;
+		PlotOrder = benchmark.BenchmarkInfo.PlotOrder;
 	}
 
 	private static DataSet ReadData(string path) {
 		if (CsharpRAPLCLI.Options.Json) {
 			var info = JsonSerializer.Deserialize<BenchmarkInfo>(File.ReadAllText(path));
-			return new DataSet(info.Name, info.NormalizedResults);
+			return new DataSet(info.Name, info.NormalizedResults, info.PlotOrder);
 		}
 
 		using var reader = new StreamReader(path);
