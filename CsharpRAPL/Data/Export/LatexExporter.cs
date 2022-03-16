@@ -200,7 +200,7 @@ public static class LatexExporter {
 			               "\\begin{tabular}{|c|c|c|c|}\n\t\t\t" +
 			               "\\hline\n\t\t\t" +
 			               "Benchmark & Time (ms) & Package Energy ($\\mu$J) & DRAM Energy ($\\mu$J) \\\\ \\hline\n");
-			foreach (DataSet dataSet in dataSets) {
+			foreach (DataSet dataSet in dataSets.OrderBy(set => set.Order).ThenBy(set => set.Name)) {
 				builder.Append(
 					$"\t\t\t\t{dataSet.Name.Humanize(LetterCasing.Title)} & {dataSet.Data.Average(result => result.ElapsedTime).ToString("N6", _provider)} & {dataSet.Data.Average(result => result.PackageEnergy).ToString("N3", _provider)} & {dataSet.Data.Average(result => result.DRAMEnergy).ToString("N3", _provider)}\\\\ \\hline\n");
 			}
