@@ -40,7 +40,8 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 		
 		object? instance = BenchmarkedMethod.IsStatic ? null : Activator.CreateInstance(BenchmarkedMethod.DeclaringType!);
 		var parameters = GetPameters();
-		return BenchmarkedMethod.Invoke(instance, parameters);
+		BenchmarkedMethod.Invoke(instance, parameters);
+		return state;
 	}
 
 	public IBenchmark WarmupIteration(IBenchmark oldstate) => oldstate;
