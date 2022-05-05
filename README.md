@@ -2,8 +2,9 @@
 [![pipeline status](https://gitlab.com/ImDreamer/CsharpRAPL/badges/main/pipeline.svg)](https://gitlab.com/ImDreamer/CsharpRAPL/-/commits/main)
 [![coverage report](https://gitlab.com/ImDreamer/CsharpRAPL/badges/main/coverage.svg)](https://gitlab.com/ImDreamer/CsharpRAPL/-/commits/main)
 
-CSharpRAPL is a framework for benchmarking C# in regards to energy.
+Fork of https://gitlab.com/ImDreamer/CsharpRAPL
 
+CSharpRAPL is a framework for benchmarking C# in regards to energy.
 In the Benchmarks folder, all the benchmarks created for this project can be found.
 
 CSharpRAPL contains the library code we have implemented to use for benchmarking.
