@@ -24,8 +24,10 @@ public class BenchmarkAttribute : Attribute {
 
 	public int PlotOrder { get; }
 
-	public BenchmarkAttribute(string? group, string description, int order = 0, bool skip = false,
+	public Type? BenchmarkLifecycleClass { get; }
+	public BenchmarkAttribute(string? group, string description, Type? benchmarkLifecycleClass=null, int order = 0, bool skip = false,
 		string name = "", int plotOrder = 0) {
+		BenchmarkLifecycleClass = benchmarkLifecycleClass;
 		Group = group;
 		Description = description;
 		Order = order;

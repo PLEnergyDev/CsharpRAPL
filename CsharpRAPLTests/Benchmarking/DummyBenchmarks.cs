@@ -1,4 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using CsharpRAPL.Benchmarking;
 using CsharpRAPL.Benchmarking.Attributes;
 
 namespace CsharpRAPL.Tests.Benchmarking;
@@ -41,7 +42,7 @@ public class DummyBenchmarks {
 		return res;
 	}
 
-	[Benchmark("Operations", "Tests pre increment using ++", 10)]
+	[Benchmark("Operations", "Tests pre increment using ++", typeof(NopBenchmarkLifecycle),10)]
 	public static int PreIncrement() {
 		int res = 0;
 		for (ulong i = 0; i < LoopIterations; i++) {

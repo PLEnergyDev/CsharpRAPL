@@ -29,15 +29,15 @@ public class BenchmarkSuite {
 		LoopIterations = loopIterations;
 	}
 
-	public void RegisterBenchmark<T>(Func<T> benchmark, Action prerun, int order = 0) {
-		RegisterBenchmark(null, benchmark, prerun, order);
+	public void RegisterBenchmark<T>(Func<T> benchmark, Type benchmarkLifecycleClass, int order = 0) {
+		RegisterBenchmark(null, benchmark, benchmarkLifecycleClass, order);
 	}
 
-	public void RegisterBenchmark<T>(string? group, Func<T> benchmark, Action prerun, int order = 0) {
-		RegisterBenchmark(benchmark.Method.Name, group, benchmark, prerun, order);
+	public void RegisterBenchmark<T>(string? group, Func<T> benchmark, Type benchmarkLifecycleClass, int order = 0) {
+		RegisterBenchmark(benchmark.Method.Name, group, benchmark, benchmarkLifecycleClass, order);
 	}
 
-	public void RegisterBenchmark<T>(string name, string? group, Func<T> benchmark, Action prerun, int order = 0, int plotOrder = 0) {
+	public void RegisterBenchmark<T>(string name, string? group, Func<T> benchmark, Type benchmarkLifecycleClass, int order = 0, int plotOrder = 0) {
 		if (benchmark.Method.IsAnonymous()) {
 			throw new NotSupportedException("Adding benchmarks through anonymous methods is not supported");
 		}
@@ -46,10 +46,10 @@ public class BenchmarkSuite {
 			RegisterBenchmarkClass(benchmark.Method.DeclaringType!);
 		}
 
-		Benchmarks.Add(new Benchmark<T>(name, Iterations, benchmark, prerun, true, group, order, plotOrder));
+		Benchmarks.Add(new Benchmark<T>(name, Iterations, benchmark, benchmarkLifecycleClass, true, group, order, plotOrder));
 	}
 
-	public void RegisterBenchmarkVariation<T>(string name, string? group, Func<T> benchmark, Action prerun,
+	public void RegisterBenchmarkVariation<T>(string name, string? group, Func<T> benchmark, Type benchmarkLifecycleClass,
 		VariationInstance parameters, int order = 0, int plotOrder = 0, string namePostfix = "") {
 		if (benchmark.Method.IsAnonymous()) {
 			throw new NotSupportedException("Adding benchmarks through anonymous methods is not supported");
@@ -59,14 +59,14 @@ public class BenchmarkSuite {
 			RegisterBenchmarkClass(benchmark.Method.DeclaringType!);
 		}
 
-		var bench = new Benchmark<T>($"{name}{namePostfix}", Iterations, benchmark, prerun,true, group, order, plotOrder)
+		var bench = new Benchmark<T>($"{name}{namePostfix}", Iterations, benchmark, benchmarkLifecycleClass,true, group, order, plotOrder)
 			{ BenchmarkInfo = { Parameters = parameters } };
 		Benchmarks.Add(bench);
 	}
 
-	public void RegisterBenchmarkVariation<T>(string? group, Func<T> benchmark, Action prerun, VariationInstance parameters,
+	public void RegisterBenchmarkVariation<T>(string? group, Func<T> benchmark, Type benchmarkLifecycleClass, VariationInstance parameters,
 		int order = 0, int plotOrder = 0, string namePostfix = "") {
-		RegisterBenchmarkVariation(benchmark.Method.Name, group, benchmark, prerun,parameters, order, plotOrder, namePostfix);
+		RegisterBenchmarkVariation(benchmark.Method.Name, group, benchmark, benchmarkLifecycleClass, parameters, order, plotOrder, namePostfix);
 	}
 
 	private void RegisterBenchmarkClass(Type benchmarkClass) {

@@ -7,7 +7,25 @@ using CsharpRAPL.Benchmarking.Variation;
 using CsharpRAPL.CommandLine;
 
 namespace CsharpRAPL.Benchmarking;
-
+public interface IBenchmarkLifecyce {
+	public IBenchmark Benchmark { get; }
+	public Type Type { get; }
+	public object Initialize(IBenchmark benchmark);
+	public object WarmupIteration(object oldstate);
+	public object PreRun(object oldstate);
+	public object PostRun(object oldstate);
+}
+public interface IBenchmarkLifecycle <T> : IBenchmarkLifecyce{
+	Type IBenchmarkLifecyce.Type => typeof(T);
+	object IBenchmarkLifecyce.Initialize(IBenchmark benchmark) => Initialize(benchmark);
+	object IBenchmarkLifecyce.WarmupIteration(object oldstate) => WarmupIteration((T)oldstate);
+	object IBenchmarkLifecyce.PreRun(object oldstate) => PreRun((T)oldstate);
+	object IBenchmarkLifecyce.PostRun(object oldstate) => PostRun((T)oldstate);
+	public T Initialize(IBenchmark benchmark);
+	public T WarmupIteration(T oldstate);
+	public T PreRun(T oldstate);
+	public T PostRun(T oldstate);
+}
 public class BenchmarkCollector : BenchmarkSuite {
 	/// <summary>
 	/// A map of a return type and a variation of the benchmark method using the return type as the generic argument
@@ -39,15 +57,15 @@ public class BenchmarkCollector : BenchmarkSuite {
 	}
 
 	private void CollectBenchmarks(Assembly assembly) {
-		var PreBenchLookup = assembly
-			.GetTypes()
-			.SelectMany(v => v.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
-			.Select(v => new {
-				PreRun = v.GetCustomAttribute<PreBenchmarkAttribute>(),
-				Method = v
-			})
-			.Where(v => v.PreRun != null)
-			.ToDictionary(v => v.PreRun.Target, V => V.Method);
+		//var PreBenchLookup = assembly
+		//	.GetTypes()
+		//	.SelectMany(v => v.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
+		//	.Select(v => new {
+		//		PreRun = v.GetCustomAttribute<PreBenchmarkAttribute>(),
+		//		Method = v
+		//	})
+		//	.Where(v => v.PreRun != null)
+		//	.ToDictionary(v => v.PreRun.Target, V => V.Method);
 		
 		
 
@@ -99,7 +117,8 @@ public class BenchmarkCollector : BenchmarkSuite {
 				benchmarkAttribute.Name == "" ? benchmarkMethod.Name : benchmarkAttribute.Name,
 				benchmarkAttribute.Group!,
 				benchmarkDelegate,
-				PreBenchLookup.TryGetValue(benchmarkMethod.Name, out var preb)?preb.CreateDelegate<Action>():()=>{},
+				benchmarkAttribute.BenchmarkLifecycleClass,
+				//PreBenchLookup.TryGetValue(benchmarkMethod.Name, out var preb)?preb.CreateDelegate<Action>():()=>{},
 				benchmarkAttribute.Order,
 				benchmarkAttribute.PlotOrder
 			});

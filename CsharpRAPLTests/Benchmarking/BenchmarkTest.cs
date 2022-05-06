@@ -6,7 +6,7 @@ namespace CsharpRAPL.Tests.Benchmarking;
 public class BenchmarkTest {
 	[Test]
 	public void BenchmarkTest01() {
-		var benchmark = new Benchmark<int>("DummyBenchmark", 10, BenchmarkSuitTest.DummyBenchmark, () => System.Console.WriteLine(nameof(BenchmarkTest01) + " pre")); 
+		var benchmark = new Benchmark<int>("DummyBenchmark", 10, BenchmarkSuitTest.DummyBenchmark, typeof(NopBenchmarkLifecycle)); 
 
 		Assert.Null(benchmark.BenchmarkInfo.Group);
 		Assert.AreEqual(10, benchmark.BenchmarkInfo.Iterations);

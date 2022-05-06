@@ -14,7 +14,7 @@ public class BenchmarkSuitTest {
 	public static ulong LoopIterations;
 
 
-	public static void DummyPrerun() { }
+	public static Type DummyPrerun => typeof(NopBenchmarkLifecycle);
 	public static int DummyBenchmark() {
 		int result = 0;
 		for (ulong i = 0; i < LoopIterations; i++) {

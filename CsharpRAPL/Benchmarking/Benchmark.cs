@@ -37,11 +37,25 @@ public class Benchmark<T> : IBenchmark {
 
 	private string? _normalizedReturnValue;
 	private readonly FieldInfo _loopIterationsFieldInfo;
+	class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
+		public NopBenchmarkLifecycle(IBenchmark bm) {
+			Benchmark = bm;
+		}
+		public IBenchmark Benchmark { get; }
+		public IBenchmark Initialize(IBenchmark benchmark) => benchmark;
+		public IBenchmark PostRun(IBenchmark oldstate) => oldstate;
+		public IBenchmark PreRun(IBenchmark oldstate) => oldstate;
+		public IBenchmark WarmupIteration(IBenchmark oldstate) => oldstate;
+	}
 
-	public Benchmark(string name, ulong iterations, Func<T> benchmark, Action prebenchmark, bool silenceBenchmarkOutput = true,
+	public Benchmark(string name, ulong iterations, Func<T> benchmark, Type? benchmarkLifecycleClass=null, bool silenceBenchmarkOutput = true,
 		string? group = null, int order = 0, int plotOrder = 0) {
-		Prerun = prebenchmark??(() =>  Console.WriteLine("NoPre"));
+		
+		IBenchmarkLifecyce bml = benchmarkLifecycleClass == null ?
+			new NopBenchmarkLifecycle(this): (IBenchmarkLifecyce)Activator.CreateInstance(benchmarkLifecycleClass, new object[] {this});
+		//Prerun = prebenchmark??(() =>  Console.WriteLine("NoPre"));
 		BenchmarkInfo = new BenchmarkInfo() {
+			BenchmarkLifecycle = bml,
 			Name = name,
 			Group = group,
 			Iterations = iterations,
@@ -129,6 +143,10 @@ public class Benchmark<T> : IBenchmark {
 	//Writes progress to stdout if there is more than one iteration
 	public void Run() {
 		Setup();
+		object state = BenchmarkInfo.BenchmarkLifecycle.Initialize(this);
+		for(ulong i=0;i<BenchmarkInfo.Iterations;i++) 
+			state = BenchmarkInfo.BenchmarkLifecycle.WarmupIteration(state);
+
 
 		for (ulong i = 0; i <= BenchmarkInfo.Iterations; i++) {
 			if (BenchmarkInfo.Iterations != 1) {
@@ -151,13 +169,16 @@ public class Benchmark<T> : IBenchmark {
 
 			MemoryApi? memoryMeasurement = null;
 
-			PreRun();
+			
+
+
 			if (CsharpRAPLCLI.Options.CollectMemoryInformation) {
 				memoryMeasurement = new MemoryApi();
 				memoryMeasurement.Start();
 			}
 
 			//Actually performing benchmark and resulting IO
+			state = BenchmarkInfo.BenchmarkLifecycle.PreRun(state);
 			Start();
 			T benchmarkOutput = _benchmark();
 			End(benchmarkOutput);
