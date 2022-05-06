@@ -2,6 +2,15 @@
 
 namespace CsharpRAPL.Benchmarking.Attributes;
 
+
+[AttributeUsage(AttributeTargets.Method)]
+public class PreBenchmarkAttribute : Attribute {
+	public string Target { get; set; }
+	public PreBenchmarkAttribute(string target) {
+		Target = target;
+	}
+}
+
 [AttributeUsage(AttributeTargets.Method)]
 public class BenchmarkAttribute : Attribute {
 	public string Name { get; }
@@ -9,7 +18,6 @@ public class BenchmarkAttribute : Attribute {
 	public string? Group { get; }
 
 	public string Description { get; }
-
 	public int Order { get; }
 
 	public bool Skip { get; }

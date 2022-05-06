@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -25,6 +25,7 @@ public class Benchmark<T> : IBenchmark {
 		get => MeasureApiApi;
 		set => MeasureApiApi = value;
 	}
+	public Action Prerun { get; }
 
 	private const int MaxExecutionTime = 2700; //In seconds
 	private const int TargetLoopIterationTime = 250; //In milliseconds
@@ -37,8 +38,9 @@ public class Benchmark<T> : IBenchmark {
 	private string? _normalizedReturnValue;
 	private readonly FieldInfo _loopIterationsFieldInfo;
 
-	public Benchmark(string name, ulong iterations, Func<T> benchmark, bool silenceBenchmarkOutput = true,
+	public Benchmark(string name, ulong iterations, Func<T> benchmark, Action prebenchmark, bool silenceBenchmarkOutput = true,
 		string? group = null, int order = 0, int plotOrder = 0) {
+		Prerun = prebenchmark??(() =>  Console.WriteLine("NoPre"));
 		BenchmarkInfo = new BenchmarkInfo() {
 			Name = name,
 			Group = group,
@@ -149,6 +151,7 @@ public class Benchmark<T> : IBenchmark {
 
 			MemoryApi? memoryMeasurement = null;
 
+			PreRun();
 			if (CsharpRAPLCLI.Options.CollectMemoryInformation) {
 				memoryMeasurement = new MemoryApi();
 				memoryMeasurement.Start();
@@ -322,5 +325,9 @@ public class Benchmark<T> : IBenchmark {
 
 	private void SetLoopIterations(ulong value) {
 		_loopIterationsFieldInfo.SetValue(null, value);
+	}
+
+	public void PreRun() {
+		Prerun?.Invoke();
 	}
 }

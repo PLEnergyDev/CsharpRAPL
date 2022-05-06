@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -21,7 +21,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 	//Get the correct version of add benchmark method
 	private static readonly MethodInfo RegisterBenchmarkGenericMethod = typeof(BenchmarkSuite)
 		.GetMethods(RegisterBenchmarkFlags)
-		.First(info => info.Name == nameof(RegisterBenchmark) && info.GetParameters().Length == 5);
+		.First(info => info.Name == nameof(RegisterBenchmark) && info.GetParameters().Length == 6);
 
 	public BenchmarkCollector(bool onlyCallingAssembly = false) : this(CsharpRAPLCLI.Options.Iterations,
 		CsharpRAPLCLI.Options.LoopIterations, onlyCallingAssembly) { }
@@ -39,6 +39,23 @@ public class BenchmarkCollector : BenchmarkSuite {
 	}
 
 	private void CollectBenchmarks(Assembly assembly) {
+		var PreBenchLookup = assembly
+			.GetTypes()
+			.SelectMany(v => v.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
+			.Select(v => new {
+				PreRun = v.GetCustomAttribute<PreBenchmarkAttribute>(),
+				Method = v
+			})
+			.Where(v => v.PreRun != null)
+			.ToDictionary(v => v.PreRun.Target, V => V.Method);
+		
+		
+
+			
+
+		
+
+
 		IEnumerable<MethodInfo> methods = assembly.GetTypes().SelectMany(type => type
 			.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
 			.Where(info => info.GetCustomAttribute<BenchmarkAttribute>() != null));
@@ -76,11 +93,13 @@ public class BenchmarkCollector : BenchmarkSuite {
 				: benchmarkMethod.CreateDelegate(funcType, Activator.CreateInstance(benchmarkMethod.DeclaringType!));
 
 
+			
 			//Then add the benchmark using the correct generic add benchmark method.
 			genericRegisterBenchmark.Invoke(this, new object[] {
 				benchmarkAttribute.Name == "" ? benchmarkMethod.Name : benchmarkAttribute.Name,
 				benchmarkAttribute.Group!,
 				benchmarkDelegate,
+				PreBenchLookup.TryGetValue(benchmarkMethod.Name, out var preb)?preb.CreateDelegate<Action>():()=>{},
 				benchmarkAttribute.Order,
 				benchmarkAttribute.PlotOrder
 			});

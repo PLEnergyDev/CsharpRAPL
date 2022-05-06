@@ -1,13 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.2.12</PackageVersion>
-        <Title>CsharpRAPL</Title>
+        <PackageVersion>0.0.1</PackageVersion>
+        <Title>PL_CsharpRAPL</Title>
         <Authors>Dreamer, Rasmus, Milton</Authors>
-        <Description>CSharpRAPL is a framework for benchmarking C# in regards to energy.
+        <Description>Fork of CSharpRAPL. CSharpRAPL is a framework for benchmarking C# in regards to energy.
             In the Benchmarks folder, all the benchmarks created for this project can be found.
             CSharpRAPL contains the library code we have implemented to use for benchmarking.
             This code is a continuation and extension of lrecht/ParadigmComparison, which is an earlier university project.
@@ -16,8 +16,8 @@
             The results generated is a CSV file that contains the DRAM Energy, Temperature, Elapsed Time, Package Energy, and the return value of the Benchmark.
         </Description>
         <Copyright>MIT License</Copyright>
-        <PackageProjectUrl>https://gitlab.com/ImDreamer/CsharpRAPL</PackageProjectUrl>
-        <RepositoryUrl>https://gitlab.com/ImDreamer/CsharpRAPL</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/PLEnergyDev/CsharpRAPL</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/PLEnergyDev/CsharpRAPL</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
     </PropertyGroup>
 

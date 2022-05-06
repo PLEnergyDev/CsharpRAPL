@@ -13,6 +13,8 @@ public class BenchmarkSuitTest {
 	public static ulong Iterations;
 	public static ulong LoopIterations;
 
+
+	public static void DummyPrerun() { }
 	public static int DummyBenchmark() {
 		int result = 0;
 		for (ulong i = 0; i < LoopIterations; i++) {
@@ -25,7 +27,7 @@ public class BenchmarkSuitTest {
 	[Test]
 	public void TestRegisterBenchmark01() {
 		var benchmarkSuit = new BenchmarkSuite(10, 29);
-		benchmarkSuit.RegisterBenchmark(DummyBenchmark);
+		benchmarkSuit.RegisterBenchmark(DummyBenchmark, DummyPrerun);
 
 		Assert.AreEqual(1, benchmarkSuit.GetBenchmarks().Count);
 		Assert.AreEqual(10, benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Iterations);
@@ -39,7 +41,7 @@ public class BenchmarkSuitTest {
 		var benchmarkSuit = new BenchmarkSuite();
 
 
-		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark);
+		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark, DummyPrerun);
 
 
 		Assert.AreEqual("TestGroup", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Group);
@@ -55,7 +57,7 @@ public class BenchmarkSuitTest {
 	public void TestRegisterBenchmark03() {
 		var benchmarkSuit = new BenchmarkSuite();
 
-		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark, 42);
+		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark, DummyPrerun, 42);
 
 		Assert.AreEqual("TestGroup", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Group);
 		Assert.AreEqual(1, benchmarkSuit.GetBenchmarks().Count);
@@ -69,7 +71,7 @@ public class BenchmarkSuitTest {
 	public void TestRegisterBenchmark04() {
 		var benchmarkSuit = new BenchmarkSuite();
 		var exception =
-			Assert.Throws<NotSupportedException>(() => benchmarkSuit.RegisterBenchmark(() => "Test"));
+			Assert.Throws<NotSupportedException>(() => benchmarkSuit.RegisterBenchmark(() => "Test", DummyPrerun));
 		Assert.AreEqual(exception?.Message, "Adding benchmarks through anonymous methods is not supported");
 	}
 
@@ -77,7 +79,7 @@ public class BenchmarkSuitTest {
 	public void TestRegisterBenchmark05() {
 		var benchmarkSuit = new BenchmarkSuite();
 		var exception =
-			Assert.Throws<NotSupportedException>(() => benchmarkSuit.RegisterBenchmark(() => { return "Test"; }));
+			Assert.Throws<NotSupportedException>(() => benchmarkSuit.RegisterBenchmark(() => { return "Test"; }, DummyPrerun));
 		Assert.AreEqual(exception?.Message, "Adding benchmarks through anonymous methods is not supported");
 	}
 
@@ -85,7 +87,7 @@ public class BenchmarkSuitTest {
 	public void TestRegisterBenchmark06() {
 		var benchmarkSuit = new BenchmarkSuite();
 
-		benchmarkSuit.RegisterBenchmark("TestBenchmark", "TestGroup", DummyBenchmark, 42);
+		benchmarkSuit.RegisterBenchmark("TestBenchmark", "TestGroup", DummyBenchmark, DummyPrerun, 42);
 
 		Assert.AreEqual("TestGroup", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Group);
 		Assert.AreEqual(1, benchmarkSuit.GetBenchmarks().Count);
@@ -99,7 +101,7 @@ public class BenchmarkSuitTest {
 	public void TestRegisterBenchmarkVariation01() {
 		var benchmarkSuit = new BenchmarkSuite();
 
-		benchmarkSuit.RegisterBenchmarkVariation("TestGroup", DummyBenchmark, new VariationInstance() { Values = { } });
+		benchmarkSuit.RegisterBenchmarkVariation("TestGroup", DummyBenchmark, DummyPrerun, new VariationInstance() { Values = { } });
 
 		Assert.AreEqual("TestGroup", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Group);
 		Assert.AreEqual(1, benchmarkSuit.GetBenchmarks().Count);
@@ -113,7 +115,7 @@ public class BenchmarkSuitTest {
 	public void TestRegisterBenchmarkVariation02() {
 		var benchmarkSuit = new BenchmarkSuite();
 
-		benchmarkSuit.RegisterBenchmarkVariation("TestBenchmark", "TestGroup", DummyBenchmark, new VariationInstance(),
+		benchmarkSuit.RegisterBenchmarkVariation("TestBenchmark", "TestGroup", DummyBenchmark, null, new VariationInstance(),
 			42);
 
 		Assert.AreEqual("TestGroup", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Group);
@@ -129,7 +131,7 @@ public class BenchmarkSuitTest {
 		var benchmarkSuit = new BenchmarkSuite();
 		var exception =
 			Assert.Throws<NotSupportedException>(() =>
-				benchmarkSuit.RegisterBenchmarkVariation("TestGroup", () => { return "Test"; },
+				benchmarkSuit.RegisterBenchmarkVariation("TestGroup", () => { return "Test"; }, DummyPrerun,
 					new VariationInstance()));
 		Assert.AreEqual(exception?.Message, "Adding benchmarks through anonymous methods is not supported");
 	}
@@ -139,13 +141,13 @@ public class BenchmarkSuitTest {
 	public void TestGetBenchmarksByGroup() {
 		var benchmarkSuit = new BenchmarkSuite();
 
-		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("TestGroup2", DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("TestGroup2", DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("TestGroup2", DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("TestGroup3", DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark, 42);
+		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark, DummyPrerun, 42);
+		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark, DummyPrerun, 42);
+		benchmarkSuit.RegisterBenchmark("TestGroup2", DummyBenchmark, DummyPrerun, 42);
+		benchmarkSuit.RegisterBenchmark("TestGroup2", DummyBenchmark, DummyPrerun, 42);
+		benchmarkSuit.RegisterBenchmark("TestGroup2", DummyBenchmark, DummyPrerun, 42);
+		benchmarkSuit.RegisterBenchmark("TestGroup3", DummyBenchmark, DummyPrerun, 42);
+		benchmarkSuit.RegisterBenchmark("TestGroup", DummyBenchmark, DummyPrerun, 42);
 
 		Dictionary<string, List<IBenchmark>> groups = benchmarkSuit.GetBenchmarksByGroup();
 
@@ -184,13 +186,13 @@ public class BenchmarkSuitTest {
 	public void TestPlotGroups01() {
 		var benchmarkSuit = new BenchmarkSuite();
 
-		benchmarkSuit.RegisterBenchmark("1", "TestGroup", DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("2", "TestGroup", DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("3", "TestGroup2", DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("4", "TestGroup2", DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("5", "TestGroup2", DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("6", "TestGroup3", DummyBenchmark, 42);
-		benchmarkSuit.RegisterBenchmark("7", "TestGroup", DummyBenchmark, 42);
+		benchmarkSuit.RegisterBenchmark("1", "TestGroup", DummyBenchmark, DummyPrerun, 42);
+		benchmarkSuit.RegisterBenchmark("2", "TestGroup", DummyBenchmark, DummyPrerun, 42);
+		benchmarkSuit.RegisterBenchmark("3", "TestGroup2", DummyBenchmark, DummyPrerun, 42);
+		benchmarkSuit.RegisterBenchmark("4", "TestGroup2", DummyBenchmark, DummyPrerun, 42);
+		benchmarkSuit.RegisterBenchmark("5", "TestGroup2", DummyBenchmark, DummyPrerun, 42);
+		benchmarkSuit.RegisterBenchmark("6", "TestGroup3", DummyBenchmark, DummyPrerun, 42);
+		benchmarkSuit.RegisterBenchmark("7", "TestGroup", DummyBenchmark, DummyPrerun, 42);
 		
 		
 		var exception = Assert.Throws<NotSupportedException>(() => benchmarkSuit.PlotGroups());

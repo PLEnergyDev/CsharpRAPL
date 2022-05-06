@@ -7,6 +7,10 @@ riderModule.iml
 results/
 
 CsharpRAPL.sln.DotSettings.user
+/.vs/CsharpRAPL/FileContentIndex
+*.v2
+*.v1
+/.vs
 
 
 ## Ignore Visual Studio temporary files, build results, and
