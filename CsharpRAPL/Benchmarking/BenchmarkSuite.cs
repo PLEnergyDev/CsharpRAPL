@@ -15,7 +15,7 @@ public class BenchmarkSuite {
 	public ulong Iterations { get; }
 	public ulong LoopIterations { get; }
 	public PlotOptions PlotOptions { get; set; } = new();
-	private List<IBenchmark> Benchmarks { get; } = new();
+	protected List<IBenchmark> Benchmarks { get; } = new();
 
 	private readonly HashSet<Type> _registeredBenchmarkClasses = new();
 
@@ -103,10 +103,14 @@ public class BenchmarkSuite {
 		benchmarkClass.GetField(name, BindingFlags.Public | BindingFlags.Static)?.SetValue(null, value);
 	}
 
+	///TODO: sanity
+	public List<IBenchmarkLifecycle> benchmarks = new List<IBenchmarkLifecycle>();
+
 	public void RunAll(bool warmup = true) {
 		if (Environment.OSVersion.Platform != PlatformID.Unix && !CsharpRAPLCLI.Options.OnlyTime) {
 			throw new NotSupportedException("Running the benchmarks is only supported on Unix.");
 		}
+
 
 		List<IBenchmark> benchmarks = Benchmarks.OrderBy(benchmark => benchmark.BenchmarkInfo.Order).ToList();
 		if (benchmarks.Count == 0) {
@@ -114,11 +118,13 @@ public class BenchmarkSuite {
 			return;
 		}
 
-		if (warmup) {
-			Warmup();
-		}
+		//if (warmup) {
+		//	Warmup();
+		//}
 
-		foreach ((int index, IBenchmark bench) in benchmarks.WithIndex()) {
+		foreach ((int index, IBenchmark bench) in benchmarks.OrderBy(v=>v.BenchmarkInfo.Order).WithIndex()) {
+			//object o = bench.Initialize();
+
 			Console.WriteLine(
 				$"Starting {bench.BenchmarkInfo.Name} which is the {index + 1} benchmark out of {benchmarks.Count} benchmarks");
 			bench.Run();

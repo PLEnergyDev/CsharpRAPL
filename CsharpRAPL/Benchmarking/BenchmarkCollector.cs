@@ -11,16 +11,16 @@ public class BenchmarkCollector : BenchmarkSuite {
 	/// <summary>
 	/// A map of a return type and a variation of the benchmark method using the return type as the generic argument
 	/// </summary>
-	private readonly Dictionary<Type, RegisterBenchmarkVariation> _registeredBenchmarkVariations = new();
+	//private readonly Dictionary<Type, RegisterBenchmarkVariation> _registeredBenchmarkVariations = new();
 
 	//Create some flags we use for binding see: https://docs.microsoft.com/en-us/dotnet/api/system.reflection.bindingflags
 	private const BindingFlags RegisterBenchmarkFlags =
 		BindingFlags.Instance | BindingFlags.Public | BindingFlags.InvokeMethod;
 
 	//Get the correct version of add benchmark method
-	private static readonly MethodInfo RegisterBenchmarkGenericMethod = typeof(BenchmarkSuite)
-		.GetMethods(RegisterBenchmarkFlags)
-		.First(info => info.Name == nameof(RegisterBenchmark) && info.GetParameters().Length == 6);
+	//private static readonly MethodInfo RegisterBenchmarkGenericMethod = typeof(BenchmarkSuite)
+	//	.GetMethods(RegisterBenchmarkFlags)
+	//	.First(info => info.Name == nameof(RegisterBenchmark) && info.GetParameters().Length == 6);
 
 	public BenchmarkCollector(bool onlyCallingAssembly = false) : this(CsharpRAPLCLI.Options.Iterations,
 		CsharpRAPLCLI.Options.LoopIterations, onlyCallingAssembly) { }
@@ -36,25 +36,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 			}
 		}
 	}
-
 	private void CollectBenchmarks(Assembly assembly) {
-		//var PreBenchLookup = assembly
-		//	.GetTypes()
-		//	.SelectMany(v => v.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
-		//	.Select(v => new {
-		//		PreRun = v.GetCustomAttribute<PreBenchmarkAttribute>(),
-		//		Method = v
-		//	})
-		//	.Where(v => v.PreRun != null)
-		//	.ToDictionary(v => v.PreRun.Target, V => V.Method);
-		
-		
-
-			
-
-		
-
-
 		IEnumerable<MethodInfo> methods = assembly.GetTypes().SelectMany(type => type
 			.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
 			.Where(info => info.GetCustomAttribute<BenchmarkAttribute>() != null));
@@ -66,43 +48,69 @@ public class BenchmarkCollector : BenchmarkSuite {
 				continue;
 			}
 
+			
 
-			SetField(benchmarkMethod.DeclaringType!, nameof(LoopIterations), LoopIterations);
-			SetField(benchmarkMethod.DeclaringType!, nameof(Iterations), Iterations);
-
-			CheckMethodValidity(benchmarkMethod);
-
-			if (!_registeredBenchmarkVariations.ContainsKey(benchmarkMethod.ReturnType)) {
-				//If we haven't registered this return type yet, register it.
-				RegisterAddBenchmarkVariation(benchmarkMethod);
-			}
-
-			(MethodInfo genericRegisterBenchmark, Type funcType) =
-				_registeredBenchmarkVariations[benchmarkMethod.ReturnType];
-
-
-			if (benchmarkMethod.GetCustomAttribute<VariationBenchmark>() != null && !benchmarkMethod.IsStatic) {
-				VariationGenerator.CreateVariations(this, benchmarkAttribute, benchmarkMethod);
-			}
-
-			//If the benchmark method is static, we don't need an instance to call the method.
-			//So if it is we use Activator to create a new instance which we use for calling the method.
-			Delegate benchmarkDelegate = benchmarkMethod.IsStatic
-				? benchmarkMethod.CreateDelegate(funcType)
-				: benchmarkMethod.CreateDelegate(funcType, Activator.CreateInstance(benchmarkMethod.DeclaringType!));
-
+			//SetField(benchmarkMethod.DeclaringType!, nameof(LoopIterations), LoopIterations);
+			//SetField(benchmarkMethod.DeclaringType!, nameof(Iterations), Iterations);
 
 			
-			//Then add the benchmark using the correct generic add benchmark method.
-			genericRegisterBenchmark.Invoke(this, new object[] {
-				benchmarkAttribute.Name == "" ? benchmarkMethod.Name : benchmarkAttribute.Name,
-				benchmarkAttribute.Group!,
-				benchmarkDelegate,
-				benchmarkAttribute.BenchmarkLifecycleClass,
+
+
+			CheckMethodValidity(benchmarkMethod);
+			var bi = new BenchmarkInfo {
+				Iterations = Iterations,
+				LoopIterations = LoopIterations,
+				Name = benchmarkAttribute.Name == "" ? benchmarkMethod.Name : benchmarkAttribute.Name,
+				Group = benchmarkAttribute.Group!,
+				Order = benchmarkAttribute.Order,
+				PlotOrder = benchmarkAttribute.PlotOrder,
+				//benchmarkDelegate,
+
+				//benchmarkAttribute.BenchmarkLifecycleClass,
 				//PreBenchLookup.TryGetValue(benchmarkMethod.Name, out var preb)?preb.CreateDelegate<Action>():()=>{},
-				benchmarkAttribute.Order,
-				benchmarkAttribute.PlotOrder
-			});
+				//benchmarkAttribute.Order,
+				//benchmarkAttribute.PlotOrder
+			};
+			IBenchmarkLifecycle nopcycle = new NopBenchmarkLifecycle(bi, benchmarkMethod);
+
+			Benchmarks.Add(new Benchmark<object>(nopcycle)); 
+
+
+
+			////Func<object> f = benchmarkMethod.Invoke(benchmarkMethod.IsStatic?null: Activator.CreateInstance(benchmarkMethod.DeclaringType), )
+
+
+			//if (!_registeredBenchmarkVariations.ContainsKey(benchmarkMethod.ReturnType)) {
+			//	//If we haven't registered this return type yet, register it.
+			//	RegisterAddBenchmarkVariation(benchmarkMethod);
+			//}
+
+			//(MethodInfo genericRegisterBenchmark, Type funcType) =
+			//	_registeredBenchmarkVariations[benchmarkMethod.ReturnType];
+
+
+			//if (benchmarkMethod.GetCustomAttribute<VariationBenchmark>() != null && !benchmarkMethod.IsStatic) {
+			//	VariationGenerator.CreateVariations(this, benchmarkAttribute, benchmarkMethod);
+			//}
+
+			////If the benchmark method is static, we don't need an instance to call the method.
+			////So if it is we use Activator to create a new instance which we use for calling the method.
+			//Delegate benchmarkDelegate = benchmarkMethod.IsStatic
+			//	? benchmarkMethod.CreateDelegate(funcType)
+			//	: benchmarkMethod.CreateDelegate(funcType, Activator.CreateInstance(benchmarkMethod.DeclaringType!));
+
+
+
+			////Then add the benchmark using the correct generic add benchmark method.
+			//genericRegisterBenchmark.Invoke(this, new object[] {
+			//	benchmarkAttribute.Name == "" ? benchmarkMethod.Name : benchmarkAttribute.Name,
+			//	benchmarkAttribute.Group!,
+			//	benchmarkDelegate,
+			//	benchmarkAttribute.BenchmarkLifecycleClass,
+			//	//PreBenchLookup.TryGetValue(benchmarkMethod.Name, out var preb)?preb.CreateDelegate<Action>():()=>{},
+			//	benchmarkAttribute.Order,
+			//	benchmarkAttribute.PlotOrder
+			//});
 		}
 	}
 
@@ -123,17 +131,17 @@ public class BenchmarkCollector : BenchmarkSuite {
 		}
 	}
 
-	private void RegisterAddBenchmarkVariation(MethodInfo benchmark) {
-		//Create a generic type of func using the methods return type
-		Type funcType = typeof(Func<>).MakeGenericType(benchmark.ReturnType);
+	//private void RegisterAddBenchmarkVariation(MethodInfo benchmark) {
+	//	//Create a generic type of func using the methods return type
+	//	Type funcType = typeof(Func<>).MakeGenericType(benchmark.ReturnType);
 
-		//Make a generic using the benchmark return type
-		MethodInfo genericAddBenchmark = RegisterBenchmarkGenericMethod.MakeGenericMethod(benchmark.ReturnType);
+	//	//Make a generic using the benchmark return type
+	//	MethodInfo genericAddBenchmark = RegisterBenchmarkGenericMethod.MakeGenericMethod(benchmark.ReturnType);
 
-		//Add it to our registry
-		_registeredBenchmarkVariations.Add(benchmark.ReturnType,
-			new RegisterBenchmarkVariation(genericAddBenchmark, funcType));
-	}
+	//	//Add it to our registry
+	//	_registeredBenchmarkVariations.Add(benchmark.ReturnType,
+	//		new RegisterBenchmarkVariation(genericAddBenchmark, funcType));
+	//}
 }
 
 /// <summary>

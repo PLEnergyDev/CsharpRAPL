@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -81,6 +81,8 @@ public static class VariationGenerator {
 				SetValue(inst, name, value, isField);
 			}
 
+
+			
 			Delegate benchmark = benchmarkMethod.CreateDelegate(funcType, inst);
 			genericAddBenchmark.Invoke(benchmarkCollector, new object[] {
 				benchmarkAttribute.Name == "" ? benchmark.Method.Name : benchmarkAttribute.Name,

@@ -27,7 +27,6 @@ public class Benchmark<T> : IBenchmark {
 		get => MeasureApiApi;
 		set => MeasureApiApi = value;
 	}
-	public Action Prerun { get; }
 
 	private const int MaxExecutionTime = 2700; //In seconds
 	private const int TargetLoopIterationTime = 250; //In milliseconds
@@ -39,24 +38,21 @@ public class Benchmark<T> : IBenchmark {
 
 	private string? _normalizedReturnValue;
 	private readonly FieldInfo _loopIterationsFieldInfo;
-	class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
-		public NopBenchmarkLifecycle(IBenchmark bm) {
-			Benchmark = bm;
-		}
-		public IBenchmark Benchmark { get; }
-		public IBenchmark Initialize(IBenchmark benchmark) => benchmark;
-		public IBenchmark PostRun(IBenchmark oldstate) => oldstate;
-		public IBenchmark PreRun(IBenchmark oldstate) => oldstate;
-		public IBenchmark WarmupIteration(IBenchmark oldstate) => oldstate;
-	}
 
+	IBenchmarkLifecycle blc;
+	//public Benchmark(BenchmarkInfo bi, IBenchmarkLifecycle)
+
+	public Benchmark(IBenchmarkLifecycle blc) {
+		this.blc = blc;
+		BenchmarkInfo = blc.BenchmarkInfo;
+	}
 	public Benchmark(string name, ulong iterations, Func<T> benchmark, Type? benchmarkLifecycleClass=null, bool silenceBenchmarkOutput = true,
 		string? group = null, int order = 0, int plotOrder = 0) {
 		
-		IBenchmarkLifecycle bml = benchmarkLifecycleClass == null ?
-			new NopBenchmarkLifecycle(this): (IBenchmarkLifecycle)Activator.CreateInstance(benchmarkLifecycleClass, new object[] {this});
+		//IBenchmarkLifecycle bml = benchmarkLifecycleClass == null ?
+		//	new NopBenchmarkLifecycle(this): (IBenchmarkLifecycle)Activator.CreateInstance(benchmarkLifecycleClass, new object[] {this});
 		//Prerun = prebenchmark??(() =>  Console.WriteLine("NoPre"));
-		BenchmarkLifecycle = bml;
+		//BenchmarkLifecycle = bml;
 		BenchmarkInfo = new BenchmarkInfo() {
 			Name = name,
 			Group = group,
@@ -93,7 +89,7 @@ public class Benchmark<T> : IBenchmark {
 		MeasureApiApi.Start();
 	}
 
-	private void End(T benchmarkOutput) {
+	private void End(object benchmarkOutput) {
 		MeasureApiApi.End();
 
 		//Result only valid if all results are valid
@@ -145,24 +141,13 @@ public class Benchmark<T> : IBenchmark {
 	//Writes progress to stdout if there is more than one iteration
 	public void Run() {
 		Setup();
-		object state = BenchmarkLifecycle.Initialize(this);
+		object state = BenchmarkLifecycle.Initialize();
 		for(ulong i=0;i<BenchmarkInfo.Iterations;i++) 
 			state = BenchmarkLifecycle.WarmupIteration(state);
 
 
 		for (ulong i = 0; i <= BenchmarkInfo.Iterations; i++) {
-			if (BenchmarkInfo.Iterations != 1) {
-				if (CsharpRAPLCLI.Options.Verbose) {
-					Print(Console.Write,
-						$"\r{i} of {BenchmarkInfo.Iterations} for {BenchmarkInfo.Name}. LoopIterations: {GetLoopIterations()}. " +
-						$"Time target: {TargetLoopIterationTime}. UseLoopScaling: {CsharpRAPLCLI.Options.UseLoopIterationScaling} UseIterationCalculation: {CsharpRAPLCLI.Options.UseIterationCalculation}" +
-						$" Last took: {(BenchmarkInfo.RawResults.Count > 0 ? BenchmarkInfo.RawResults[^1].ElapsedTime : 0.00):##,###}ms");
-				}
-				else {
-					Print(Console.Write, $"\r{i} of {BenchmarkInfo.Iterations} for {BenchmarkInfo.Name}");
-				}
-			}
-
+			PrintExecutionHeader(i);
 
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
 				GC.Collect();
@@ -170,9 +155,6 @@ public class Benchmark<T> : IBenchmark {
 			}
 
 			MemoryApi? memoryMeasurement = null;
-
-			
-
 
 			if (CsharpRAPLCLI.Options.CollectMemoryInformation) {
 				memoryMeasurement = new MemoryApi();
@@ -182,8 +164,9 @@ public class Benchmark<T> : IBenchmark {
 			//Actually performing benchmark and resulting IO
 			state = BenchmarkLifecycle.PreRun(state);
 			Start();
-			T benchmarkOutput = _benchmark();
-			End(benchmarkOutput);
+			//T benchmarkOutput = _benchmark();
+			state = BenchmarkLifecycle.Run(state);
+			End(state);
 
 
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
@@ -205,7 +188,7 @@ public class Benchmark<T> : IBenchmark {
 			}
 
 			if (CsharpRAPLCLI.Options.UseLoopIterationScaling &&
-			    BenchmarkInfo.RawResults[^1].ElapsedTime < TargetLoopIterationTime) {
+				BenchmarkInfo.RawResults[^1].ElapsedTime < TargetLoopIterationTime) {
 				if (ScaleLoopIterations()) {
 					i = 0;
 				}
@@ -231,6 +214,20 @@ public class Benchmark<T> : IBenchmark {
 
 		//Resets console output
 		Console.SetOut(_stdout);
+	}
+
+	private void PrintExecutionHeader(ulong i) {
+		if (BenchmarkInfo.Iterations != 1) {
+			if (CsharpRAPLCLI.Options.Verbose) {
+				Print(Console.Write,
+					$"\r{i} of {BenchmarkInfo.Iterations} for {BenchmarkInfo.Name}. LoopIterations: {GetLoopIterations()}. " +
+					$"Time target: {TargetLoopIterationTime}. UseLoopScaling: {CsharpRAPLCLI.Options.UseLoopIterationScaling} UseIterationCalculation: {CsharpRAPLCLI.Options.UseIterationCalculation}" +
+					$" Last took: {(BenchmarkInfo.RawResults.Count > 0 ? BenchmarkInfo.RawResults[^1].ElapsedTime : 0.00):##,###}ms");
+			}
+			else {
+				Print(Console.Write, $"\r{i} of {BenchmarkInfo.Iterations} for {BenchmarkInfo.Name}");
+			}
+		}
 	}
 
 	/// <summary>
@@ -350,7 +347,7 @@ public class Benchmark<T> : IBenchmark {
 		_loopIterationsFieldInfo.SetValue(null, value);
 	}
 
-	public void PreRun() {
-		Prerun?.Invoke();
-	}
+	//public void PreRun() {
+	//	Prerun?.Invoke();
+	//}
 }
