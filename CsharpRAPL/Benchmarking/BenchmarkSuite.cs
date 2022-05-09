@@ -28,7 +28,7 @@ public class BenchmarkSuite {
 		Iterations = iterations;
 		LoopIterations = loopIterations;
 	}
-
+	
 	public void RegisterBenchmark<T>(Func<T> benchmark, Type benchmarkLifecycleClass, int order = 0) {
 		RegisterBenchmark(null, benchmark, benchmarkLifecycleClass, order);
 	}
@@ -45,7 +45,7 @@ public class BenchmarkSuite {
 		if (!_registeredBenchmarkClasses.Contains(benchmark.Method.DeclaringType!)) {
 			RegisterBenchmarkClass(benchmark.Method.DeclaringType!);
 		}
-
+		
 		Benchmarks.Add(new Benchmark<T>(name, Iterations, benchmark, benchmarkLifecycleClass, true, group, order, plotOrder));
 	}
 

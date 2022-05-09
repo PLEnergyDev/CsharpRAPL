@@ -15,6 +15,11 @@ using CsharpRAPL.Measuring;
 
 namespace CsharpRAPL.Benchmarking;
 
+public interface IBenchmarkState {
+	public ulong LoopIterations { get; set; }
+	public ulong Iterations { get; set; }
+}
+
 public class Benchmark<T> : IBenchmark {
 	public IBenchmarkLifecycle BenchmarkLifecycle { get; init; }
 
@@ -37,7 +42,7 @@ public class Benchmark<T> : IBenchmark {
 	private readonly Func<T> _benchmark;
 
 	private string? _normalizedReturnValue;
-	private readonly FieldInfo _loopIterationsFieldInfo;
+	//private readonly FieldInfo _loopIterationsFieldInfo;
 
 	//public Benchmark(BenchmarkInfo bi, IBenchmarkLifecycle)
 
@@ -48,6 +53,7 @@ public class Benchmark<T> : IBenchmark {
 	public Benchmark(string name, ulong iterations, Func<T> benchmark, Type? benchmarkLifecycleClass=null, bool silenceBenchmarkOutput = true,
 		string? group = null, int order = 0, int plotOrder = 0) {
 		
+
 		//IBenchmarkLifecycle bml = benchmarkLifecycleClass == null ?
 		//	new NopBenchmarkLifecycle(this): (IBenchmarkLifecycle)Activator.CreateInstance(benchmarkLifecycleClass, new object[] {this});
 		//Prerun = prebenchmark??(() =>  Console.WriteLine("NoPre"));
@@ -73,11 +79,11 @@ public class Benchmark<T> : IBenchmark {
 		_stdout = Console.Out;
 
 
-		Debug.Assert(_benchmark.Method.DeclaringType != null, "_benchmark.Method.DeclaringType != null");
-		_loopIterationsFieldInfo =
-			_benchmark.Method.DeclaringType.GetField("LoopIterations", BindingFlags.Public | BindingFlags.Static) ??
-			throw new InvalidOperationException(
-				$"Your class '{_benchmark.Method.DeclaringType.Name}' must have the field '{name}'.");
+		//Debug.Assert(_benchmark.Method.DeclaringType != null, "_benchmark.Method.DeclaringType != null");
+		//_loopIterationsFieldInfo =
+		//	_benchmark.Method.DeclaringType.GetField("LoopIterations", BindingFlags.Public | BindingFlags.Static) ??
+		//	throw new InvalidOperationException(
+		//		$"Your class '{_benchmark.Method.DeclaringType.Name}' must have the field '{name}'.");
 
 		if (!silenceBenchmarkOutput) {
 			_benchmarkOutputStream = _stdout;
@@ -128,14 +134,19 @@ public class Benchmark<T> : IBenchmark {
 			BenchmarkInfo.Iterations = IterationCalculationAll();
 		}
 
-		ulong oldLoopIter = GetLoopIterations();
+		ulong oldLoopIter = BenchmarkInfo.LoopIterations;
 		// Get normalized return value
+
 		SetLoopIterations(10); //TODO: Macrobenchmarks??	
 		_normalizedReturnValue = _benchmark()?.ToString() ?? string.Empty;
 		SetLoopIterations(oldLoopIter);
 	}
 
-
+	IBenchmarkState LegacyState { get; set; } 
+	class BenchmarkStateLegacyImpl : IBenchmarkState {
+		public ulong LoopIterations { get; set; }
+		public ulong Iterations { get; set; }
+	}
 	//Performs benchmarking
 	//Writes progress to stdout if there is more than one iteration
 	public void Run() {
@@ -339,15 +350,16 @@ public class Benchmark<T> : IBenchmark {
 			2));
 	}
 
-	private ulong GetLoopIterations() {
-		return (ulong)(_loopIterationsFieldInfo.GetValue(null) ??
-		               throw new InvalidOperationException(
-			               $"Your class '{_benchmark.Method.DeclaringType?.Name}' must have the field 'LoopIterations'."));
-	}
+	//private ulong GetLoopIterations() {
+	//	return BenchmarkInfo.LoopIterations;
+	//	//return (ulong)(_loopIterationsFieldInfo.GetValue(null) ??
+	//	//               throw new InvalidOperationException(
+	//	//	               $"Your class '{_benchmark.Method.DeclaringType?.Name}' must have the field 'LoopIterations'."));
+	//}
 
-	private void SetLoopIterations(ulong value) {
-		_loopIterationsFieldInfo.SetValue(null, value);
-	}
+	//private void SetLoopIterations(ulong value) {
+	//	_loopIterationsFieldInfo.SetValue(null, value);
+	//}
 
 	//public void PreRun() {
 	//	Prerun?.Invoke();
