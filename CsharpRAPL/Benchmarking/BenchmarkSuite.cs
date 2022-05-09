@@ -29,9 +29,9 @@ public class BenchmarkSuite {
 		LoopIterations = loopIterations;
 	}
 	
-	public void RegisterBenchmark<T>(Func<T> benchmark, Type benchmarkLifecycleClass, int order = 0) {
-		RegisterBenchmark(null, benchmark, benchmarkLifecycleClass, order);
-	}
+	//public void RegisterBenchmark<T>(Func<T> benchmark, Type benchmarkLifecycleClass, int order = 0) {
+	//	RegisterBenchmark(null, benchmark, benchmarkLifecycleClass, order);
+	//}
 
 	public void RegisterBenchmark<T>(string? group, Func<T> benchmark, Type benchmarkLifecycleClass, int order = 0) {
 		RegisterBenchmark(benchmark.Method.Name, group, benchmark, benchmarkLifecycleClass, order);
