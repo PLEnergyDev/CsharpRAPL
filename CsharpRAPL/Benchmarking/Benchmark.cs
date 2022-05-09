@@ -46,27 +46,7 @@ public class Benchmark<T> : IBenchmark {
 
 	//public Benchmark(BenchmarkInfo bi, IBenchmarkLifecycle)
 
-	public Benchmark(IBenchmarkLifecycle blc) {
-		BenchmarkLifecycle = blc;
-		BenchmarkInfo = blc.BenchmarkInfo;
-	}
-	public Benchmark(string name, ulong iterations, Func<T> benchmark, Type? benchmarkLifecycleClass=null, bool silenceBenchmarkOutput = true,
-		string? group = null, int order = 0, int plotOrder = 0) {
-		
-
-		//IBenchmarkLifecycle bml = benchmarkLifecycleClass == null ?
-		//	new NopBenchmarkLifecycle(this): (IBenchmarkLifecycle)Activator.CreateInstance(benchmarkLifecycleClass, new object[] {this});
-		//Prerun = prebenchmark??(() =>  Console.WriteLine("NoPre"));
-		//BenchmarkLifecycle = bml;
-		BenchmarkInfo = new BenchmarkInfo() {
-			Name = name,
-			Group = group,
-			Iterations = iterations,
-			Order = order,
-			Parameters = new VariationInstance(),
-			PlotOrder = plotOrder
-		};
-
+	public Benchmark(IBenchmarkLifecycle blc, bool silenceBenchmarkOutput = true) {
 		MeasureApiApi = null!;
 		if (CsharpRAPLCLI.Options.Json) {
 			ResultsSerializer = new JsonResultSerializer();
@@ -75,20 +55,41 @@ public class Benchmark<T> : IBenchmark {
 			ResultsSerializer = new CSVResultSerializer();
 		}
 
-		_benchmark = benchmark;
+		BenchmarkLifecycle = blc;
+		BenchmarkInfo = blc.BenchmarkInfo;
 		_stdout = Console.Out;
-
-
-		//Debug.Assert(_benchmark.Method.DeclaringType != null, "_benchmark.Method.DeclaringType != null");
-		//_loopIterationsFieldInfo =
-		//	_benchmark.Method.DeclaringType.GetField("LoopIterations", BindingFlags.Public | BindingFlags.Static) ??
-		//	throw new InvalidOperationException(
-		//		$"Your class '{_benchmark.Method.DeclaringType.Name}' must have the field '{name}'.");
-
 		if (!silenceBenchmarkOutput) {
 			_benchmarkOutputStream = _stdout;
 		}
 	}
+	//public Benchmark(string name, ulong iterations, Func<T> benchmark, Type? benchmarkLifecycleClass=null, bool silenceBenchmarkOutput = true,
+	//	string? group = null, int order = 0, int plotOrder = 0) {
+		
+
+	//	//IBenchmarkLifecycle bml = benchmarkLifecycleClass == null ?
+	//	//	new NopBenchmarkLifecycle(this): (IBenchmarkLifecycle)Activator.CreateInstance(benchmarkLifecycleClass, new object[] {this});
+	//	//Prerun = prebenchmark??(() =>  Console.WriteLine("NoPre"));
+	//	//BenchmarkLifecycle = bml;
+	//	BenchmarkInfo = new BenchmarkInfo() {
+	//		Name = name,
+	//		Group = group,
+	//		Iterations = iterations,
+	//		Order = order,
+	//		Parameters = new VariationInstance(),
+	//		PlotOrder = plotOrder
+	//	};
+
+	//	_benchmark = benchmark;
+
+
+	//	//Debug.Assert(_benchmark.Method.DeclaringType != null, "_benchmark.Method.DeclaringType != null");
+	//	//_loopIterationsFieldInfo =
+	//	//	_benchmark.Method.DeclaringType.GetField("LoopIterations", BindingFlags.Public | BindingFlags.Static) ??
+	//	//	throw new InvalidOperationException(
+	//	//		$"Your class '{_benchmark.Method.DeclaringType.Name}' must have the field '{name}'.");
+
+
+	//}
 
 	private void Start() {
 		MeasureApiApi.Start();
@@ -350,16 +351,18 @@ public class Benchmark<T> : IBenchmark {
 			2));
 	}
 
-	//private ulong GetLoopIterations() {
+	private ulong GetLoopIterations() {
+		return LegacyState.LoopIterations;
 	//	return BenchmarkInfo.LoopIterations;
 	//	//return (ulong)(_loopIterationsFieldInfo.GetValue(null) ??
 	//	//               throw new InvalidOperationException(
 	//	//	               $"Your class '{_benchmark.Method.DeclaringType?.Name}' must have the field 'LoopIterations'."));
-	//}
+	}
 
-	//private void SetLoopIterations(ulong value) {
+	private void SetLoopIterations(ulong value) {
+		LegacyState.LoopIterations = value;
 	//	_loopIterationsFieldInfo.SetValue(null, value);
-	//}
+	}
 
 	//public void PreRun() {
 	//	Prerun?.Invoke();

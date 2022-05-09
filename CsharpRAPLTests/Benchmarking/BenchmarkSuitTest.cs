@@ -3,11 +3,35 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using CsharpRAPL.Benchmarking;
+using CsharpRAPL.Benchmarking.Attributes;
 using CsharpRAPL.Benchmarking.Variation;
 using CsharpRAPL.CommandLine;
 using NUnit.Framework;
 
 namespace CsharpRAPL.Tests.Benchmarking;
+
+public static class BSExt {
+
+	public static void RegisterBenchmark<T>(this BenchmarkSuite bs, string name, string? group, Func<T> benchmark, Type benchmarkLifecycleClass, int order = 0, int plotOrder = 0) {
+		if (benchmark.Method.IsAnonymous()) {
+			throw new NotSupportedException("Adding benchmarks through anonymous methods is not supported");
+		}
+		var attr = new BenchmarkAttribute(group, name, benchmarkLifecycleClass, order, false, name, plotOrder);
+		bs.RegisterBenchmark(benchmark.Method, attr);
+		//if (!_registeredBenchmarkClasses.Contains(benchmark.Method.DeclaringType!)) {
+		//	RegisterBenchmarkClass(benchmark.Method.DeclaringType!);
+		//}
+		//IBenchmarkLifecycle bs;
+		//Benchmarks.Add(new Benchmark<T>(name, Iterations, benchmark, benchmarkLifecycleClass, true, group, order, plotOrder));
+	}
+
+	public static void RegisterBenchmark<T>(this BenchmarkSuite bs, string? group, Func<T> benchmark, Type benchmarkLifecycleClass, int order = 0) {
+		bs.RegisterBenchmark(benchmark.Method.Name, group, benchmark, benchmarkLifecycleClass, order);
+	}
+	public static void RegisterBenchmark<T>(this BenchmarkSuite bs, Func<T> benchmark, Type benchmarkLifecycleClass, int order = 0) {
+		bs.RegisterBenchmark(null, benchmark, benchmarkLifecycleClass, order);
+	}
+}
 
 public class BenchmarkSuitTest {
 	public static ulong Iterations;
@@ -20,7 +44,7 @@ public class BenchmarkSuitTest {
 		for (ulong i = 0; i < LoopIterations; i++) {
 			Thread.Sleep(10);
 		}
-
+		
 		return result;
 	}
 

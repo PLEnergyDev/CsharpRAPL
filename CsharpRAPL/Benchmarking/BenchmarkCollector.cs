@@ -44,36 +44,20 @@ public class BenchmarkCollector : BenchmarkSuite {
 		foreach (MethodInfo benchmarkMethod in methods) {
 			var benchmarkAttribute = benchmarkMethod.GetCustomAttribute<BenchmarkAttribute>()!;
 			if (benchmarkAttribute.Skip ||
-			    benchmarkMethod.DeclaringType!.GetCustomAttribute<SkipBenchmarksAttribute>() != null) {
+				benchmarkMethod.DeclaringType!.GetCustomAttribute<SkipBenchmarksAttribute>() != null) {
 				continue;
 			}
 
-			
+
 
 			//SetField(benchmarkMethod.DeclaringType!, nameof(LoopIterations), LoopIterations);
 			//SetField(benchmarkMethod.DeclaringType!, nameof(Iterations), Iterations);
 
-			
+
 
 
 			CheckMethodValidity(benchmarkMethod);
-			var bi = new BenchmarkInfo {
-				Iterations = Iterations,
-				LoopIterations = LoopIterations,
-				Name = benchmarkAttribute.Name == "" ? benchmarkMethod.Name : benchmarkAttribute.Name,
-				Group = benchmarkAttribute.Group!,
-				Order = benchmarkAttribute.Order,
-				PlotOrder = benchmarkAttribute.PlotOrder,
-				//benchmarkDelegate,
-
-				//benchmarkAttribute.BenchmarkLifecycleClass,
-				//PreBenchLookup.TryGetValue(benchmarkMethod.Name, out var preb)?preb.CreateDelegate<Action>():()=>{},
-				//benchmarkAttribute.Order,
-				//benchmarkAttribute.PlotOrder
-			};
-			IBenchmarkLifecycle nopcycle = new NopBenchmarkLifecycle(bi, benchmarkMethod);
-
-			Benchmarks.Add(new Benchmark<object>(nopcycle)); 
+			RegisterBenchmark(benchmarkMethod, benchmarkAttribute);
 
 
 
@@ -113,6 +97,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 			//});
 		}
 	}
+
 
 
 	/// <summary>

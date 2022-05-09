@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using CsharpRAPL.Benchmarking.Attributes;
 using CsharpRAPL.Benchmarking.Variation;
 using CsharpRAPL.CommandLine;
 using CsharpRAPL.Plotting;
@@ -29,25 +30,10 @@ public class BenchmarkSuite {
 		LoopIterations = loopIterations;
 	}
 	
-	//public void RegisterBenchmark<T>(Func<T> benchmark, Type benchmarkLifecycleClass, int order = 0) {
-	//	RegisterBenchmark(null, benchmark, benchmarkLifecycleClass, order);
-	//}
 
-	public void RegisterBenchmark<T>(string? group, Func<T> benchmark, Type benchmarkLifecycleClass, int order = 0) {
-		RegisterBenchmark(benchmark.Method.Name, group, benchmark, benchmarkLifecycleClass, order);
-	}
 
-	public void RegisterBenchmark<T>(string name, string? group, Func<T> benchmark, Type benchmarkLifecycleClass, int order = 0, int plotOrder = 0) {
-		if (benchmark.Method.IsAnonymous()) {
-			throw new NotSupportedException("Adding benchmarks through anonymous methods is not supported");
-		}
 
-		if (!_registeredBenchmarkClasses.Contains(benchmark.Method.DeclaringType!)) {
-			RegisterBenchmarkClass(benchmark.Method.DeclaringType!);
-		}
-		
-		Benchmarks.Add(new Benchmark<T>(name, Iterations, benchmark, benchmarkLifecycleClass, true, group, order, plotOrder));
-	}
+	
 
 	public void RegisterBenchmarkVariation<T>(string name, string? group, Func<T> benchmark, Type benchmarkLifecycleClass,
 		VariationInstance parameters, int order = 0, int plotOrder = 0, string namePostfix = "") {
@@ -69,6 +55,25 @@ public class BenchmarkSuite {
 		RegisterBenchmarkVariation(benchmark.Method.Name, group, benchmark, benchmarkLifecycleClass, parameters, order, plotOrder, namePostfix);
 	}
 
+	public void RegisterBenchmark(MethodInfo benchmarkMethod, BenchmarkAttribute benchmarkAttribute) {
+		var bi = new BenchmarkInfo {
+			Iterations = Iterations,
+			LoopIterations = LoopIterations,
+			Name = benchmarkAttribute.Name == "" ? benchmarkMethod.Name : benchmarkAttribute.Name,
+			Group = benchmarkAttribute.Group!,
+			Order = benchmarkAttribute.Order,
+			PlotOrder = benchmarkAttribute.PlotOrder,
+			//benchmarkDelegate,
+
+			//benchmarkAttribute.BenchmarkLifecycleClass,
+			//PreBenchLookup.TryGetValue(benchmarkMethod.Name, out var preb)?preb.CreateDelegate<Action>():()=>{},
+			//benchmarkAttribute.Order,
+			//benchmarkAttribute.PlotOrder
+		};
+		IBenchmarkLifecycle nopcycle = new NopBenchmarkLifecycle(bi, benchmarkMethod);
+
+		Benchmarks.Add(new Benchmark<object>(nopcycle));
+	}
 	private void RegisterBenchmarkClass(Type benchmarkClass) {
 		SetField(benchmarkClass, IterationsName, Iterations);
 		SetField(benchmarkClass, LoopIterationsName, LoopIterations);
