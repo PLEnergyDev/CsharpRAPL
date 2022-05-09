@@ -140,8 +140,11 @@ public class Benchmark<T> : IBenchmark {
 	//Performs benchmarking
 	//Writes progress to stdout if there is more than one iteration
 	public void Run() {
+		Console.WriteLine($"BenchmarkLifecycle: {BenchmarkLifecycle?.GetType().FullName}") ;
 		Setup();
+		Console.WriteLine("Initializing benchmark");
 		object state = BenchmarkLifecycle.Initialize();
+		Console.WriteLine("Warmup");
 		for(ulong i=0;i<BenchmarkInfo.Iterations;i++) 
 			state = BenchmarkLifecycle.WarmupIteration(state);
 
