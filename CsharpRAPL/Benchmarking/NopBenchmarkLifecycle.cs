@@ -7,7 +7,7 @@ namespace CsharpRAPL.Benchmarking;
 public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 	public NopBenchmarkLifecycle(BenchmarkInfo bm, MethodInfo benchmarkedMethod) {
 		BenchmarkedMethod = benchmarkedMethod;
-
+		BenchmarkInfo = bm;
 		object? instance = benchmarkedMethod.IsStatic ? null : Activator.CreateInstance(benchmarkedMethod.DeclaringType!);
 		Invoker = (benchmarkedMethod.GetParameters().Length == 0) ?
 			(state) => benchmarkedMethod.Invoke(null, null)

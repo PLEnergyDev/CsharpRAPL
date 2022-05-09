@@ -104,7 +104,7 @@ public class BenchmarkSuite {
 	}
 
 	///TODO: sanity
-	public List<IBenchmarkLifecycle> benchmarks = new List<IBenchmarkLifecycle>();
+	//public List<IBenchmarkLifecycle> benchmarks = new List<IBenchmarkLifecycle>();
 
 	public void RunAll(bool warmup = true) {
 		if (Environment.OSVersion.Platform != PlatformID.Unix && !CsharpRAPLCLI.Options.OnlyTime) {
