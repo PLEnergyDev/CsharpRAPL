@@ -39,11 +39,10 @@ public class Benchmark<T> : IBenchmark {
 	private string? _normalizedReturnValue;
 	private readonly FieldInfo _loopIterationsFieldInfo;
 
-	IBenchmarkLifecycle blc;
 	//public Benchmark(BenchmarkInfo bi, IBenchmarkLifecycle)
 
 	public Benchmark(IBenchmarkLifecycle blc) {
-		this.blc = blc;
+		BenchmarkLifecycle = blc;
 		BenchmarkInfo = blc.BenchmarkInfo;
 	}
 	public Benchmark(string name, ulong iterations, Func<T> benchmark, Type? benchmarkLifecycleClass=null, bool silenceBenchmarkOutput = true,
