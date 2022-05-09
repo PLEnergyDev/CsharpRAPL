@@ -5,7 +5,6 @@ using CsharpRAPL.Data;
 namespace CsharpRAPL.Benchmarking;
 
 public class BenchmarkInfo {
-	public IBenchmarkLifecyce BenchmarkLifecycle { get; init; }
 	public string Name { get; init; } = "";
 	public string? Group { get; init; }
 	public int Order { get; init; }

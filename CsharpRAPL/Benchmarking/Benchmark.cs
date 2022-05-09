@@ -16,6 +16,8 @@ using CsharpRAPL.Measuring;
 namespace CsharpRAPL.Benchmarking;
 
 public class Benchmark<T> : IBenchmark {
+	public IBenchmarkLifecycle BenchmarkLifecycle { get; init; }
+
 	public BenchmarkInfo BenchmarkInfo { get; }
 	private IMeasureApi MeasureApiApi { get; set; }
 	public IResultsSerializer ResultsSerializer { get; }
@@ -51,11 +53,11 @@ public class Benchmark<T> : IBenchmark {
 	public Benchmark(string name, ulong iterations, Func<T> benchmark, Type? benchmarkLifecycleClass=null, bool silenceBenchmarkOutput = true,
 		string? group = null, int order = 0, int plotOrder = 0) {
 		
-		IBenchmarkLifecyce bml = benchmarkLifecycleClass == null ?
-			new NopBenchmarkLifecycle(this): (IBenchmarkLifecyce)Activator.CreateInstance(benchmarkLifecycleClass, new object[] {this});
+		IBenchmarkLifecycle bml = benchmarkLifecycleClass == null ?
+			new NopBenchmarkLifecycle(this): (IBenchmarkLifecycle)Activator.CreateInstance(benchmarkLifecycleClass, new object[] {this});
 		//Prerun = prebenchmark??(() =>  Console.WriteLine("NoPre"));
+		BenchmarkLifecycle = bml;
 		BenchmarkInfo = new BenchmarkInfo() {
-			BenchmarkLifecycle = bml,
 			Name = name,
 			Group = group,
 			Iterations = iterations,
@@ -143,9 +145,9 @@ public class Benchmark<T> : IBenchmark {
 	//Writes progress to stdout if there is more than one iteration
 	public void Run() {
 		Setup();
-		object state = BenchmarkInfo.BenchmarkLifecycle.Initialize(this);
+		object state = BenchmarkLifecycle.Initialize(this);
 		for(ulong i=0;i<BenchmarkInfo.Iterations;i++) 
-			state = BenchmarkInfo.BenchmarkLifecycle.WarmupIteration(state);
+			state = BenchmarkLifecycle.WarmupIteration(state);
 
 
 		for (ulong i = 0; i <= BenchmarkInfo.Iterations; i++) {
@@ -178,7 +180,7 @@ public class Benchmark<T> : IBenchmark {
 			}
 
 			//Actually performing benchmark and resulting IO
-			state = BenchmarkInfo.BenchmarkLifecycle.PreRun(state);
+			state = BenchmarkLifecycle.PreRun(state);
 			Start();
 			T benchmarkOutput = _benchmark();
 			End(benchmarkOutput);

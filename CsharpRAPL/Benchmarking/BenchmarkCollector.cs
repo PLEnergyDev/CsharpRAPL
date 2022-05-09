@@ -7,25 +7,6 @@ using CsharpRAPL.Benchmarking.Variation;
 using CsharpRAPL.CommandLine;
 
 namespace CsharpRAPL.Benchmarking;
-public interface IBenchmarkLifecyce {
-	public IBenchmark Benchmark { get; }
-	public Type Type { get; }
-	public object Initialize(IBenchmark benchmark);
-	public object WarmupIteration(object oldstate);
-	public object PreRun(object oldstate);
-	public object PostRun(object oldstate);
-}
-public interface IBenchmarkLifecycle <T> : IBenchmarkLifecyce{
-	Type IBenchmarkLifecyce.Type => typeof(T);
-	object IBenchmarkLifecyce.Initialize(IBenchmark benchmark) => Initialize(benchmark);
-	object IBenchmarkLifecyce.WarmupIteration(object oldstate) => WarmupIteration((T)oldstate);
-	object IBenchmarkLifecyce.PreRun(object oldstate) => PreRun((T)oldstate);
-	object IBenchmarkLifecyce.PostRun(object oldstate) => PostRun((T)oldstate);
-	public T Initialize(IBenchmark benchmark);
-	public T WarmupIteration(T oldstate);
-	public T PreRun(T oldstate);
-	public T PostRun(T oldstate);
-}
 public class BenchmarkCollector : BenchmarkSuite {
 	/// <summary>
 	/// A map of a return type and a variation of the benchmark method using the return type as the generic argument
@@ -127,7 +108,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 
 
 	/// <summary>
-	/// Checks if the method has no parameters and does not have void as the return type.
+	/// Checks if the method has none or are single parameter and does not have void as the return type.
 	/// </summary>
 	/// <param name="benchmark"></param>
 	/// <exception cref="NotSupportedException">Throws NotSupportedException if the method has parameters or if the method returns void</exception>
@@ -137,7 +118,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 				$"The benchmark '{benchmark.Name}' is returning void which isn't supported.");
 		}
 
-		if (benchmark.GetParameters().Length != 0) {
+		if (benchmark.GetParameters().Length >1) {
 			throw new NotSupportedException($"The Benchmark '{benchmark.Name}' has parameters which isn't supported.");
 		}
 	}
