@@ -51,7 +51,7 @@ public class BenchmarkCollector : BenchmarkSuite {
 			//SetField(benchmarkMethod.DeclaringType!, nameof(LoopIterations), LoopIterations);
 			//SetField(benchmarkMethod.DeclaringType!, nameof(Iterations), Iterations);
 
-			CheckMethodValidity(benchmarkMethod);
+			//CheckMethodValidity(benchmarkMethod);
 			RegisterBenchmark(benchmarkMethod, benchmarkAttribute);
 
 

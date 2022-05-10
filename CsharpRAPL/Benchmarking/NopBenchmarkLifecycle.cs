@@ -12,7 +12,6 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 		BenchmarkedMethod = benchmarkedMethod;
 		BenchmarkInfo = bm;
 	}
-	//Func<object, object> Invoker { get; }
 	public MethodInfo BenchmarkedMethod { get; }
 
 	public BenchmarkInfo BenchmarkInfo { get; }
@@ -29,6 +28,7 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 			paramvalues[v.Position] = v.GetCustomAttribute<BenchParameterAttribute>()?.BenchmarkParameterSource switch {
 				"LoopIterations" => BenchmarkInfo.LoopIterations,
 				"Iterations" => BenchmarkInfo.Iterations,
+				null => throw new NotSupportedException($"Unmarked parameter: [{v.Name}] position:[{v.Position}] of method: [{BenchmarkedMethod.Name}] -- mark with {nameof(BenchParameterAttribute)}" ),
 				string parameterName => throw new InvalidOperationException($"Unknown parameter: [{parameterName}] position:[{v.Position}] of method: [{BenchmarkedMethod.Name}]")
 			};
 		}
