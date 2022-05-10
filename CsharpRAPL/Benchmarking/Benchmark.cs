@@ -147,7 +147,7 @@ public class Benchmark<T> : IBenchmark {
 *******/
 	}
 
-	IBenchmarkState LegacyState { get; set; } 
+	//IBenchmarkState LegacyState { get; set; } 
 	class BenchmarkStateLegacyImpl : IBenchmarkState {
 		public ulong LoopIterations { get; set; }
 		public ulong Iterations { get; set; }
@@ -158,7 +158,7 @@ public class Benchmark<T> : IBenchmark {
 		Console.WriteLine($"BenchmarkLifecycle: {BenchmarkLifecycle?.GetType().FullName}") ;
 		Setup();
 		Console.WriteLine("Initializing benchmark");
-		object state = BenchmarkLifecycle.Initialize();
+		object state = BenchmarkLifecycle.Initialize(this);
 		Console.WriteLine("Warmup");
 		for(ulong i=0;i<BenchmarkInfo.Iterations;i++) 
 			state = BenchmarkLifecycle.WarmupIteration(state);
@@ -356,7 +356,8 @@ public class Benchmark<T> : IBenchmark {
 	}
 
 	private ulong GetLoopIterations() {
-		return LegacyState.LoopIterations;
+		return BenchmarkInfo.LoopIterations;
+		//return LegacyState.LoopIterations;
 	//	return BenchmarkInfo.LoopIterations;
 	//	//return (ulong)(_loopIterationsFieldInfo.GetValue(null) ??
 	//	//               throw new InvalidOperationException(
@@ -364,7 +365,7 @@ public class Benchmark<T> : IBenchmark {
 	}
 
 	private void SetLoopIterations(ulong value) {
-		LegacyState.LoopIterations = value;
+		BenchmarkInfo.LoopIterations = value;
 	//	_loopIterationsFieldInfo.SetValue(null, value);
 	}
 
