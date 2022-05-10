@@ -121,44 +121,44 @@ public class BenchmarkSuitTest {
 		Assert.AreEqual(42, benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Order);
 	}
 
-	[Test]
-	public void TestRegisterBenchmarkVariation01() {
-		var benchmarkSuit = new BenchmarkSuite();
+	//[Test]
+	//public void TestRegisterBenchmarkVariation01() {
+	//	var benchmarkSuit = new BenchmarkSuite();
 
-		benchmarkSuit.RegisterBenchmarkVariation("TestGroup", DummyBenchmark, DummyPrerun, new VariationInstance() { Values = { } });
+	//	benchmarkSuit.RegisterBenchmarkVariation("TestGroup", DummyBenchmark, DummyPrerun, new VariationInstance() { Values = { } });
 
-		Assert.AreEqual("TestGroup", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Group);
-		Assert.AreEqual(1, benchmarkSuit.GetBenchmarks().Count);
-		Assert.AreEqual(50, benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Iterations);
-		Assert.False(benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.HasRun);
-		Assert.AreEqual("DummyBenchmark", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Name);
-		Assert.AreEqual(0, benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Order);
-	}
+	//	Assert.AreEqual("TestGroup", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Group);
+	//	Assert.AreEqual(1, benchmarkSuit.GetBenchmarks().Count);
+	//	Assert.AreEqual(50, benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Iterations);
+	//	Assert.False(benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.HasRun);
+	//	Assert.AreEqual("DummyBenchmark", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Name);
+	//	Assert.AreEqual(0, benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Order);
+	//}
 
-	[Test]
-	public void TestRegisterBenchmarkVariation02() {
-		var benchmarkSuit = new BenchmarkSuite();
+	//[Test]
+	//public void TestRegisterBenchmarkVariation02() {
+	//	var benchmarkSuit = new BenchmarkSuite();
 
-		benchmarkSuit.RegisterBenchmarkVariation("TestBenchmark", "TestGroup", DummyBenchmark, null, new VariationInstance(),
-			42);
+	//	benchmarkSuit.RegisterBenchmarkVariation("TestBenchmark", "TestGroup", DummyBenchmark, null, new VariationInstance(),
+	//		42);
 
-		Assert.AreEqual("TestGroup", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Group);
-		Assert.AreEqual(1, benchmarkSuit.GetBenchmarks().Count);
-		Assert.AreEqual(50, benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Iterations);
-		Assert.False(benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.HasRun);
-		Assert.AreEqual("TestBenchmark", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Name);
-		Assert.AreEqual(42, benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Order);
-	}
+	//	Assert.AreEqual("TestGroup", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Group);
+	//	Assert.AreEqual(1, benchmarkSuit.GetBenchmarks().Count);
+	//	Assert.AreEqual(50, benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Iterations);
+	//	Assert.False(benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.HasRun);
+	//	Assert.AreEqual("TestBenchmark", benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Name);
+	//	Assert.AreEqual(42, benchmarkSuit.GetBenchmarks()[0].BenchmarkInfo.Order);
+	//}
 
-	[Test]
-	public void TestRegisterBenchmarkVariation03() {
-		var benchmarkSuit = new BenchmarkSuite();
-		var exception =
-			Assert.Throws<NotSupportedException>(() =>
-				benchmarkSuit.RegisterBenchmarkVariation("TestGroup", () => { return "Test"; }, DummyPrerun,
-					new VariationInstance()));
-		Assert.AreEqual(exception?.Message, "Adding benchmarks through anonymous methods is not supported");
-	}
+	//[Test]
+	//public void TestRegisterBenchmarkVariation03() {
+	//	var benchmarkSuit = new BenchmarkSuite();
+	//	var exception =
+	//		Assert.Throws<NotSupportedException>(() =>
+	//			benchmarkSuit.RegisterBenchmarkVariation("TestGroup", () => { return "Test"; }, DummyPrerun,
+	//				new VariationInstance()));
+	//	Assert.AreEqual(exception?.Message, "Adding benchmarks through anonymous methods is not supported");
+	//}
 
 
 	[Test]

@@ -14,7 +14,7 @@ public class BenchmarkTest {
 			Group = group,
 			Iterations = iterations,
 			Order = order,
-			Parameters = new VariationInstance(),
+			//Parameters = new VariationInstance(),
 			PlotOrder = plotOrder
 		};
 		return new Benchmark<T>(new NopBenchmarkLifecycle(bi, benchmark.Method), silenceBenchmarkOutput);

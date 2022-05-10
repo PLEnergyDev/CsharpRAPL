@@ -35,25 +35,25 @@ public class BenchmarkSuite {
 
 	
 
-	public void RegisterBenchmarkVariation<T>(string name, string? group, Func<T> benchmark, Type benchmarkLifecycleClass,
-		VariationInstance parameters, int order = 0, int plotOrder = 0, string namePostfix = "") {
-		if (benchmark.Method.IsAnonymous()) {
-			throw new NotSupportedException("Adding benchmarks through anonymous methods is not supported");
-		}
+	//public void RegisterBenchmarkVariation<T>(string name, string? group, Func<T> benchmark, Type benchmarkLifecycleClass,
+	//	VariationInstance parameters, int order = 0, int plotOrder = 0, string namePostfix = "") {
+	//	if (benchmark.Method.IsAnonymous()) {
+	//		throw new NotSupportedException("Adding benchmarks through anonymous methods is not supported");
+	//	}
 
-		if (!_registeredBenchmarkClasses.Contains(benchmark.Method.DeclaringType!)) {
-			RegisterBenchmarkClass(benchmark.Method.DeclaringType!);
-		}
+	//	if (!_registeredBenchmarkClasses.Contains(benchmark.Method.DeclaringType!)) {
+	//		RegisterBenchmarkClass(benchmark.Method.DeclaringType!);
+	//	}
 
-		var bench = new Benchmark<T>($"{name}{namePostfix}", Iterations, benchmark, benchmarkLifecycleClass,true, group, order, plotOrder)
-			{ BenchmarkInfo = { Parameters = parameters } };
-		Benchmarks.Add(bench);
-	}
+	//	var bench = new Benchmark<T>($"{name}{namePostfix}", Iterations, benchmark, benchmarkLifecycleClass,true, group, order, plotOrder)
+	//		{ BenchmarkInfo = { Parameters = parameters } };
+	//	Benchmarks.Add(bench);
+	//}
 
-	public void RegisterBenchmarkVariation<T>(string? group, Func<T> benchmark, Type benchmarkLifecycleClass, VariationInstance parameters,
-		int order = 0, int plotOrder = 0, string namePostfix = "") {
-		RegisterBenchmarkVariation(benchmark.Method.Name, group, benchmark, benchmarkLifecycleClass, parameters, order, plotOrder, namePostfix);
-	}
+	//public void RegisterBenchmarkVariation<T>(string? group, Func<T> benchmark, Type benchmarkLifecycleClass, VariationInstance parameters,
+	//	int order = 0, int plotOrder = 0, string namePostfix = "") {
+	//	RegisterBenchmarkVariation(benchmark.Method.Name, group, benchmark, benchmarkLifecycleClass, parameters, order, plotOrder, namePostfix);
+	//}
 
 	public void RegisterBenchmark(MethodInfo benchmarkMethod, BenchmarkAttribute benchmarkAttribute) {
 		var bi = new BenchmarkInfo {
@@ -107,9 +107,6 @@ public class BenchmarkSuite {
 		CheckFieldValidity(benchmarkClass, name);
 		benchmarkClass.GetField(name, BindingFlags.Public | BindingFlags.Static)?.SetValue(null, value);
 	}
-
-	///TODO: sanity
-	//public List<IBenchmarkLifecycle> benchmarks = new List<IBenchmarkLifecycle>();
 
 	public void RunAll(bool warmup = true) {
 		if (Environment.OSVersion.Platform != PlatformID.Unix && !CsharpRAPLCLI.Options.OnlyTime) {

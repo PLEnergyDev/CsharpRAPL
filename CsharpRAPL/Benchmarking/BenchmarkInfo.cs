@@ -13,7 +13,7 @@ public class BenchmarkInfo {
 	public double ElapsedTime { get; set; }
 	public ulong Iterations { get; set; }
 	public ulong LoopIterations { get; set; }
-	public VariationInstance Parameters { get; set; } = new();
+	//public VariationInstance Parameters { get; set; } = new();
 	public List<BenchmarkResult> RawResults { get; init; } = new();
 	public List<BenchmarkResult> NormalizedResults { get; init; } = new();
 }

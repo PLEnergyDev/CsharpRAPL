@@ -62,39 +62,39 @@ public static class VariationGenerator {
 		return input;
 	}
 
-	//TODO: Maybe put variations in to a table to reuse so we don't have to create instances for all benchmarks
-	public static void CreateVariations(BenchmarkCollector benchmarkCollector, BenchmarkAttribute benchmarkAttribute,
-		MethodInfo benchmarkMethod) {
-		Type funcType = typeof(Func<>).MakeGenericType(benchmarkMethod.ReturnType);
-		//Make a generic using the benchmark return type
-		MethodInfo genericAddBenchmark =
-			RegisterBenchmarkVariationGenericMethod.MakeGenericMethod(benchmarkMethod.ReturnType);
+	////TODO: Maybe put variations in to a table to reuse so we don't have to create instances for all benchmarks
+	//public static void CreateVariations(BenchmarkCollector benchmarkCollector, BenchmarkAttribute benchmarkAttribute,
+	//	MethodInfo benchmarkMethod) {
+	//	Type funcType = typeof(Func<>).MakeGenericType(benchmarkMethod.ReturnType);
+	//	//Make a generic using the benchmark return type
+	//	MethodInfo genericAddBenchmark =
+	//		RegisterBenchmarkVariationGenericMethod.MakeGenericMethod(benchmarkMethod.ReturnType);
 
-		Type declaringType = benchmarkMethod.DeclaringType!;
+	//	Type declaringType = benchmarkMethod.DeclaringType!;
 
-		var result = new List<VariationInstance>();
-		GeneratePermutations(GetFields(declaringType), result);
+	//	var result = new List<VariationInstance>();
+	//	GeneratePermutations(GetFields(declaringType), result);
 
-		foreach ((int index, VariationInstance instance) in result.WithIndex()) {
-			object inst = Activator.CreateInstance(declaringType)!;
-			foreach ((string name, object value, bool isField) in instance.Values) {
-				SetValue(inst, name, value, isField);
-			}
+	//	foreach ((int index, VariationInstance instance) in result.WithIndex()) {
+	//		object inst = Activator.CreateInstance(declaringType)!;
+	//		foreach ((string name, object value, bool isField) in instance.Values) {
+	//			SetValue(inst, name, value, isField);
+	//		}
 
 
 			
-			Delegate benchmark = benchmarkMethod.CreateDelegate(funcType, inst);
-			genericAddBenchmark.Invoke(benchmarkCollector, new object[] {
-				benchmarkAttribute.Name == "" ? benchmark.Method.Name : benchmarkAttribute.Name,
-				benchmarkAttribute.Group!,
-				benchmark,
-				instance,
-				benchmarkAttribute.Order,
-				benchmarkAttribute.PlotOrder,
-				$"Variation-{index + 1}"
-			});
-		}
-	}
+	//		Delegate benchmark = benchmarkMethod.CreateDelegate(funcType, inst);
+	//		genericAddBenchmark.Invoke(benchmarkCollector, new object[] {
+	//			benchmarkAttribute.Name == "" ? benchmark.Method.Name : benchmarkAttribute.Name,
+	//			benchmarkAttribute.Group!,
+	//			benchmark,
+	//			instance,
+	//			benchmarkAttribute.Order,
+	//			benchmarkAttribute.PlotOrder,
+	//			$"Variation-{index + 1}"
+	//		});
+	//	}
+	//}
 
 	private static void SetValue(object instance, string name, object value, bool isField) {
 		if (isField) {
@@ -138,30 +138,30 @@ public static class VariationGenerator {
 		}
 	}
 
-	private static void GeneratePermutations(IReadOnlyList<VariationParameter> input,
-		ICollection<VariationInstance> result,
-		int depth = 0, List<VariationInstance.MemberInfo>? current = null) {
-		if (input.Count == 0) {
-			return;
-		}
+	//private static void GeneratePermutations(IReadOnlyList<VariationParameter> input,
+	//	ICollection<VariationInstance> result,
+	//	int depth = 0, List<VariationInstance.MemberInfo>? current = null) {
+	//	if (input.Count == 0) {
+	//		return;
+	//	}
 
-		current ??= new List<VariationInstance.MemberInfo>();
+	//	current ??= new List<VariationInstance.MemberInfo>();
 
-		if (depth == input.Count) {
-			var inst = new VariationInstance();
-			foreach ((string name, object value, bool isField) in current) {
-				inst.Values.Add(new VariationInstance.MemberInfo(name, value, isField));
-			}
+	//	if (depth == input.Count) {
+	//		var inst = new VariationInstance();
+	//		foreach ((string name, object value, bool isField) in current) {
+	//			inst.Values.Add(new VariationInstance.MemberInfo(name, value, isField));
+	//		}
 
-			result.Add(inst);
-			return;
-		}
+	//		result.Add(inst);
+	//		return;
+	//	}
 
-		for (var i = 0; i < input[depth].Values.Count; i++) {
-			var cur = new List<VariationInstance.MemberInfo>
-				{ new(input[depth].Name, input[depth].Values[i], input[depth].IsField) };
-			cur.AddRange(current);
-			GeneratePermutations(input, result, depth + 1, cur);
-		}
-	}
+	//	for (var i = 0; i < input[depth].Values.Count; i++) {
+	//		var cur = new List<VariationInstance.MemberInfo>
+	//			{ new(input[depth].Name, input[depth].Values[i], input[depth].IsField) };
+	//		cur.AddRange(current);
+	//		GeneratePermutations(input, result, depth + 1, cur);
+	//	}
+	//}
 }
