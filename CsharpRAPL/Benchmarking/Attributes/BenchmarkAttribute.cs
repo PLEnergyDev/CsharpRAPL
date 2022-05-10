@@ -2,35 +2,6 @@
 
 namespace CsharpRAPL.Benchmarking.Attributes;
 
-[AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false)]
-public class BenchParameterAttribute : Attribute{
-	public BenchParameterAttribute(string benchmarkParameterSource) {
-		BenchmarkParameterSource = benchmarkParameterSource;
-	}
-	public string BenchmarkParameterSource { get; set; }
-}
-
-[AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false)]
-public class BenchmarkLoopiterationsAttribute : BenchParameterAttribute {
-	public BenchmarkLoopiterationsAttribute() : base("LoopIterations") {
-	}
-}
-[AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false)]
-public class BencharkIterationsAttribute : BenchParameterAttribute {
-	public BencharkIterationsAttribute() : base("Iterations") {
-	}
-}
-
-
-
-[AttributeUsage(AttributeTargets.Method)]
-public class PreBenchmarkAttribute : Attribute {
-	public string Target { get; set; }
-	public PreBenchmarkAttribute(string target) {
-		Target = target;
-	}
-}
-
 [AttributeUsage(AttributeTargets.Method)]
 public class BenchmarkAttribute : Attribute {
 	public string Name { get; }
