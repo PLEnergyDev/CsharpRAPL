@@ -39,7 +39,7 @@ public class Benchmark<T> : IBenchmark {
 	// Prints everything to a null stream similar to /dev/null
 	private readonly TextWriter _benchmarkOutputStream = new StreamWriter(Stream.Null);
 	private readonly TextWriter _stdout;
-	private readonly Func<T> _benchmark;
+	//private readonly Func<T> _benchmark;
 
 	private string? _normalizedReturnValue;
 	//private readonly FieldInfo _loopIterationsFieldInfo;
@@ -138,9 +138,13 @@ public class Benchmark<T> : IBenchmark {
 		ulong oldLoopIter = BenchmarkInfo.LoopIterations;
 		// Get normalized return value
 
-		SetLoopIterations(10); //TODO: Macrobenchmarks??	
+		
+		///TODO: Figure out... is this warmup? -- comment until figured out
+/*****
+ * SetLoopIterations(10); //TODO: Macrobenchmarks??	
 		_normalizedReturnValue = _benchmark()?.ToString() ?? string.Empty;
 		SetLoopIterations(oldLoopIter);
+*******/
 	}
 
 	IBenchmarkState LegacyState { get; set; } 

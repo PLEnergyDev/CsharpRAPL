@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using CsharpRAPL.Benchmarking.Attributes;
 
 namespace CsharpRAPL.Benchmarking;
 
@@ -8,12 +11,8 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 	public NopBenchmarkLifecycle(BenchmarkInfo bm, MethodInfo benchmarkedMethod) {
 		BenchmarkedMethod = benchmarkedMethod;
 		BenchmarkInfo = bm;
-		object? instance = benchmarkedMethod.IsStatic ? null : Activator.CreateInstance(benchmarkedMethod.DeclaringType!);
-		Invoker = (benchmarkedMethod.GetParameters().Length == 0) ?
-			(state) => benchmarkedMethod.Invoke(null, null)
-			: (state) => benchmarkedMethod.Invoke(null, new object[] { state });
 	}
-	Func<object, object> Invoker { get; }
+	//Func<object, object> Invoker { get; }
 	public MethodInfo BenchmarkedMethod { get; }
 
 	public BenchmarkInfo BenchmarkInfo { get; }
@@ -21,8 +20,27 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 	public IBenchmark PostRun(IBenchmark oldstate) => oldstate;
 	public IBenchmark PreRun(IBenchmark oldstate) => oldstate;
 
+
+	private object[] GetPameters() {
+
+		ParameterInfo[] vs = BenchmarkedMethod.GetParameters();
+		var paramvalues = new object[vs.Length];
+		foreach (var v in vs) {
+			paramvalues[v.Position] = v.GetCustomAttribute<BenchParameterAttribute>()?.BenchmarkParameterSource switch {
+				"LoopIterations" => BenchmarkInfo.LoopIterations,
+				"Iterations" => BenchmarkInfo.Iterations,
+				string parameterName => throw new InvalidOperationException($"Unknown parameter: [{parameterName}] position:[{v.Position}] of method: [{BenchmarkedMethod.Name}]")
+			};
+		}
+		return paramvalues;
+	}
+
 	public object Run(IBenchmark state) {
-		return Invoker(state);
+
+		
+		object? instance = BenchmarkedMethod.IsStatic ? null : Activator.CreateInstance(BenchmarkedMethod.DeclaringType!);
+		var parameters = GetPameters();
+		return BenchmarkedMethod.Invoke(instance, parameters);
 	}
 
 	public IBenchmark WarmupIteration(IBenchmark oldstate) => oldstate;

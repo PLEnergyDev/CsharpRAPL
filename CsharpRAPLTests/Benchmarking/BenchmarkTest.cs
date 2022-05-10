@@ -1,6 +1,5 @@
 ﻿using System;
 using CsharpRAPL.Benchmarking;
-using CsharpRAPL.Benchmarking.Variation;
 using NUnit.Framework;
 
 namespace CsharpRAPL.Tests.Benchmarking;

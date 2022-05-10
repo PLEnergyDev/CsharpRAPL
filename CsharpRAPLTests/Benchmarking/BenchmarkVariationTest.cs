@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using CsharpRAPL.Benchmarking;
+﻿using CsharpRAPL.Benchmarking;
 using CsharpRAPL.Benchmarking.Attributes;
-using CsharpRAPL.Benchmarking.Variation;
 using NUnit.Framework;
 
 namespace CsharpRAPL.Tests.Benchmarking;
@@ -12,7 +9,6 @@ public class BenchmarkVariationTest {
 	public static ulong LoopIterations;
 	[Variations(10, 15)] public int TestProp { get; set; }
 	[Variations(101, 69)] public int TestField;
-
 	[VariationBenchmark("Variations", "Tests Variations")]
 	public int TestBenchmark() {
 		var res = 0;
