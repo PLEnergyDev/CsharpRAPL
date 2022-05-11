@@ -188,27 +188,59 @@ public static class LatexExporter {
 		return builder.ToString();
 	}
 
-	public static void GenerateAverageTable(string outputPath = "_Latex/Tables/Results/") {
+	public static void GenerateAverageTable(string outputPath = "_Latex/Tables/Results/", bool round = true,
+		bool difference = true) {
 		Dictionary<string, List<DataSet>> groups = GenerateResultGroups();
 
 		foreach ((string group, List<DataSet> dataSets) in groups) {
 			var builder = new StringBuilder();
 
+			DataSet? defaultData = dataSets.FirstOrDefault(set => set.Name.Contains("Default"));
 			builder.Append("\\begin{table}[H]\n\t" +
 			               "\\resizebox{\\textwidth}{!}{%\n\t\t" +
-			               "\\centering\n\t\t" +
-			               "\\begin{tabular}{|c|c|c|c|}\n\t\t\t" +
-			               "\\hline\n\t\t\t" +
-			               "Benchmark & Time (ms) & Package Energy ($\\mu$J) & DRAM Energy ($\\mu$J) \\\\ \\hline\n");
+			               "\\centering\n\t\t");
+			builder.Append(defaultData != null && difference
+				? "\\begin{tabular}{|c|c|c|c|c|}\n\t\t\t"
+				: "\\begin{tabular}{|c|c|c|c|}\n\t\t\t");
+
+			builder.Append("\\hline\n\t\t\t");
+			builder.Append(defaultData != null && difference
+				? "Benchmark & Time (ms) & Package Energy ($\\mu$J) & DRAM Energy ($\\mu$J) & Difference from Default\\\\ \\hline\n"
+				: "Benchmark & Time (ms) & Package Energy ($\\mu$J) & DRAM Energy ($\\mu$J) \\\\ \\hline\n");
 			foreach (DataSet dataSet in dataSets.OrderBy(set => set.PlotOrder).ThenBy(set => set.Name)) {
-				builder.Append(
-					$"\t\t\t\t{dataSet.Name.Humanize(LetterCasing.Title)} & {dataSet.Data.Average(result => result.ElapsedTime).ToString("N6", _provider)} & {dataSet.Data.Average(result => result.PackageEnergy).ToString("N3", _provider)} & {dataSet.Data.Average(result => result.DRAMEnergy).ToString("N3", _provider)}\\\\ \\hline\n");
+				if (round) {
+					builder.Append(
+						$"\t\t\t\t{dataSet.Name.Humanize(LetterCasing.Title)}" +
+						$"& {Math.Round(dataSet.Data.Average(result => result.ElapsedTime)).ToString("N0", _provider)} " +
+						$"& {Math.Round(dataSet.Data.Average(result => result.PackageEnergy)).ToString("N0", _provider)} " +
+						$"& {Math.Round(dataSet.Data.Average(result => result.DRAMEnergy)).ToString("N0", _provider)} ");
+				}
+				else {
+					builder.Append(
+						$"\t\t\t\t{dataSet.Name.Humanize(LetterCasing.Title)}" +
+						$"& {dataSet.Data.Average(result => result.ElapsedTime).ToString("N3", _provider)} " +
+						$"& {dataSet.Data.Average(result => result.PackageEnergy).ToString("N3", _provider)} " +
+						$"& {dataSet.Data.Average(result => result.DRAMEnergy).ToString("N3", _provider)} ");
+				}
+
+				if (defaultData != null && difference) {
+					if (defaultData.Name == dataSet.Name) {
+						builder.Append("& N/A");
+					}
+					else {
+						double diff = ((dataSet.Data.Average(result => result.PackageEnergy) /
+						                defaultData.Data.Average(result => result.PackageEnergy)) - 1) * 100;
+						builder.Append($"& {Math.Round(diff, 2).ToString("N2", _provider)}\\%");
+					}
+				}
+
+				builder.Append("\\\\ \\hline\n");
 			}
 
 			builder.Append("\t\t\\end{tabular}\n\t" +
 			               "}\n\t" +
 			               "\\caption{" +
-			               $"Table showing the elapsed time and energy measurement for each {group.Humanize(LetterCasing.Title)}." +
+			               $"Table showing the elapsed time and energy measurement for each {group.Humanize(LetterCasing.Title)}, the difference from default is with regards to package energy." +
 			               "\\label{" +
 			               $"tab:{group.ToLower()}results" +
 			               "}}" +
