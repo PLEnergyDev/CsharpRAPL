@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using CsharpRAPL.Benchmarking.Attributes;
@@ -23,18 +24,45 @@ public class BenchmarkCollector : BenchmarkSuite {
 		.GetMethods(RegisterBenchmarkFlags)
 		.First(info => info.Name == nameof(RegisterBenchmark) && info.GetParameters().Length == 5);
 
-	public BenchmarkCollector(bool onlyCallingAssembly = false) : this(CsharpRAPLCLI.Options.Iterations,
-		CsharpRAPLCLI.Options.LoopIterations, onlyCallingAssembly) { }
+	/// <summary>
+	/// BenchmarkCollector tries to collect all benchmarks in the current assembly or referenced assemblies by use of the <see cref="BenchmarkAttribute"/>.
+	/// </summary>
+	/// <param name="onlyCallingAssembly">If we should only load the current assembly. default: false</param>
+	/// <param name="forceLoadAllAssemblies">Forces to load all assemblies in the program folder. default: false</param>
+	public BenchmarkCollector(bool onlyCallingAssembly = false, bool forceLoadAllAssemblies = false) : this(
+		CsharpRAPLCLI.Options.Iterations,
+		CsharpRAPLCLI.Options.LoopIterations, onlyCallingAssembly, forceLoadAllAssemblies) { }
 
-	public BenchmarkCollector(ulong iterations, ulong loopIterations, bool onlyCallingAssembly = false) :
+	/// <summary>
+	/// BenchmarkCollector tries to collect all benchmarks in the current assembly or referenced assemblies by use of the <see cref="BenchmarkAttribute"/>.
+	/// </summary>
+	/// <param name="iterations">The amount iterations to run ignored if <see cref="Options.UseIterationCalculation"/></param>
+	/// <param name="loopIterations">The amount loop iterations to run ignored if <see cref="Options.UseLoopIterationScaling"/></param>
+	/// <param name="onlyCallingAssembly">If we should only load the current assembly. default: false</param>
+	/// <param name="forceLoadAllAssemblies">Forces to load all assemblies in the program folder. default: false</param>
+	/// <exception cref="InvalidOperationException">Thrown if we can't get the calling assembly</exception>
+	public BenchmarkCollector(ulong iterations, ulong loopIterations, bool onlyCallingAssembly = false,
+		bool forceLoadAllAssemblies = false) :
 		base(iterations, loopIterations) {
 		if (onlyCallingAssembly) {
 			CollectBenchmarks(Assembly.GetCallingAssembly() ?? throw new InvalidOperationException());
+			return;
 		}
-		else {
-			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()) {
-				CollectBenchmarks(assembly);
-			}
+
+		if (forceLoadAllAssemblies) {
+			List<Assembly> loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+			IEnumerable<string> loadedPaths = loadedAssemblies.Select(a => a.Location);
+
+			string[] referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+			List<string> toLoad = referencedPaths
+				.Where(r => !loadedPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase)).ToList();
+
+			toLoad.ForEach(path =>
+				loadedAssemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path))));
+		}
+
+		foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+			CollectBenchmarks(assembly);
 		}
 	}
 
