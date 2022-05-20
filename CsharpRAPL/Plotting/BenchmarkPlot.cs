@@ -115,14 +115,24 @@ public static class BenchmarkPlot {
 			plt.XAxis.TickLabelStyle(rotation: 45);
 		}
 
-		plt.XTicks(Enumerable.Range(0, dataSets.Length).Select(i1 => (double)i1).ToArray(), names);
+		string title = string.IsNullOrEmpty(plotOptions.Name)
+			? $"{resultType}"
+			: $"{plotOptions.Name.Humanize(LetterCasing.Title)}";
+
+		if (plotOptions.IncludeRunConfiguration) {
+#if DEBUG
+			title += " (Debug)";
+#elif RELEASE
+			title += " (Release)";
+#endif
+		}
+
+		plt.Title(title);
 		plt.XLabel("Benchmark");
+		plt.XTicks(Enumerable.Range(0, dataSets.Length).Select(i1 => (double)i1).ToArray(), names);
 
 		plt.YLabel(GetYLabel(resultType));
 		plt.YAxis.TickLabelFormat(d => Math.Round(d, 5).ToString("N", info));
-		plt.Title(string.IsNullOrEmpty(plotOptions.Name)
-			? $"{resultType}"
-			: $"{plotOptions.Name.Humanize(LetterCasing.Title)}");
 
 		DateTime dateTime = DateTime.Now;
 		string time = $"{dateTime.ToString("s").Replace(":", "-")}-{dateTime.Millisecond}";

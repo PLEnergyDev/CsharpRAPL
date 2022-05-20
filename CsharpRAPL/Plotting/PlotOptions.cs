@@ -6,7 +6,6 @@ namespace CsharpRAPL.Plotting;
 public class PlotOptions {
 	public PlotOptions() { }
 
-
 	public string Name { get; set; } = "";
 	public int Width { get; set; } = 600;
 	public int Height { get; set; } = 450;
@@ -26,6 +25,8 @@ public class PlotOptions {
 	public bool UseColorRange { get; set; }
 	
 	public bool ForceRotatedText { get; set; }
+	
+	public bool IncludeRunConfiguration { get; set; } = true;
 
 	public HatchStyle HatchStyle {
 		get => GrayScale ? HatchStyle.None : _hatchStyle;
@@ -60,5 +61,6 @@ public class PlotOptions {
 		GrayScale = plotOptions.GrayScale;
 		UseColorRange = plotOptions.UseColorRange;
 		ForceRotatedText = plotOptions.ForceRotatedText;
+		IncludeRunConfiguration = plotOptions.IncludeRunConfiguration;
 	}
 }
