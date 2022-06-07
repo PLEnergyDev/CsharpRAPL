@@ -3,14 +3,10 @@
 namespace Benchmarks.Lifecycle {
 	class SampleBenchmark {
 		public class VariablesBenchmarks {
-			public static ulong Iterations;
-			public static ulong LoopIterations;
-
-
 			[Benchmark("Variables", "Tests local variables")]
-			public static ulong LocalVariable() {
+			public static ulong LocalVariable([BenchmarkLoopiterations] ulong loopIterations) {
 				ulong localA = 0, localB = 1;
-				for (ulong i = 0; i < LoopIterations; i++) {
+				for (ulong i = 0; i < loopIterations; i++) {
 					localA += localB + i;
 				}
 
