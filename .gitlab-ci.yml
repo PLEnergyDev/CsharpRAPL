@@ -50,8 +50,9 @@ test-with-coverage:
             - $CI_PROJECT_DIR/cobertura/*/coverage.cobertura.xml
             - $CI_PROJECT_DIR/junit/junit-test-result.xml
         reports:
-            cobertura:
-                - $CI_PROJECT_DIR/cobertura/*/coverage.cobertura.xml
+            coverage_report:
+                coverage_format: cobertura
+                path: $CI_PROJECT_DIR/cobertura/*/coverage.cobertura.xml
             junit:
                 - $CI_PROJECT_DIR/junit/junit-test-result.xml
 
