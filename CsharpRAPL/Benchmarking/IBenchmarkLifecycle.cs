@@ -2,7 +2,6 @@
 
 namespace CsharpRAPL.Benchmarking;
 public interface IBenchmarkLifecycle {
-	//public IBenchmark Benchmark { get; }
 	public Type Type { get; }
 	public BenchmarkInfo BenchmarkInfo { get; }
 	public object Initialize(IBenchmark benchmark);
@@ -19,7 +18,7 @@ public interface IBenchmarkLifecycle <T> : IBenchmarkLifecycle{
 	object IBenchmarkLifecycle.PreRun(object oldstate) => PreRun((T)oldstate);
 	object IBenchmarkLifecycle.PostRun(object oldstate) => PostRun((T)oldstate);
 	object IBenchmarkLifecycle.Run(object state) => Run((T)state);
-	public T Initialize(IBenchmark benchmark);
+	public new T Initialize(IBenchmark benchmark); //TODO: should be fine.... create tests 
 	public T WarmupIteration(T oldstate);
 	public T PreRun(T oldstate);
 	public object Run(T state);

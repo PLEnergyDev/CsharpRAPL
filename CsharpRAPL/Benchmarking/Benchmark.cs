@@ -319,9 +319,9 @@ public class Benchmark<T> : IBenchmark {
 		if (BenchmarkInfo.RawResults.Count < 10) {
 			return 10;
 		}
-
+		
 		// The alpha value is 1 - the confidence we want (Also known as p-value)
-		double alpha = 1 - confidence;
+		double alpha = 1.0 - confidence;
 
 		// Calculate the mean and standard deviation of the current sample
 		// We start by adding all the values to a double-array as this is used to calculate mean and standard
