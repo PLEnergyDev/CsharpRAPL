@@ -9,19 +9,10 @@ using CsharpRAPL.CommandLine;
 
 namespace CsharpRAPL.Benchmarking;
 public class BenchmarkCollector : BenchmarkSuite {
-	/// <summary>
-	/// A map of a return type and a variation of the benchmark method using the return type as the generic argument
-	/// </summary>
-	//private readonly Dictionary<Type, RegisterBenchmarkVariation> _registeredBenchmarkVariations = new();
-
 	//Create some flags we use for binding see: https://docs.microsoft.com/en-us/dotnet/api/system.reflection.bindingflags
 	private const BindingFlags RegisterBenchmarkFlags =
 		BindingFlags.Instance | BindingFlags.Public | BindingFlags.InvokeMethod;
 
-	//Get the correct version of add benchmark method
-	//private static readonly MethodInfo RegisterBenchmarkGenericMethod = typeof(BenchmarkSuite)
-	//	.GetMethods(RegisterBenchmarkFlags)
-	//	.First(info => info.Name == nameof(RegisterBenchmark) && info.GetParameters().Length == 6);
 
 	/// <summary>
 	/// BenchmarkCollector tries to collect all benchmarks in the current assembly or referenced assemblies by use of the <see cref="BenchmarkAttribute"/>.
@@ -78,7 +69,6 @@ public class BenchmarkCollector : BenchmarkSuite {
 			RegisterBenchmark(benchmarkMethod, benchmarkAttribute);
 		}
 	}
-
 }
 
 /// <summary>
