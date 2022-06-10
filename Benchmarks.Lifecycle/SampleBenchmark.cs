@@ -9,7 +9,6 @@ namespace Benchmarks.Lifecycle {
 				for (ulong i = 0; i < loopIterations; i++) {
 					localA += localB + i;
 				}
-
 				return localA;
 			}
 		}

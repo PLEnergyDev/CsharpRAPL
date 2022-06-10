@@ -75,81 +75,10 @@ public class BenchmarkCollector : BenchmarkSuite {
 				benchmarkMethod.DeclaringType!.GetCustomAttribute<SkipBenchmarksAttribute>() != null) {
 				continue;
 			}
-
-			//SetField(benchmarkMethod.DeclaringType!, nameof(LoopIterations), LoopIterations);
-			//SetField(benchmarkMethod.DeclaringType!, nameof(Iterations), Iterations);
-
-			//CheckMethodValidity(benchmarkMethod);
 			RegisterBenchmark(benchmarkMethod, benchmarkAttribute);
-
-
-
-			////Func<object> f = benchmarkMethod.Invoke(benchmarkMethod.IsStatic?null: Activator.CreateInstance(benchmarkMethod.DeclaringType), )
-
-
-			//if (!_registeredBenchmarkVariations.ContainsKey(benchmarkMethod.ReturnType)) {
-			//	//If we haven't registered this return type yet, register it.
-			//	RegisterAddBenchmarkVariation(benchmarkMethod);
-			//}
-
-			//(MethodInfo genericRegisterBenchmark, Type funcType) =
-			//	_registeredBenchmarkVariations[benchmarkMethod.ReturnType];
-
-
-			//if (benchmarkMethod.GetCustomAttribute<VariationBenchmark>() != null && !benchmarkMethod.IsStatic) {
-			//	VariationGenerator.CreateVariations(this, benchmarkAttribute, benchmarkMethod);
-			//}
-
-			////If the benchmark method is static, we don't need an instance to call the method.
-			////So if it is we use Activator to create a new instance which we use for calling the method.
-			//Delegate benchmarkDelegate = benchmarkMethod.IsStatic
-			//	? benchmarkMethod.CreateDelegate(funcType)
-			//	: benchmarkMethod.CreateDelegate(funcType, Activator.CreateInstance(benchmarkMethod.DeclaringType!));
-
-
-
-			////Then add the benchmark using the correct generic add benchmark method.
-			//genericRegisterBenchmark.Invoke(this, new object[] {
-			//	benchmarkAttribute.Name == "" ? benchmarkMethod.Name : benchmarkAttribute.Name,
-			//	benchmarkAttribute.Group!,
-			//	benchmarkDelegate,
-			//	benchmarkAttribute.BenchmarkLifecycleClass,
-			//	//PreBenchLookup.TryGetValue(benchmarkMethod.Name, out var preb)?preb.CreateDelegate<Action>():()=>{},
-			//	benchmarkAttribute.Order,
-			//	benchmarkAttribute.PlotOrder
-			//});
 		}
 	}
 
-
-
-	/// <summary>
-	/// Checks if the method has none or are single parameter and does not have void as the return type.
-	/// </summary>
-	/// <param name="benchmark"></param>
-	/// <exception cref="NotSupportedException">Throws NotSupportedException if the method has parameters or if the method returns void</exception>
-	public static void CheckMethodValidity(MethodInfo benchmark) {
-		if (benchmark.ReturnType == typeof(void)) {
-			throw new NotSupportedException(
-				$"The benchmark '{benchmark.Name}' is returning void which isn't supported.");
-		}
-
-		if (benchmark.GetParameters().Length >1) {
-			throw new NotSupportedException($"The Benchmark '{benchmark.Name}' has parameters which isn't supported.");
-		}
-	}
-
-	//private void RegisterAddBenchmarkVariation(MethodInfo benchmark) {
-	//	//Create a generic type of func using the methods return type
-	//	Type funcType = typeof(Func<>).MakeGenericType(benchmark.ReturnType);
-
-	//	//Make a generic using the benchmark return type
-	//	MethodInfo genericAddBenchmark = RegisterBenchmarkGenericMethod.MakeGenericMethod(benchmark.ReturnType);
-
-	//	//Add it to our registry
-	//	_registeredBenchmarkVariations.Add(benchmark.ReturnType,
-	//		new RegisterBenchmarkVariation(genericAddBenchmark, funcType));
-	//}
 }
 
 /// <summary>
