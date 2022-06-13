@@ -159,6 +159,7 @@ public class Benchmark<T> : IBenchmark {
 			state = BenchmarkLifecycle.Run(state);
 			End(state);
 
+			state = BenchmarkLifecycle.PostRun(state);
 
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
 				try {
