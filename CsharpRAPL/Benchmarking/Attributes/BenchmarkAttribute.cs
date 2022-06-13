@@ -15,10 +15,10 @@ public class BenchmarkAttribute : Attribute {
 
 	public int PlotOrder { get; }
 
-	public Type? BenchmarkLifecycleClass { get; }
+	public Type BenchmarkLifecycleClass { get; }
 	public BenchmarkAttribute(string? group, string description, Type? benchmarkLifecycleClass=null, int order = 0, bool skip = false,
 		string name = "", int plotOrder = 0) {
-		BenchmarkLifecycleClass = benchmarkLifecycleClass;
+		BenchmarkLifecycleClass = benchmarkLifecycleClass??typeof(NopBenchmarkLifecycle);
 		Group = group;
 		Description = description;
 		Order = order;

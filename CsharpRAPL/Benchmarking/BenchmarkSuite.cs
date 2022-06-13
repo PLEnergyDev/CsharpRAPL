@@ -70,7 +70,43 @@ public class BenchmarkSuite {
 			//benchmarkAttribute.Order,
 			//benchmarkAttribute.PlotOrder
 		};
-		IBenchmarkLifecycle nopcycle = new NopBenchmarkLifecycle(bi, benchmarkMethod);
+
+
+		var ctors = benchmarkAttribute.BenchmarkLifecycleClass.GetConstructors()
+			.Select(
+				v => new { 
+					types = v.GetParameters()
+					.Select(v => v.ParameterType)
+					.ToArray(), ctor = v })
+			.Where(v=>v.types.Count()<=2)
+			.OrderByDescending(v=>v.types.Count())
+			.ToList();
+		IBenchmarkLifecycle? l = null;
+		List<object> args = new List<object>();
+		foreach(var v in ctors) {
+			foreach (var t in v.types) {
+				if (t.IsAssignableFrom(bi.GetType())) {
+					args.Add(bi);
+				}
+				else if (t.IsAssignableFrom(benchmarkMethod.GetType())) {
+					args.Add(benchmarkMethod);
+				}
+				else {
+					goto continueOuter;
+				}
+			}
+			l = (IBenchmarkLifecycle)v.ctor.Invoke(args.ToArray());
+				//(IBenchmarkLifecycle)Activator.CreateInstance(benchmarkAttribute.BenchmarkLifecycleClass, args.ToArray());
+		continueOuter:
+			args.Clear();
+			continue;
+		}
+
+		if (l == null) {
+			l = new NopBenchmarkLifecycle(bi, benchmarkMethod);
+		}
+
+		IBenchmarkLifecycle nopcycle = l;// new NopBenchmarkLifecycle(bi, benchmarkMethod);
 
 		Benchmarks.Add(new Benchmark<object>(nopcycle));
 	}
