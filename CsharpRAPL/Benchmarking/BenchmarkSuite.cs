@@ -29,33 +29,8 @@ public class BenchmarkSuite {
 		Iterations = iterations;
 		LoopIterations = loopIterations;
 	}
-	
-
-
-
-	
-
-	//public void RegisterBenchmarkVariation<T>(string name, string? group, Func<T> benchmark, Type benchmarkLifecycleClass,
-	//	VariationInstance parameters, int order = 0, int plotOrder = 0, string namePostfix = "") {
-	//	if (benchmark.Method.IsAnonymous()) {
-	//		throw new NotSupportedException("Adding benchmarks through anonymous methods is not supported");
-	//	}
-
-	//	if (!_registeredBenchmarkClasses.Contains(benchmark.Method.DeclaringType!)) {
-	//		RegisterBenchmarkClass(benchmark.Method.DeclaringType!);
-	//	}
-
-	//	var bench = new Benchmark<T>($"{name}{namePostfix}", Iterations, benchmark, benchmarkLifecycleClass,true, group, order, plotOrder)
-	//		{ BenchmarkInfo = { Parameters = parameters } };
-	//	Benchmarks.Add(bench);
-	//}
-
-	//public void RegisterBenchmarkVariation<T>(string? group, Func<T> benchmark, Type benchmarkLifecycleClass, VariationInstance parameters,
-	//	int order = 0, int plotOrder = 0, string namePostfix = "") {
-	//	RegisterBenchmarkVariation(benchmark.Method.Name, group, benchmark, benchmarkLifecycleClass, parameters, order, plotOrder, namePostfix);
-	//}
-
 	public void RegisterBenchmark(MethodInfo benchmarkMethod, BenchmarkAttribute benchmarkAttribute) {
+
 		var bi = new BenchmarkInfo {
 			Iterations = Iterations,
 			LoopIterations = LoopIterations,
@@ -63,8 +38,6 @@ public class BenchmarkSuite {
 			Group = benchmarkAttribute.Group!,
 			Order = benchmarkAttribute.Order,
 			PlotOrder = benchmarkAttribute.PlotOrder,
-			//benchmarkDelegate,
-
 			//benchmarkAttribute.BenchmarkLifecycleClass,
 			//PreBenchLookup.TryGetValue(benchmarkMethod.Name, out var preb)?preb.CreateDelegate<Action>():()=>{},
 			//benchmarkAttribute.Order,
@@ -81,7 +54,7 @@ public class BenchmarkSuite {
 			.Where(v=>v.types.Count()<=2)
 			.OrderByDescending(v=>v.types.Count())
 			.ToList();
-		IBenchmarkLifecycle? l = null;
+		IBenchmarkLifecycle? lifecycle = null;
 		List<object> args = new List<object>();
 		foreach(var v in ctors) {
 			foreach (var t in v.types) {
@@ -95,53 +68,13 @@ public class BenchmarkSuite {
 					goto continueOuter;
 				}
 			}
-			l = (IBenchmarkLifecycle)v.ctor.Invoke(args.ToArray());
+			lifecycle = (IBenchmarkLifecycle)v.ctor.Invoke(args.ToArray());
 				//(IBenchmarkLifecycle)Activator.CreateInstance(benchmarkAttribute.BenchmarkLifecycleClass, args.ToArray());
 		continueOuter:
 			args.Clear();
 			continue;
 		}
-
-		if (l == null) {
-			l = new NopBenchmarkLifecycle(bi, benchmarkMethod);
-		}
-
-		IBenchmarkLifecycle nopcycle = l;// new NopBenchmarkLifecycle(bi, benchmarkMethod);
-
-		Benchmarks.Add(new Benchmark<object>(nopcycle));
-	}
-	private void RegisterBenchmarkClass(Type benchmarkClass) {
-		SetField(benchmarkClass, IterationsName, Iterations);
-		SetField(benchmarkClass, LoopIterationsName, LoopIterations);
-		_registeredBenchmarkClasses.Add(benchmarkClass);
-	}
-
-	private static void CheckFieldValidity(Type benchmarkClass, string name) {
-		FieldInfo? fieldInfo = benchmarkClass.GetFields()
-			.FirstOrDefault(info => info.Name == name);
-		if (fieldInfo == null) {
-			throw new NotSupportedException(
-				$"Your class '{benchmarkClass.Name}' doesn't have the field '{name}' and it is required.");
-		}
-
-		if (!fieldInfo.IsStatic) {
-			throw new NotSupportedException($"Your '{name}' field must be static.");
-		}
-
-		if (fieldInfo.FieldType != typeof(ulong) && fieldInfo.FieldType != typeof(uint)) {
-			throw new NotSupportedException(
-				$"Your field '{fieldInfo.Name}' must have the type 'ulong' or 'uint' for the benchmark '{benchmarkClass.Name}'.");
-		}
-	}
-
-	protected static void SetField(Type benchmarkClass, string name, ulong value) {
-		CheckFieldValidity(benchmarkClass, name);
-		benchmarkClass.GetField(name, BindingFlags.Public | BindingFlags.Static)?.SetValue(null, value);
-	}
-
-	public static void SetField(Type benchmarkClass, string name, uint value) {
-		CheckFieldValidity(benchmarkClass, name);
-		benchmarkClass.GetField(name, BindingFlags.Public | BindingFlags.Static)?.SetValue(null, value);
+		Benchmarks.Add(new Benchmark<object>(lifecycle));
 	}
 
 	public void RunAll(bool warmup = true) {
@@ -180,28 +113,6 @@ public class BenchmarkSuite {
 		if (CsharpRAPLCLI.Options.ZipResults) {
 			ZipResults();
 		}
-	}
-
-	private static void Warmup() {
-		var warmup = 0;
-		Console.WriteLine("Warmup commencing");
-		for (var i = 0; i < 10; i++) {
-			while (warmup < int.MaxValue) {
-				warmup++;
-				if (warmup % 1000000 != 0) {
-					continue;
-				}
-
-				var percentage = (int)((double)warmup / int.MaxValue * 10.0 + 10.0 * i);
-				Console.SetCursorPosition(0, Console.CursorTop);
-				Console.Write($"{percentage}%");
-				Console.Out.Flush();
-			}
-
-			warmup = 0;
-		}
-
-		Console.Write("\n");
 	}
 
 	private static void ZipResults() {
