@@ -29,6 +29,6 @@ jobs:
     - name: Test
       run: dotnet test CsharpRAPL --no-build --verbosity normal
     - name: Build Package
-      run: dotnet pack CsharpRAPL --configuration Release --no-build
+      run: dotnet pack CsharpRAPL --configuration Release
     - name: Push Package
       run: cd CsharpRAPL && dotnet nuget push "bin/Release/CsharpRAPL.*.nupkg" --api-key $API_KEY --skip-duplicate --source "github"
