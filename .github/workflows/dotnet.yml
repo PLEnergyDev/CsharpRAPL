@@ -30,6 +30,6 @@ jobs:
     - name: Test
       run: dotnet test $NAME --no-build --verbosity normal
     - name: Build Package
-      run: dotnet pack $NAME --configuration Release
+      run: dotnet pack $NAME --configuration Release --no-build
     - name: Push Package
       run: cd $NAME && dotnet nuget push "bin/Release/$NAME.*.nupkg" --api-key $API_KEY --skip-duplicate --source "github"
