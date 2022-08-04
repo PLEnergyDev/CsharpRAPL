@@ -34,7 +34,7 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 	public BenchmarkInfo BenchmarkInfo { get; }
 	public IBenchmark Initialize(IBenchmark benchmark) => benchmark;
 	public IBenchmark AdjustLoopIterations(IBenchmark oldstate) {
-
+		ScaleLoopIterations();
 		return oldstate;
 	}
 
@@ -51,6 +51,25 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 	}
 
 	public IBenchmark WarmupIteration(IBenchmark oldstate) => oldstate;
+	
+	private bool ScaleLoopIterations() {
+		ulong currentValue = GetLoopIterations();
+
+		switch (currentValue) {
+			case ulong.MaxValue:
+				return false;
+			case >= ulong.MaxValue / 2:
+				SetLoopIterations(ulong.MaxValue);
+				BenchmarkInfo.RawResults.Clear();
+				BenchmarkInfo.NormalizedResults.Clear();
+				return true;
+			default:
+				SetLoopIterations(currentValue + currentValue);
+				BenchmarkInfo.RawResults.Clear();
+				BenchmarkInfo.NormalizedResults.Clear();
+				return true;
+		}
+	}
 	
 }
 //public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {

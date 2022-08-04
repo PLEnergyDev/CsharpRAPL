@@ -182,9 +182,10 @@ public class Benchmark<T> : IBenchmark {
 
 			if (CsharpRAPLCLI.Options.UseLoopIterationScaling &&
 				BenchmarkInfo.RawResults[^1].ElapsedTime < TargetLoopIterationTime) {
-				if (ScaleLoopIterations()) {
+				state = BenchmarkLifecycle.AdjustLoopIterations(state);
+				/*if (ScaleLoopIterations()) {
 					i = 0;
-				}
+				}*/
 			}
 
 			if (BenchmarkInfo.ElapsedTime < MaxExecutionTime) {
