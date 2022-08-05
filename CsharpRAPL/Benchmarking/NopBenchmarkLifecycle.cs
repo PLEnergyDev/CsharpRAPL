@@ -44,7 +44,9 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 		return benchmark;
 	}
 	public IBenchmark AdjustLoopIterations(IBenchmark oldstate) {
-		ScaleLoopIterations();
+		if (ScaleLoopIterations()) {
+			oldstate.ResetBenchmark = true;
+		}
 		return oldstate;
 	}
 

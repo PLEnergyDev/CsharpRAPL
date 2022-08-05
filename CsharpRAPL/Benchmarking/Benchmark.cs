@@ -26,6 +26,7 @@ public class Benchmark<T> : IBenchmark {
 	public BenchmarkInfo BenchmarkInfo { get; }
 	private IMeasureApi MeasureApiApi { get; set; }
 	public IResultsSerializer ResultsSerializer { get; }
+	public bool ResetBenchmark { get; set; }
 
 	//TODO: Check if using a interface here hurts measurements
 	IMeasureApi IBenchmark.MeasureApiApi {
@@ -183,9 +184,10 @@ public class Benchmark<T> : IBenchmark {
 			if (CsharpRAPLCLI.Options.UseLoopIterationScaling &&
 				BenchmarkInfo.RawResults[^1].ElapsedTime < TargetLoopIterationTime) {
 				state = BenchmarkLifecycle.AdjustLoopIterations(state);
-				/*if (ScaleLoopIterations()) {
+				if (ResetBenchmark) {
 					i = 0;
-				}*/
+					ResetBenchmark = false;
+				}
 			}
 
 			if (BenchmarkInfo.ElapsedTime < MaxExecutionTime) {
@@ -260,6 +262,7 @@ public class Benchmark<T> : IBenchmark {
 	public List<BenchmarkResult> GetResults(bool ignoreFirst = true) {
 		return new List<BenchmarkResult>(BenchmarkInfo.NormalizedResults.Skip(ignoreFirst ? 1 : 0));
 	}
+	
 
 	//TODO: Figure out if we want to still ignore first
 	public List<BenchmarkResult> GetRawResults(bool ignoreFirst = true) {
