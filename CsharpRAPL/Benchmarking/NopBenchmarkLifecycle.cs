@@ -25,14 +25,24 @@ public static class IBenchmarkLifecycleExt {
 
 
 public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
+	private readonly FieldInfo _loopIterationsFieldInfo;
+
 	public NopBenchmarkLifecycle(BenchmarkInfo bm, MethodInfo benchmarkedMethod) {
 		BenchmarkedMethod = benchmarkedMethod;
 		BenchmarkInfo = bm;
+		_loopIterationsFieldInfo =
+			BenchmarkedMethod.DeclaringType?.GetField("LoopIterations", BindingFlags.Public | BindingFlags.Static) ??
+			throw new InvalidOperationException(
+				$"Your class '{BenchmarkedMethod.DeclaringType?.Name}' must have the field 'LoopIterations'.");
 	}
 	public MethodInfo BenchmarkedMethod { get; }
 
 	public BenchmarkInfo BenchmarkInfo { get; }
-	public IBenchmark Initialize(IBenchmark benchmark) => benchmark;
+
+	public IBenchmark Initialize(IBenchmark benchmark) {
+		SetLoopIterations(BenchmarkInfo.LoopIterations);
+		return benchmark;
+	}
 	public IBenchmark AdjustLoopIterations(IBenchmark oldstate) {
 		ScaleLoopIterations();
 		return oldstate;
@@ -54,6 +64,7 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 	
 	private bool ScaleLoopIterations() {
 		ulong currentValue = GetLoopIterations();
+		
 
 		switch (currentValue) {
 			case ulong.MaxValue:
@@ -70,7 +81,14 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 				return true;
 		}
 	}
-	
+
+	private void SetLoopIterations(ulong maxValue) {
+		_loopIterationsFieldInfo.SetValue(null, maxValue);
+	}
+
+	private ulong GetLoopIterations() {
+		return (ulong)(_loopIterationsFieldInfo.GetValue(null) ?? throw new InvalidOperationException("Your class must have the field 'LoopIterations'"));
+	}
 }
 //public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 //	public NopBenchmarkLifecycle(IBenchmark bm) {

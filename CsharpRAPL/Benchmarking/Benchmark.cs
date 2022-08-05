@@ -108,9 +108,9 @@ public class Benchmark<T> : IBenchmark {
 			BenchmarkInfo.Iterations = IterationCalculationAll();
 		}
 
-		ulong oldLoopIter = BenchmarkInfo.LoopIterations;
+		//ulong oldLoopIter = BenchmarkInfo.LoopIterations;
 		// Get normalized return value
-		SetLoopIterations(10);
+		//SetLoopIterations(10);
 
 		
 		///TODO: Figure out... is this warmup? -- comment until figured out
