@@ -6,6 +6,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using CsharpRAPL.Benchmarking.Attributes;
+using CsharpRAPL.Benchmarking.Lifecycles;
 using CsharpRAPL.Benchmarking.Variation;
 using CsharpRAPL.CommandLine;
 using CsharpRAPL.Plotting;

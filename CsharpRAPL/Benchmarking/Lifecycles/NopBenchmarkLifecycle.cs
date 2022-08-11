@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using CsharpRAPL.Benchmarking.Attributes;
 
-namespace CsharpRAPL.Benchmarking;
+namespace CsharpRAPL.Benchmarking.Lifecycles;
 
 public static class IBenchmarkLifecycleExt {
 	public static object[] GetParameters(this IBenchmarkLifecycle lf) {
@@ -92,18 +90,3 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 		return (ulong)(_loopIterationsFieldInfo.GetValue(null) ?? throw new InvalidOperationException("Your class must have the field 'LoopIterations'"));
 	}
 }
-//public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
-//	public NopBenchmarkLifecycle(IBenchmark bm) {
-//		Benchmark = bm;
-//	}
-//	public IBenchmark Benchmark { get; }
-//	public IBenchmark Initialize(IBenchmark benchmark) => benchmark;
-//	public IBenchmark PostRun(IBenchmark oldstate) => oldstate;
-//	public IBenchmark PreRun(IBenchmark oldstate) => oldstate;
-
-//	public object Run(IBenchmark state) {
-//		throw new System.NotImplementedException();
-//	}
-
-//	public IBenchmark WarmupIteration(IBenchmark oldstate) => oldstate;
-//}

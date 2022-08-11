@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using CsharpRAPL.Benchmarking;
 using CsharpRAPL.Benchmarking.Attributes;
+using CsharpRAPL.Benchmarking.Lifecycles;
 
 namespace CsharpRAPL.Tests.Benchmarking;
 

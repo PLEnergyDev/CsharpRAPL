@@ -1,4 +1,5 @@
 ﻿using System;
+using CsharpRAPL.Benchmarking.Lifecycles;
 
 namespace CsharpRAPL.Benchmarking.Attributes;
 

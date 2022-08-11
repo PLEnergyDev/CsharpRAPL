@@ -7,6 +7,7 @@ using System.Reflection;
 using Accord.Statistics;
 using Accord.Statistics.Distributions.Univariate;
 using CsharpRAPL.Analysis;
+using CsharpRAPL.Benchmarking.Lifecycles;
 using CsharpRAPL.Benchmarking.Serialization;
 using CsharpRAPL.Benchmarking.Variation;
 using CsharpRAPL.CommandLine;

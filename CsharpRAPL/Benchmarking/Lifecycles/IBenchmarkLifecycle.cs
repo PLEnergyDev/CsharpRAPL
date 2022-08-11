@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace CsharpRAPL.Benchmarking;
+namespace CsharpRAPL.Benchmarking.Lifecycles;
 public interface IBenchmarkLifecycle {
 	public MethodInfo BenchmarkedMethod { get; }
 	public Type Type { get; }
