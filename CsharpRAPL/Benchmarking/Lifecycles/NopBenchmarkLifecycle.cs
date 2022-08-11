@@ -28,6 +28,7 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 	public NopBenchmarkLifecycle(BenchmarkInfo bm, MethodInfo benchmarkedMethod) {
 		BenchmarkedMethod = benchmarkedMethod;
 		BenchmarkInfo = bm;
+		// Fetch loopiterations field in benchmark class
 		_loopIterationsFieldInfo =
 			BenchmarkedMethod.DeclaringType?.GetField("LoopIterations", BindingFlags.Public | BindingFlags.Static) ??
 			throw new InvalidOperationException(
@@ -45,6 +46,10 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 		if (ScaleLoopIterations()) {
 			oldstate.ResetBenchmark = true;
 		}
+		return oldstate;
+	}
+
+	public IBenchmark End(IBenchmark oldstate) {
 		return oldstate;
 	}
 

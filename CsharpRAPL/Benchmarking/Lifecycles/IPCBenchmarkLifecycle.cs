@@ -1,12 +1,13 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading;
 using CsvHelper;
 using SocketComm;
 
 namespace CsharpRAPL.Benchmarking.Lifecycles; 
 
-public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<FPipe> {
+public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 	public MethodInfo BenchmarkedMethod { get; }
 	public BenchmarkInfo BenchmarkInfo { get; }
 
@@ -15,7 +16,7 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<FPipe> {
 		BenchmarkInfo = benchmarkInfo;
 		BenchmarkedMethod = benchmarkedMethod;
 	}
-	public FPipe Initialize(IBenchmark benchmark) {
+	public IpcState Initialize(IBenchmark benchmark) {
 		var file = "/tmp/" + BenchmarkedMethod.Name + ".pipe";
 		ProcessStartInfo startinfo;
 		if(BenchmarkedMethod.Name.StartsWith("C")) {
@@ -28,39 +29,43 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<FPipe> {
 		startinfo.UseShellExecute = true;
 		startinfo.Arguments += file;
 		Process.Start(startinfo);
-		var pipe = new FPipe(file);
-		pipe.ExpectCmd(Cmd.Ready);
-		return pipe;      
-	}
-
-	public FPipe WarmupIteration(FPipe oldstate) {
-		var p = oldstate;
-		p.ExpectCmd(Cmd.Ready);
-		p.WriteCmd(Cmd.Go);
-		p.ExpectCmd(Cmd.Done);
-		p.WriteCmd(Cmd.Ready);
-		return oldstate;
-	}
-
-	public FPipe PreRun(FPipe oldstate) {
-		oldstate.ExpectCmd(Cmd.Ready);
-		return oldstate;
-	}
-
-	public object Run(FPipe state) {
-		state.WriteCmd(Cmd.Go);
-		state.ExpectCmd(Cmd.Done);
+		var state = new IpcState(new FPipe(file));
+		state.Pipe.ExpectCmd(Cmd.Ready);
 		return state;
 	}
 
-	public FPipe PostRun(FPipe oldstate) {
-		oldstate.WriteCmd(Cmd.Ready);
+	public IpcState WarmupIteration(IpcState oldstate) {
+		oldstate.Pipe.ExpectCmd(Cmd.Ready);
+		oldstate.Pipe.WriteCmd(Cmd.Go);
+		oldstate.Pipe.ExpectCmd(Cmd.Done);
+		oldstate.Pipe.WriteCmd(Cmd.Ready);
 		return oldstate;
 	}
 
-	public FPipe AdjustLoopIterations(FPipe oldstate) {
+	public IpcState PreRun(IpcState oldstate) {
+		oldstate.Pipe.ExpectCmd(Cmd.Ready);
+		return oldstate;
+	}
+
+	public object Run(IpcState state) {
+		state.Pipe.WriteCmd(Cmd.Go);
+		state.Pipe.ExpectCmd(Cmd.Done);
+		return state;
+	}
+
+	public IpcState PostRun(IpcState oldstate) {
+		oldstate.Pipe.WriteCmd(oldstate.Hasrun ? Cmd.Done : Cmd.Ready);
+		return oldstate;
+	}
+
+	public IpcState AdjustLoopIterations(IpcState oldstate) {
 		//TODO: scale over IPC
 		BenchmarkInfo.LoopIterations = 10;
+		return oldstate;
+	}
+
+	public IpcState End(IpcState oldstate) {
+		oldstate.Hasrun = true;
 		return oldstate;
 	}
 }

@@ -136,12 +136,14 @@ public class Benchmark<T> : IBenchmark {
 		Console.WriteLine("Initializing benchmark");
 		object state = BenchmarkLifecycle.Initialize(this);
 		Console.WriteLine("Warmup");
-		for(ulong i=0;i<BenchmarkInfo.Iterations;i++) 
+		for(ulong i=0;i<BenchmarkInfo.Iterations;i++) {
 			state = BenchmarkLifecycle.WarmupIteration(state);
+		}
 
 
 		for (ulong i = 0; i <= BenchmarkInfo.Iterations; i++) {
 			PrintExecutionHeader(i);
+			
 
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
 				GC.Collect();
@@ -161,7 +163,9 @@ public class Benchmark<T> : IBenchmark {
 			//T benchmarkOutput = _benchmark();
 			state = BenchmarkLifecycle.Run(state);
 			End(state);
-
+			if (i == BenchmarkInfo.Iterations) {
+				state = BenchmarkLifecycle.End(state);
+			}
 			state = BenchmarkLifecycle.PostRun(state);
 
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
