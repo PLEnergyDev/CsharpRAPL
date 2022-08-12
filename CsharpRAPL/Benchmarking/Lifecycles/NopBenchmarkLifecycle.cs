@@ -42,7 +42,6 @@ public static class IBenchmarkLifecycleExt {
 
 
 public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
-	private readonly FieldInfo _loopIterationsFieldInfo;
 
 	public NopBenchmarkLifecycle(BenchmarkInfo bm, MethodInfo benchmarkedMethod) {
 		BenchmarkedMethod = benchmarkedMethod;

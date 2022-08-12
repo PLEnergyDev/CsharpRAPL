@@ -19,6 +19,7 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 	public IpcState Initialize(IBenchmark benchmark) {
 		var file = "/tmp/" + BenchmarkedMethod.Name + ".pipe";
 		ProcessStartInfo startinfo;
+		//TODO: makeshift implementation. Should be dynamic via attributes
 		if(BenchmarkedMethod.Name.StartsWith("C")) {
 			startinfo = new ProcessStartInfo("Crun");
 		}
@@ -60,7 +61,7 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 
 	public IpcState AdjustLoopIterations(IpcState oldstate) {
 		//TODO: scale over IPC
-		BenchmarkInfo.LoopIterations = 10;
+		//BenchmarkInfo.LoopIterations = 10;
 		return oldstate;
 	}
 

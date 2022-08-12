@@ -211,10 +211,10 @@ public class Benchmark<T> : IBenchmark {
 		}
 
 		BenchmarkInfo.HasRun = true;
-		/* Redundant 
+		/*** Redundant 
 		BenchmarkInfo.LoopIterations = GetLoopIterations();*/
 		ResultsSerializer.SerializeResults(this);
-		SetLoopIterations(CsharpRAPLCLI.Options.LoopIterations);
+		//SetLoopIterations(CsharpRAPLCLI.Options.LoopIterations);
 
 
 		//Resets console output

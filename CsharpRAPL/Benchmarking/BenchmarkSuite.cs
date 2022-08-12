@@ -34,7 +34,7 @@ public class BenchmarkSuite {
 
 		var bi = new BenchmarkInfo {
 			Iterations = Iterations,
-			LoopIterations = LoopIterations,
+			LoopIterations = benchmarkAttribute.LoopIterations == 0?  LoopIterations: benchmarkAttribute.LoopIterations,
 			Name = benchmarkAttribute.Name == "" ? benchmarkMethod.Name : benchmarkAttribute.Name,
 			Group = benchmarkAttribute.Group!,
 			Order = benchmarkAttribute.Order,
