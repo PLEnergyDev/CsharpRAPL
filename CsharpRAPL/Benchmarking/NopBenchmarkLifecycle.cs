@@ -25,22 +25,16 @@ public static class IBenchmarkLifecycleExt {
 
 
 public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
-	private readonly FieldInfo _loopIterationsFieldInfo;
 
 	public NopBenchmarkLifecycle(BenchmarkInfo bm, MethodInfo benchmarkedMethod) {
 		BenchmarkedMethod = benchmarkedMethod;
 		BenchmarkInfo = bm;
-		_loopIterationsFieldInfo =
-			BenchmarkedMethod.DeclaringType?.GetField("LoopIterations", BindingFlags.Public | BindingFlags.Static) ??
-			throw new InvalidOperationException(
-				$"Your class '{BenchmarkedMethod.DeclaringType?.Name}' must have the field 'LoopIterations'.");
 	}
 	public MethodInfo BenchmarkedMethod { get; }
 
 	public BenchmarkInfo BenchmarkInfo { get; }
 
 	public IBenchmark Initialize(IBenchmark benchmark) {
-		SetLoopIterations(BenchmarkInfo.LoopIterations);
 		return benchmark;
 	}
 	public IBenchmark AdjustLoopIterations(IBenchmark oldstate) {
@@ -65,31 +59,22 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 	public IBenchmark WarmupIteration(IBenchmark oldstate) => oldstate;
 	
 	private bool ScaleLoopIterations() {
-		ulong currentValue = GetLoopIterations();
+		ulong currentValue = BenchmarkInfo.LoopIterations;
 		
-
 		switch (currentValue) {
 			case ulong.MaxValue:
 				return false;
 			case >= ulong.MaxValue / 2:
-				SetLoopIterations(ulong.MaxValue);
+				BenchmarkInfo.LoopIterations =  ulong.MaxValue;
 				BenchmarkInfo.RawResults.Clear();
 				BenchmarkInfo.NormalizedResults.Clear();
 				return true;
 			default:
-				SetLoopIterations(currentValue + currentValue);
+				BenchmarkInfo.LoopIterations = currentValue + currentValue;
 				BenchmarkInfo.RawResults.Clear();
 				BenchmarkInfo.NormalizedResults.Clear();
 				return true;
 		}
-	}
-
-	private void SetLoopIterations(ulong maxValue) {
-		_loopIterationsFieldInfo.SetValue(null, maxValue);
-	}
-
-	private ulong GetLoopIterations() {
-		return (ulong)(_loopIterationsFieldInfo.GetValue(null) ?? throw new InvalidOperationException("Your class must have the field 'LoopIterations'"));
 	}
 }
 //public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
