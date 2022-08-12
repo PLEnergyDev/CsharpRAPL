@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace CsharpRAPL.Benchmarking.Attributes;
+namespace CsharpRAPL.Benchmarking.Attributes.Parameters;
 
 [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false)]
-public class BencharkIterationsAttribute : BenchParameterAttribute {
-	public BencharkIterationsAttribute() : base("Iterations") {
+public class BenchmarkIterationsAttribute : BenchParameterAttribute {
+	public BenchmarkIterationsAttribute() : base("Iterations") {
 	}
 }

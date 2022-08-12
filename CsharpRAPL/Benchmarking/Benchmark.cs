@@ -211,7 +211,8 @@ public class Benchmark<T> : IBenchmark {
 		}
 
 		BenchmarkInfo.HasRun = true;
-		BenchmarkInfo.LoopIterations = GetLoopIterations();
+		/* Redundant 
+		BenchmarkInfo.LoopIterations = GetLoopIterations();*/
 		ResultsSerializer.SerializeResults(this);
 		SetLoopIterations(CsharpRAPLCLI.Options.LoopIterations);
 
