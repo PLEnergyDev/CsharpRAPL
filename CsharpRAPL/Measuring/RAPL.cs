@@ -46,10 +46,10 @@ public sealed class RAPL : IMeasureApi {
 
 	public BenchmarkResult GetNormalizedResults(ulong loopIterations, int normalizedIterations = 1000000) {
 		BenchmarkResult result = new() {
-			DRAMEnergy = _dramApi.Delta / ((double)loopIterations / normalizedIterations),
+			DRAMEnergy = _dramApi.Delta / loopIterations,
 			Temperature = _tempApi.Delta / 1000,
-			ElapsedTime = _timerApi.Delta / ((double)loopIterations / normalizedIterations),
-			PackageEnergy = _packageApi.Delta / ((double)loopIterations / normalizedIterations)
+			ElapsedTime = _timerApi.Delta / loopIterations,
+			PackageEnergy = _packageApi.Delta / loopIterations
 		};
 		return result;
 	}
