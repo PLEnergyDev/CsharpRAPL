@@ -88,6 +88,7 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 	}
 
 	private void SetLoopIterations(ulong maxValue) {
+		BenchmarkInfo.LoopIterations = maxValue;
 		_loopIterationsFieldInfo.SetValue(null, maxValue);
 	}
 

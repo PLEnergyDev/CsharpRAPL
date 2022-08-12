@@ -206,6 +206,9 @@ public class Benchmark<T> : IBenchmark {
 			Print(Console.WriteLine, $"\rEnding for {BenchmarkInfo.Name} benchmark due to time constraints");
 			break;
 		}
+		if(CsharpRAPLCLI.Options.Verbose) {
+			Print(Console.WriteLine, $"\n LoopIterations: {BenchmarkInfo.LoopIterations}");
+		}
 
 		BenchmarkInfo.HasRun = true;
 		BenchmarkInfo.LoopIterations = GetLoopIterations();
