@@ -1,4 +1,5 @@
 ﻿using CsharpRAPL.Benchmarking.Attributes;
+using CsharpRAPL.Benchmarking.Attributes.Parameters;
 
 namespace Benchmarks.Lifecycle {
 	public class VariablesBenchmarks {

@@ -1,5 +1,6 @@
 ﻿using CsharpRAPL.Benchmarking;
 using CsharpRAPL.Benchmarking.Attributes;
+using CsharpRAPL.Benchmarking.Attributes.Parameters;
 using CsharpRAPL.CommandLine;
 using NUnit.Framework;
 

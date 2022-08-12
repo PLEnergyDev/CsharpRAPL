@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Accord.Math.Decompositions;
 using CsharpRAPL.Benchmarking.Attributes;
+using CsharpRAPL.Benchmarking.Attributes.Parameters;
 
 namespace CsharpRAPL.Benchmarking;
 
@@ -10,14 +12,31 @@ public static class IBenchmarkLifecycleExt {
 	public static object[] GetParameters(this IBenchmarkLifecycle lf) {
 
 		ParameterInfo[] vs = lf.BenchmarkedMethod.GetParameters();
+		if (vs.Length == 0) {
+			throw new InvalidOperationException($"{lf.BenchmarkedMethod.DeclaringType}.{lf.BenchmarkedMethod.Name} has no parameters. All benchmarks must have at least 1 parameter for LoopIterations");
+		}
 		var paramvalues = new object[vs.Length];
+		bool hasLoopIterations = false;
 		foreach (var v in vs) {
-			paramvalues[v.Position] = v.GetCustomAttribute<BenchParameterAttribute>()?.BenchmarkParameterSource switch {
-				"LoopIterations" => lf.BenchmarkInfo.LoopIterations,
-				"Iterations" => lf.BenchmarkInfo.Iterations,
-				null => throw new NotSupportedException($"Unmarked parameter: [{v.Name}] position:[{v.Position}] of method: [{lf.BenchmarkedMethod.Name}] -- mark with {nameof(BenchParameterAttribute)}"),
-				string parameterName => throw new InvalidOperationException($"Unknown parameter: [{parameterName}] position:[{v.Position}] of method: [{lf.BenchmarkedMethod.Name}]")
-			};
+			//paramvalues[v.Position] = ; 
+			switch( v.GetCustomAttribute<BenchParameterAttribute>()?.BenchmarkParameterSource) {
+			case "LoopIterations":
+				paramvalues[v.Position] = lf.BenchmarkInfo.LoopIterations;
+				hasLoopIterations = true;
+				break;
+			case "Iterations": 
+				paramvalues[v.Position] = lf.BenchmarkInfo.Iterations; 
+				break;
+			case null:
+				throw new NotSupportedException(
+					$"Unmarked parameter: [{v.Name}] position:[{v.Position}] of method: [{lf.BenchmarkedMethod.Name}] -- mark with {nameof(BenchParameterAttribute)}");
+			case string parameterName:
+				throw new InvalidOperationException(
+					$"Unknown parameter: [{parameterName}] position:[{v.Position}] of method: [{lf.BenchmarkedMethod.Name}]");
+			}
+		}
+		if (!hasLoopIterations) {
+			throw new InvalidOperationException($"{lf.BenchmarkedMethod.DeclaringType}.{lf.BenchmarkedMethod.Name} must have a parameter marked with the [BenchmarkLoopIterations] attribute");
 		}
 		return paramvalues;
 	}
