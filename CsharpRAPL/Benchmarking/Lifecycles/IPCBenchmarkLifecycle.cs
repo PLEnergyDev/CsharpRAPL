@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using CsvHelper;
 using SocketComm;
 
@@ -10,27 +11,32 @@ namespace CsharpRAPL.Benchmarking.Lifecycles;
 public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 	public MethodInfo BenchmarkedMethod { get; }
 	public BenchmarkInfo BenchmarkInfo { get; }
+	public string ExePath { get; }
 
-	public IpcBenchmarkLifecycle(BenchmarkInfo benchmarkInfo, MethodInfo benchmarkedMethod)
+	public IpcBenchmarkLifecycle(BenchmarkInfo benchmarkInfo, MethodInfo benchmarkedMethod, string exePath)
 	{
 		BenchmarkInfo = benchmarkInfo;
 		BenchmarkedMethod = benchmarkedMethod;
+		ExePath = exePath;
 	}
 	public IpcState Initialize(IBenchmark benchmark) {
 		var file = "/tmp/" + BenchmarkedMethod.Name + ".pipe";
+		// Open pipe server
+		var s = Task.Run(() => new IpcState(new FPipe(file)));
+
+
+		// Start pipe client
 		ProcessStartInfo startinfo;
 		//TODO: makeshift implementation. Should be dynamic via attributes
-		if(BenchmarkedMethod.Name.StartsWith("C")) {
-			startinfo = new ProcessStartInfo("Crun");
-		}
-		else
-		{
-			startinfo = new ProcessStartInfo("java", "-jar JavaRun.jar ");
-		}
-		startinfo.UseShellExecute = true;
+		startinfo = new ProcessStartInfo(ExePath) {
+			UseShellExecute = true
+		};
 		startinfo.Arguments += file;
 		Process.Start(startinfo);
-		var state = new IpcState(new FPipe(file));
+		IpcState state;
+		
+		// await return of connection
+		state = s.Result;
 		state.Pipe.ExpectCmd(Cmd.Ready);
 		return state;
 	}
