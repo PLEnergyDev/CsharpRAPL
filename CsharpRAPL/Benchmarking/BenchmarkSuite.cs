@@ -52,7 +52,7 @@ public class BenchmarkSuite {
 					types = v.GetParameters()
 					.Select(v => v.ParameterType)
 					.ToArray(), ctor = v })
-			.Where(v=>v.types.Count()<=3)
+			.Where(v=>v.types.Count()<=2)
 			.OrderByDescending(v=>v.types.Count())
 			.ToList();
 		IBenchmarkLifecycle? lifecycle = null;
@@ -64,9 +64,6 @@ public class BenchmarkSuite {
 				}
 				else if (t.IsAssignableFrom(benchmarkMethod.GetType())) {
 					args.Add(benchmarkMethod);
-				}
-				else if (benchmarkAttribute.GetType() == typeof(IpcBenchmarkAttribute) && t.IsAssignableFrom(typeof(string))) {
-					args.Add(((IpcBenchmarkAttribute)benchmarkAttribute).ExePath);
 				}
 				else {
 					goto continueOuter;

@@ -11,35 +11,27 @@ namespace CsharpRAPL.Benchmarking.Lifecycles;
 public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 	public MethodInfo BenchmarkedMethod { get; }
 	public BenchmarkInfo BenchmarkInfo { get; }
-	public string ExePath { get; }
 
-	public IpcBenchmarkLifecycle(BenchmarkInfo benchmarkInfo, MethodInfo benchmarkedMethod, string exePath)
+
+	public IpcBenchmarkLifecycle(BenchmarkInfo benchmarkInfo, MethodInfo benchmarkedMethod)
 	{
 		BenchmarkInfo = benchmarkInfo;
 		BenchmarkedMethod = benchmarkedMethod;
-		ExePath = exePath;
 	}
 	public IpcState Initialize(IBenchmark benchmark) {
 		var file = "/tmp/" + BenchmarkedMethod.Name + ".pipe";
-		// Open pipe server
-		var s = Task.Run(() => new IpcState(new FPipe(file)));
-
-
-		// Start pipe client
-		ProcessStartInfo startinfo;
-		//TODO: makeshift implementation. Should be dynamic via attributes
-		startinfo = new ProcessStartInfo(ExePath) {
-			UseShellExecute = true
-		};
-		startinfo.Arguments += file;
-		Process.Start(startinfo);
-		IpcState state;
+		var state = new IpcState(file);
 		
-		// await return of connection
-		state = s.Result;
+		//Get benchmark information
+		state = (IpcState)BenchmarkedMethod.Invoke(null, new object?[]{state})!;
+		state.Pipe.Listening += state.OnPipeListening;
+		
+		//Connect pipe
+		state.Pipe.Connect();
 		state.Pipe.ExpectCmd(Cmd.Ready);
 		return state;
 	}
+
 
 	public IpcState WarmupIteration(IpcState oldstate) {
 		oldstate.Pipe.ExpectCmd(Cmd.Ready);
