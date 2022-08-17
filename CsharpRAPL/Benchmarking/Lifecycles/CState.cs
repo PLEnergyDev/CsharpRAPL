@@ -29,22 +29,30 @@ public class CState : IpcState {
 	}
 
 	public override IpcState Generate() {
+		//Create directories and copy lib
 		string[] filesToCopy = {"cmd.c","cmd.h","scomm.c","scomm.h", CFile, HeaderFile };
 		var dt = DateTime.Now;
-		var dir= Directory.CreateDirectory($"tmp/CBench-{BenchmarkSignature}-{dt.ToString("s").Replace(":", "-")}-{dt.Millisecond}");
+		var dir= Directory.CreateDirectory($"tmp/CBench/{BenchmarkSignature}-{dt.ToString("s").Replace(":", "-")}-{dt.Millisecond}");
 		foreach (var f in filesToCopy) {
-			File.Copy(LibPath + "/"+ f,dir.FullName +"/"+f);
+			File.Copy($"{LibPath}/{f}",$"{dir.FullName}/{f}");
 		}
+		
+		//Write main file
 		var main = File.ReadAllLines(LibPath + "/main.c");
-		var includeline = main.First(s => s.Contains("///Includes here"));
-		var benchmarkline = main.First(s => s.Contains("///Compute benchmark here"));
-		main[benchmarkline] = BenchmarkSignature;
-		main[includeline] = $"#include \"{HeaderFile}\"";
+		var includeLine = main.First(s => s.Contains("///Includes here"));
+		var benchmarkLine = main.First(s => s.Contains("///Compute benchmark here"));
+		main[benchmarkLine] = BenchmarkSignature;
+		main[includeLine] = $"#include \"{HeaderFile}\"";
 		File.WriteAllLines(dir.FullName + "/main.c", main);
+		
+		//Run compile script
 		var compile = new ProcessStartInfo("CompileCBenchmarks.sh");
-		compile.Arguments = dir.FullName + " " + CFile + " \"" + AdditionalCompilerOptions + "\"";
+		compile.Arguments = $"{dir.FullName} {CFile} \"{AdditionalCompilerOptions}\"";
+		compile.CreateNoWindow = true;
+		compile.UseShellExecute = true;
 		var compP = Process.Start(compile);
 		compP?.WaitForExit();
+		compP?.Dispose();
 		ExecutablePath = dir.FullName + "/CBench";
 		return this;
 	}
