@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using CsharpRAPL.Benchmarking;
 using CsharpRAPL.Benchmarking.Attributes;
+using CsharpRAPL.Benchmarking.Lifecycles;
 using CsharpRAPL.CommandLine;
 using NUnit.Framework;
 

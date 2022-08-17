@@ -1,4 +1,5 @@
 ﻿using System;
+using CsharpRAPL.Benchmarking.Lifecycles;
 
 namespace CsharpRAPL.Benchmarking.Attributes;
 
@@ -14,10 +15,11 @@ public class BenchmarkAttribute : Attribute {
 	public bool Skip { get; }
 
 	public int PlotOrder { get; }
+	public ulong LoopIterations { get; }
 
 	public Type BenchmarkLifecycleClass { get; }
 	public BenchmarkAttribute(string? group, string description, Type? benchmarkLifecycleClass=null, int order = 0, bool skip = false,
-		string name = "", int plotOrder = 0) {
+		string name = "", int plotOrder = 0, ulong loopIterations=0) {
 		BenchmarkLifecycleClass = benchmarkLifecycleClass??typeof(NopBenchmarkLifecycle);
 		Group = group;
 		Description = description;
@@ -25,5 +27,6 @@ public class BenchmarkAttribute : Attribute {
 		PlotOrder = plotOrder;
 		Skip = skip;
 		Name = name;
+		LoopIterations = loopIterations;
 	}
 }

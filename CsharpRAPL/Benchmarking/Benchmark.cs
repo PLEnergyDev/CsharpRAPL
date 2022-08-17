@@ -7,6 +7,7 @@ using System.Reflection;
 using Accord.Statistics;
 using Accord.Statistics.Distributions.Univariate;
 using CsharpRAPL.Analysis;
+using CsharpRAPL.Benchmarking.Lifecycles;
 using CsharpRAPL.Benchmarking.Serialization;
 using CsharpRAPL.Benchmarking.Variation;
 using CsharpRAPL.CommandLine;
@@ -135,12 +136,14 @@ public class Benchmark<T> : IBenchmark {
 		Console.WriteLine("Initializing benchmark");
 		object state = BenchmarkLifecycle.Initialize(this);
 		Console.WriteLine("Warmup");
-		for(ulong i=0;i<BenchmarkInfo.Iterations;i++) 
+		for(ulong i=0;i<BenchmarkInfo.Iterations;i++) {
 			state = BenchmarkLifecycle.WarmupIteration(state);
+		}
 
 
 		for (ulong i = 0; i <= BenchmarkInfo.Iterations; i++) {
 			PrintExecutionHeader(i);
+			
 
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
 				GC.Collect();
@@ -160,7 +163,9 @@ public class Benchmark<T> : IBenchmark {
 			//T benchmarkOutput = _benchmark();
 			state = BenchmarkLifecycle.Run(state);
 			End(state);
-
+			if (i == BenchmarkInfo.Iterations) {
+				state = BenchmarkLifecycle.End(state);
+			}
 			state = BenchmarkLifecycle.PostRun(state);
 
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
@@ -201,12 +206,15 @@ public class Benchmark<T> : IBenchmark {
 			Print(Console.WriteLine, $"\rEnding for {BenchmarkInfo.Name} benchmark due to time constraints");
 			break;
 		}
+		if(CsharpRAPLCLI.Options.Verbose) {
+			Print(Console.WriteLine, $"\n LoopIterations: {BenchmarkInfo.LoopIterations}");
+		}
 
 		BenchmarkInfo.HasRun = true;
-		/* Redundant 
+		/*** Redundant 
 		BenchmarkInfo.LoopIterations = GetLoopIterations();*/
 		ResultsSerializer.SerializeResults(this);
-		SetLoopIterations(CsharpRAPLCLI.Options.LoopIterations);
+		//SetLoopIterations(CsharpRAPLCLI.Options.LoopIterations);
 
 
 		//Resets console output
