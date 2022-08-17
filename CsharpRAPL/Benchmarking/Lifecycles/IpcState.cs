@@ -11,12 +11,13 @@ public class IpcState {
 	public string PipePath { get; }
 	public IpcState(string pipe) {
 		PipePath = pipe;
-		Pipe = new FPipe(pipe);
+		Pipe = new FPipe(PipePath);
+		Pipe.Listening += OnPipeListening;
 	}
-
 	public string ExecutablePath { get; set; }
+	
 	public FPipe Pipe { get; private set; }
-	public bool Hasrun = false;
+	public bool HasRun = false;
 
 	public virtual IpcState Generate() => this;
 	

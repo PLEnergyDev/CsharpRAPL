@@ -12,6 +12,8 @@ public class CState : IpcState {
 	public string CFile { get; set; }
 	public string HeaderFile { get; set; }
 	public string LibPath { get; set; }
+	
+	public string? AdditionalCompilerOptions { get; set; }
 
 	private string _bencmarkSignature;
 	public string BenchmarkSignature {
@@ -40,7 +42,7 @@ public class CState : IpcState {
 		main[includeline] = $"#include \"{HeaderFile}\"";
 		File.WriteAllLines(dir.FullName + "/main.c", main);
 		var compile = new ProcessStartInfo("CompileCBenchmarks.sh");
-		compile.Arguments = dir.FullName + " " + CFile;
+		compile.Arguments = dir.FullName + " " + CFile + " \"" + AdditionalCompilerOptions + "\"";
 		var compP = Process.Start(compile);
 		compP?.WaitForExit();
 		ExecutablePath = dir.FullName + "/CBench";

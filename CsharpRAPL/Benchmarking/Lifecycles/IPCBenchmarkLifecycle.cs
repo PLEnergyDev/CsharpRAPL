@@ -24,9 +24,8 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 		
 		//Get benchmark information
 		state = (IpcState)BenchmarkedMethod.Invoke(null, new object?[]{state})!;
-		state.Pipe.Listening += state.OnPipeListening;
 		
-		//Connect pipe
+		//Open pipe for connection
 		state.Pipe.Connect();
 		state.Pipe.ExpectCmd(Cmd.Ready);
 		return state;
@@ -53,7 +52,7 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 	}
 
 	public IpcState PostRun(IpcState oldstate) {
-		oldstate.Pipe.WriteCmd(oldstate.Hasrun ? Cmd.Done : Cmd.Ready);
+		oldstate.Pipe.WriteCmd(oldstate.HasRun ? Cmd.Done : Cmd.Ready);
 		return oldstate;
 	}
 
@@ -64,7 +63,7 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 	}
 
 	public IpcState End(IpcState oldstate) {
-		oldstate.Hasrun = true;
+		oldstate.HasRun = true;
 		return oldstate;
 	}
 }
