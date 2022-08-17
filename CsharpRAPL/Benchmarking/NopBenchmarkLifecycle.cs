@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Accord.Math.Decompositions;
 using CsharpRAPL.Benchmarking.Attributes;
+using CsharpRAPL.Benchmarking.Attributes.Parameters;
 
 namespace CsharpRAPL.Benchmarking;
 
@@ -10,14 +12,31 @@ public static class IBenchmarkLifecycleExt {
 	public static object[] GetParameters(this IBenchmarkLifecycle lf) {
 
 		ParameterInfo[] vs = lf.BenchmarkedMethod.GetParameters();
+		if (vs.Length == 0) {
+			throw new InvalidOperationException($"{lf.BenchmarkedMethod.DeclaringType}.{lf.BenchmarkedMethod.Name} has no parameters. All benchmarks must have at least 1 parameter for LoopIterations");
+		}
 		var paramvalues = new object[vs.Length];
+		bool hasLoopIterations = false;
 		foreach (var v in vs) {
-			paramvalues[v.Position] = v.GetCustomAttribute<BenchParameterAttribute>()?.BenchmarkParameterSource switch {
-				"LoopIterations" => lf.BenchmarkInfo.LoopIterations,
-				"Iterations" => lf.BenchmarkInfo.Iterations,
-				null => throw new NotSupportedException($"Unmarked parameter: [{v.Name}] position:[{v.Position}] of method: [{lf.BenchmarkedMethod.Name}] -- mark with {nameof(BenchParameterAttribute)}"),
-				string parameterName => throw new InvalidOperationException($"Unknown parameter: [{parameterName}] position:[{v.Position}] of method: [{lf.BenchmarkedMethod.Name}]")
-			};
+			//paramvalues[v.Position] = ; 
+			switch( v.GetCustomAttribute<BenchParameterAttribute>()?.BenchmarkParameterSource) {
+			case "LoopIterations":
+				paramvalues[v.Position] = lf.BenchmarkInfo.LoopIterations;
+				hasLoopIterations = true;
+				break;
+			case "Iterations": 
+				paramvalues[v.Position] = lf.BenchmarkInfo.Iterations; 
+				break;
+			case null:
+				throw new NotSupportedException(
+					$"Unmarked parameter: [{v.Name}] position:[{v.Position}] of method: [{lf.BenchmarkedMethod.Name}] -- mark with {nameof(BenchParameterAttribute)}");
+			case string parameterName:
+				throw new InvalidOperationException(
+					$"Unknown parameter: [{parameterName}] position:[{v.Position}] of method: [{lf.BenchmarkedMethod.Name}]");
+			}
+		}
+		if (!hasLoopIterations) {
+			throw new InvalidOperationException($"{lf.BenchmarkedMethod.DeclaringType}.{lf.BenchmarkedMethod.Name} must have a parameter marked with the [BenchmarkLoopIterations] attribute");
 		}
 		return paramvalues;
 	}
@@ -25,22 +44,16 @@ public static class IBenchmarkLifecycleExt {
 
 
 public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
-	private readonly FieldInfo _loopIterationsFieldInfo;
 
 	public NopBenchmarkLifecycle(BenchmarkInfo bm, MethodInfo benchmarkedMethod) {
 		BenchmarkedMethod = benchmarkedMethod;
 		BenchmarkInfo = bm;
-		_loopIterationsFieldInfo =
-			BenchmarkedMethod.DeclaringType?.GetField("LoopIterations", BindingFlags.Public | BindingFlags.Static) ??
-			throw new InvalidOperationException(
-				$"Your class '{BenchmarkedMethod.DeclaringType?.Name}' must have the field 'LoopIterations'.");
 	}
 	public MethodInfo BenchmarkedMethod { get; }
 
 	public BenchmarkInfo BenchmarkInfo { get; }
 
 	public IBenchmark Initialize(IBenchmark benchmark) {
-		SetLoopIterations(BenchmarkInfo.LoopIterations);
 		return benchmark;
 	}
 	public IBenchmark AdjustLoopIterations(IBenchmark oldstate) {
@@ -65,31 +78,22 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 	public IBenchmark WarmupIteration(IBenchmark oldstate) => oldstate;
 	
 	private bool ScaleLoopIterations() {
-		ulong currentValue = GetLoopIterations();
+		ulong currentValue = BenchmarkInfo.LoopIterations;
 		
-
 		switch (currentValue) {
 			case ulong.MaxValue:
 				return false;
 			case >= ulong.MaxValue / 2:
-				SetLoopIterations(ulong.MaxValue);
+				BenchmarkInfo.LoopIterations =  ulong.MaxValue;
 				BenchmarkInfo.RawResults.Clear();
 				BenchmarkInfo.NormalizedResults.Clear();
 				return true;
 			default:
-				SetLoopIterations(currentValue + currentValue);
+				BenchmarkInfo.LoopIterations = currentValue + currentValue;
 				BenchmarkInfo.RawResults.Clear();
 				BenchmarkInfo.NormalizedResults.Clear();
 				return true;
 		}
-	}
-
-	private void SetLoopIterations(ulong maxValue) {
-		_loopIterationsFieldInfo.SetValue(null, maxValue);
-	}
-
-	private ulong GetLoopIterations() {
-		return (ulong)(_loopIterationsFieldInfo.GetValue(null) ?? throw new InvalidOperationException("Your class must have the field 'LoopIterations'"));
 	}
 }
 //public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
