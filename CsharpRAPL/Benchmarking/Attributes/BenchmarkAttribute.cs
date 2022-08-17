@@ -19,8 +19,8 @@ public class BenchmarkAttribute : Attribute {
 
 	public Type BenchmarkLifecycleClass { get; }
 	public BenchmarkAttribute(string? group, string description, Type? benchmarkLifecycleClass=null, int order = 0, bool skip = false,
-		string name = "", int plotOrder = 0, ulong loopIterations=0) {
-		BenchmarkLifecycleClass = benchmarkLifecycleClass??typeof(NopBenchmarkLifecycle);
+		string name = "", int plotOrder = 0, ulong loopIterations=0) { ///TODO: Tempoary loopIterations, #5,3ba15eb
+				BenchmarkLifecycleClass = benchmarkLifecycleClass??typeof(NopBenchmarkLifecycle);
 		Group = group;
 		Description = description;
 		Order = order;
