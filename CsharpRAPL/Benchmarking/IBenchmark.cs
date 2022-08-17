@@ -10,4 +10,5 @@ public interface IBenchmark {
 	public IResultsSerializer ResultsSerializer { get; }
 	public void Run();
 	public List<BenchmarkResult> GetResults(bool ignoreFirst = true);
+	public bool ResetBenchmark { get; set; }
 }

@@ -26,6 +26,7 @@ public class Benchmark<T> : IBenchmark {
 	public BenchmarkInfo BenchmarkInfo { get; }
 	private IMeasureApi MeasureApiApi { get; set; }
 	public IResultsSerializer ResultsSerializer { get; }
+	public bool ResetBenchmark { get; set; }
 
 	//TODO: Check if using a interface here hurts measurements
 	IMeasureApi IBenchmark.MeasureApiApi {
@@ -108,8 +109,9 @@ public class Benchmark<T> : IBenchmark {
 			BenchmarkInfo.Iterations = IterationCalculationAll();
 		}
 
-		ulong oldLoopIter = BenchmarkInfo.LoopIterations;
+		//ulong oldLoopIter = BenchmarkInfo.LoopIterations;
 		// Get normalized return value
+		//SetLoopIterations(10);
 
 		
 		///TODO: Figure out... is this warmup? -- comment until figured out
@@ -181,8 +183,10 @@ public class Benchmark<T> : IBenchmark {
 
 			if (CsharpRAPLCLI.Options.UseLoopIterationScaling &&
 				BenchmarkInfo.RawResults[^1].ElapsedTime < TargetLoopIterationTime) {
-				if (ScaleLoopIterations()) {
+				state = BenchmarkLifecycle.AdjustLoopIterations(state);
+				if (ResetBenchmark) {
 					i = 0;
+					ResetBenchmark = false;
 				}
 			}
 
@@ -199,7 +203,8 @@ public class Benchmark<T> : IBenchmark {
 		}
 
 		BenchmarkInfo.HasRun = true;
-		BenchmarkInfo.LoopIterations = GetLoopIterations();
+		/* Redundant 
+		BenchmarkInfo.LoopIterations = GetLoopIterations();*/
 		ResultsSerializer.SerializeResults(this);
 		SetLoopIterations(CsharpRAPLCLI.Options.LoopIterations);
 
@@ -258,6 +263,7 @@ public class Benchmark<T> : IBenchmark {
 	public List<BenchmarkResult> GetResults(bool ignoreFirst = true) {
 		return new List<BenchmarkResult>(BenchmarkInfo.NormalizedResults.Skip(ignoreFirst ? 1 : 0));
 	}
+	
 
 	//TODO: Figure out if we want to still ignore first
 	public List<BenchmarkResult> GetRawResults(bool ignoreFirst = true) {

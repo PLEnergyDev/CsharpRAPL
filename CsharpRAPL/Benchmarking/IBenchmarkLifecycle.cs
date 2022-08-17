@@ -11,6 +11,7 @@ public interface IBenchmarkLifecycle {
 	public object PreRun(object oldstate);
 	public object Run(object state);
 	public object PostRun(object oldstate);
+	public object AdjustLoopIterations(object oldstate);
 }
 
 public interface IBenchmarkLifecycle <T> : IBenchmarkLifecycle{
@@ -20,9 +21,11 @@ public interface IBenchmarkLifecycle <T> : IBenchmarkLifecycle{
 	object IBenchmarkLifecycle.PreRun(object oldstate) => PreRun((T)oldstate);
 	object IBenchmarkLifecycle.PostRun(object oldstate) => PostRun((T)oldstate);
 	object IBenchmarkLifecycle.Run(object state) => Run((T)state);
+	object IBenchmarkLifecycle.AdjustLoopIterations(object oldstate) => AdjustLoopIterations((T)oldstate); 
 	public new T Initialize(IBenchmark benchmark); //TODO: should be fine.... create tests 
 	public T WarmupIteration(T oldstate);
 	public T PreRun(T oldstate);
 	public object Run(T state);
 	public T PostRun(T oldstate);
+	public T AdjustLoopIterations(T oldstate);
 }
