@@ -25,7 +25,6 @@ public class IpcState {
 		Generate();
 		// Start pipe client
 		ProcessStartInfo startinfo;
-		//TODO: makeshift implementation. Should be dynamic via states
 		startinfo = new ProcessStartInfo(ExecutablePath) {
 			UseShellExecute = true
 		};
