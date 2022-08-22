@@ -133,18 +133,16 @@ public class Benchmark<T> : IBenchmark {
 	public void Run() {
 		Console.WriteLine($"BenchmarkLifecycle: {BenchmarkLifecycle?.GetType().FullName}") ;
 		Setup();
-		Console.WriteLine("Initializing benchmark");
+		Print(Console.WriteLine,"Initializing benchmark");
 		object state = BenchmarkLifecycle.Initialize(this);
-		Console.WriteLine("Warmup");
+		Print(Console.WriteLine,"Warmup");
 		for(ulong i=0;i<BenchmarkInfo.Iterations;i++) {
 			state = BenchmarkLifecycle.WarmupIteration(state);
 		}
 
-
 		for (ulong i = 0; i <= BenchmarkInfo.Iterations; i++) {
 			PrintExecutionHeader(i);
 			
-
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
 				GC.Collect();
 				GC.TryStartNoGCRegion(CsharpRAPLCLI.Options.GCMemory, false);
@@ -166,6 +164,7 @@ public class Benchmark<T> : IBenchmark {
 			if (i == BenchmarkInfo.Iterations) {
 				state = BenchmarkLifecycle.End(state);
 			}
+			//TODO: handle when IPC error
 			state = BenchmarkLifecycle.PostRun(state);
 
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
@@ -189,10 +188,14 @@ public class Benchmark<T> : IBenchmark {
 			if (CsharpRAPLCLI.Options.UseLoopIterationScaling &&
 				BenchmarkInfo.RawResults[^1].ElapsedTime < TargetLoopIterationTime) {
 				state = BenchmarkLifecycle.AdjustLoopIterations(state);
-				if (ResetBenchmark) {
-					i = 0;
-					ResetBenchmark = false;
-				}
+			}
+			if (ResetBenchmark) {
+				i = 0;
+				BenchmarkInfo.RawResults.Clear();
+				BenchmarkInfo.NormalizedResults.Clear();
+				ResetBenchmark = false;
+				//TODO: re-initialize IPC
+				state = BenchmarkLifecycle.Initialize(this);
 			}
 
 			if (BenchmarkInfo.ElapsedTime < MaxExecutionTime) {
@@ -203,7 +206,11 @@ public class Benchmark<T> : IBenchmark {
 				continue;
 			}
 
-			Print(Console.WriteLine, $"\rEnding for {BenchmarkInfo.Name} benchmark due to time constraints");
+			Print(Console.WriteLine,
+				BenchmarkInfo.HasRun
+					? $"\rEnding for {BenchmarkInfo.Name} benchmark due to repeated failure"
+					: $"\rEnding for {BenchmarkInfo.Name} benchmark due to time constraints");
+
 			break;
 		}
 		if(CsharpRAPLCLI.Options.Verbose) {

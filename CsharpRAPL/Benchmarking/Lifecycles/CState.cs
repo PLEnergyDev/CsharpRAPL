@@ -7,7 +7,7 @@ using SocketComm;
 namespace CsharpRAPL.Benchmarking.Lifecycles; 
 
 public class CState : IpcState {
-	public CState(string pipe) : base(pipe) { }
+	public CState(IpcState state) : base(state.PipePath, state.Benchmark) { }
 
 	public string CFile { get; set; }
 	public string HeaderFile { get; set; }
@@ -28,7 +28,7 @@ public class CState : IpcState {
 		}
 	}
 
-	public override IpcState Generate() {
+	protected override IpcState Generate() {
 		//Create directories and copy lib
 		string[] filesToCopy = {"cmd.c","cmd.h","scomm.c","scomm.h", CFile, HeaderFile };
 		var dt = DateTime.Now;
@@ -52,7 +52,9 @@ public class CState : IpcState {
 		compile.UseShellExecute = true;
 		var compP = Process.Start(compile);
 		compP?.WaitForExit();
-		compP?.Dispose();
+		if (compP!.ExitCode != 0) {
+			throw new InvalidOperationException($"Compilation for {CFile} failed!");
+		}
 		ExecutablePath = dir.FullName + "/CBench";
 		return this;
 	}

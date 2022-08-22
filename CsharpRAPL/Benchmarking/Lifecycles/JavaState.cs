@@ -6,14 +6,14 @@ using System.Linq;
 namespace CsharpRAPL.Benchmarking.Lifecycles; 
 
 public class JavaState : IpcState {
-	public JavaState(string pipe) : base(pipe) { }
+	public JavaState(IpcState state) : base(state.PipePath, state.Benchmark) { }
 
 	public string JavaFile { get; set; }
 	public string LibPath { get; set; }
 	public string BenchmarkSignature { get; set; }
 	public string? AdditionalCompilerOptions { get; set; }
 
-	public override IpcState Generate() {
+	protected override IpcState Generate() {
 		//Create directory and copy lib
 		string[] filesToCopy = { "Cmd.java", "FPipe.java","PipeCmdException.java", "MANIFEST.MF" };
 		var dt = DateTime.Now;
@@ -41,7 +41,9 @@ public class JavaState : IpcState {
 		};
 		var compP = Process.Start(compile);
 		compP?.WaitForExit();
-		compP.Dispose();
+		if (compP!.ExitCode != 0) {
+			throw new InvalidOperationException($"Compilation for {JavaFile} failed!");
+		}
 		ExecutablePath = dir.FullName + "/JavaBench.sh";
 		return this;
 	}

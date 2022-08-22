@@ -19,8 +19,9 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 		BenchmarkedMethod = benchmarkedMethod;
 	}
 	public IpcState Initialize(IBenchmark benchmark) {
+		//Initialize state
 		var file = "/tmp/" + BenchmarkedMethod.Name + ".pipe";
-		var state = new IpcState(file);
+		var state = new IpcState(file, benchmark);
 		
 		//Get benchmark information
 		state = (IpcState)BenchmarkedMethod.Invoke(null, new object?[]{state})!;
