@@ -168,6 +168,9 @@ To make IPC benchmarking easier, pipelines for compiling C and Java benchmarks h
     - ``KeepCompilationResults`` - (optional) Keep the generated source files and compilation results of the benchmark. Default is false
     - ``HeaderFile``(C only) - The Path, from ``LibPath``, to the appropriate header file to your ``CFile``
 
+**NB!**
+Make sure that your compile script is marked as executable. If not, it cannot be launched. This can be done with the command ``sudo chmod +x <path/to/script>``
+
 **Example of a Java benchmark**
 ```c#
 [Benchmark("Java", "A Java IPC benchamrk", typeof(IpcBenchmarkLifecycle)]
