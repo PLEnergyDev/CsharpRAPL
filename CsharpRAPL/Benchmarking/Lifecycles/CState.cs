@@ -33,6 +33,7 @@ public class CState : IpcState {
 		string[] filesToCopy = {"cmd.c","cmd.h","scomm.c","scomm.h", CFile, HeaderFile };
 		var dt = DateTime.Now;
 		var dir= Directory.CreateDirectory($"tmp/CBench/{BenchmarkSignature}-{dt.ToString("s").Replace(":", "-")}-{dt.Millisecond}");
+		CompilationPath = dir.FullName;
 		foreach (var f in filesToCopy) {
 			File.Copy($"{LibPath}/{f}",$"{dir.FullName}/{f}");
 		}

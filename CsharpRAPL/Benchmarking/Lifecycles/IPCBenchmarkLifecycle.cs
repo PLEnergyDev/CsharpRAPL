@@ -34,26 +34,60 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 
 
 	public IpcState WarmupIteration(IpcState oldstate) {
-		oldstate.Pipe.ExpectCmd(Cmd.Ready);
-		oldstate.Pipe.WriteCmd(Cmd.Go);
-		oldstate.Pipe.ExpectCmd(Cmd.Done);
-		oldstate.Pipe.WriteCmd(Cmd.Ready);
+		try {
+			if (!oldstate.Benchmark.ResetBenchmark) {
+				oldstate.Pipe.ExpectCmd(Cmd.Ready);
+				oldstate.Pipe.WriteCmd(Cmd.Go);
+				oldstate.Pipe.ExpectCmd(Cmd.Done);
+				oldstate.Pipe.WriteCmd(Cmd.Ready);
+			}
+		}
+		catch (Exception) {
+			oldstate.Benchmark.ResetBenchmark = true;
+		}
+
 		return oldstate;
 	}
 
 	public IpcState PreRun(IpcState oldstate) {
-		oldstate.Pipe.ExpectCmd(Cmd.Ready);
+		try {
+			if (!oldstate.Benchmark.ResetBenchmark) {
+				oldstate.Pipe.ExpectCmd(Cmd.Ready);
+			}
+		}
+		catch (Exception) {
+			oldstate.Benchmark.ResetBenchmark = true;
+		}
+
 		return oldstate;
 	}
 
 	public object Run(IpcState state) {
-		state.Pipe.WriteCmd(Cmd.Go);
-		state.Pipe.ExpectCmd(Cmd.Done);
+		try {
+			if (!state.Benchmark.ResetBenchmark) {
+				state.Pipe.WriteCmd(Cmd.Go);
+				state.Pipe.ExpectCmd(Cmd.Done);
+			}
+		}
+		catch (Exception e) {
+			state.Benchmark.ResetBenchmark = true;
+		}
 		return state;
 	}
 
 	public IpcState PostRun(IpcState oldstate) {
-		oldstate.Pipe.WriteCmd(oldstate.HasRun ? Cmd.Done : Cmd.Ready);
+		try {
+			if (!oldstate.Benchmark.ResetBenchmark) {
+				oldstate.Pipe.WriteCmd(oldstate.HasRun ? Cmd.Done : Cmd.Ready);
+			}
+			else {
+				oldstate.Pipe.WriteCmd(Cmd.Exit);
+			}
+		}
+		catch (Exception) {
+			oldstate.Benchmark.ResetBenchmark = true;
+		}
+
 		return oldstate;
 	}
 

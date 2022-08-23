@@ -19,6 +19,7 @@ public class JavaState : IpcState {
 		var dt = DateTime.Now;
 		var dir = Directory.CreateDirectory(
 			$"tmp/JavaBench/{BenchmarkSignature}-{dt.ToString("s").Replace(":", "-")}-{dt.Millisecond}");
+		CompilationPath = dir.FullName;
 		foreach (var f in filesToCopy) {
 			File.Copy($"{LibPath}/{f}",$"{dir.FullName}/{f}");
 		}

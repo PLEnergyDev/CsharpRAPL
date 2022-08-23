@@ -20,8 +20,8 @@ public class IpcState {
 	public bool HasRun = false;
 	private Process _runBenchmark = new ();
 	public IBenchmark Benchmark { get; }
-	private int _maxAttempts = 3;
-	private int _currentAttemt = 0;
+	protected string CompilationPath { get; set; }
+	public bool KeepCompilationResults = false;
 
 	protected virtual IpcState Generate() => this;
 
@@ -48,16 +48,14 @@ public class IpcState {
 	}
 
 	private void OnProcessExit(object? sender, EventArgs e) {
-		if (_runBenchmark.ExitCode != 0 ) {
-			if (_currentAttemt < _maxAttempts) {
-				//TODO: restart benchmark
-				Benchmark.ResetBenchmark = true;
-				_currentAttemt++;
-			}
-			else {
-				HasRun = true;
-				Benchmark.BenchmarkInfo.HasRun = true;
+		if (_runBenchmark.ExitCode == 0 ) {
+			if (!KeepCompilationResults) {
+				Directory.Delete(CompilationPath, true);
 			}
 		}
+		else {
+			Benchmark.ResetBenchmark = true;
+		}
+		
 	}
 }

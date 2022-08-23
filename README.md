@@ -164,7 +164,8 @@ To make IPC benchmarking easier, pipelines for compiling C and Java benchmarks h
     - ``LibPath`` - The path to your source directory containing the files from step 1 & 2
     - ``JavaFile``/``CFile`` - The path, from ``LibPath``, to the file containing the method you want to benchmark.
     - ``BenchmarkSignature`` - Commands you want to execute during the benchmarking (including ;)
-    - ``AdditionalCompilerOptions`` -(optional) Any additional options passed to the compiler e.g. optimizations or library linking
+    - ``AdditionalCompilerOptions`` - (optional) Any additional options passed to the compiler e.g. optimizations or library linking
+    - ``KeepCompilationResults`` - (optional) Keep the generated source files and compilation results of the benchmark. Default is false
     - ``HeaderFile``(C only) - The Path, from ``LibPath``, to the appropriate header file to your ``CFile``
 
 **Example of a Java benchmark**
@@ -174,7 +175,8 @@ public static JavaState IpcBenchmark(IpcState s){
     return new JavaState(s.pipePath){
         LibPath = "Benchmarks/Java",
         JavaFile = "Bench.java",
-        BenchmarkSignature = "Bench.Run();"
+        BenchmarkSignature = "Bench.Run();",
+        KeepCompilationResults = true 
     };
 }
 ```
