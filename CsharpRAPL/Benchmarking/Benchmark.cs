@@ -170,7 +170,6 @@ public class Benchmark<T> : IBenchmark {
 			if (i == BenchmarkInfo.Iterations) {
 				state = BenchmarkLifecycle.End(state);
 			}
-			//TODO: handle when IPC error
 			state = BenchmarkLifecycle.PostRun(state);
 
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
