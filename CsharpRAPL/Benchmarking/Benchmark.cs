@@ -167,10 +167,7 @@ public class Benchmark<T> : IBenchmark {
 			//T benchmarkOutput = _benchmark();
 			state = BenchmarkLifecycle.Run(state);
 			End(state);
-			if (i == BenchmarkInfo.Iterations) {
-				state = BenchmarkLifecycle.End(state);
-			}
-			state = BenchmarkLifecycle.PostRun(state);
+			
 
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
 				try {
@@ -221,6 +218,11 @@ public class Benchmark<T> : IBenchmark {
 				if (CsharpRAPLCLI.Options.UseIterationCalculation) {
 					BenchmarkInfo.Iterations = IterationCalculationAll();
 				}
+				
+				if (i >= BenchmarkInfo.Iterations) {
+					state = BenchmarkLifecycle.End(state);
+				}
+				state = BenchmarkLifecycle.PostRun(state);
 
 				continue;
 			}
@@ -229,7 +231,8 @@ public class Benchmark<T> : IBenchmark {
 				BenchmarkInfo.HasRun
 					? $"\rEnding for {BenchmarkInfo.Name} benchmark due to repeated failure"
 					: $"\rEnding for {BenchmarkInfo.Name} benchmark due to time constraints");
-			Console.SetOut(_stdout);
+			state = BenchmarkLifecycle.End(state);
+			state = BenchmarkLifecycle.PostRun(state);
 
 			break;
 		}
