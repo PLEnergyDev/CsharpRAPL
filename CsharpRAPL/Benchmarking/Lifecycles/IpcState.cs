@@ -14,7 +14,7 @@ public class IpcState {
 		Pipe.Listening += OnPipeListening;
 	}
 
-	protected string ExecutablePath { get; set; } = "";
+	public string ExecutablePath { get; set; } = "";
 	
 	public FPipe Pipe { get; private set; }
 	public bool HasRun = false;
