@@ -49,7 +49,7 @@ public class IpcState {
 
 	private void OnProcessExit(object? sender, EventArgs e) {
 		if (_runBenchmark.ExitCode == 0 ) {
-			if (!KeepCompilationResults) {
+			if (!KeepCompilationResults && Directory.Exists(CompilationPath)) {
 				Directory.Delete(CompilationPath, true);
 			}
 		}
