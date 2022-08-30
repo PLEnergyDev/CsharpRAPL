@@ -12,6 +12,7 @@ public class JavaState : IpcState {
 	public string LibPath { get; set; }
 	public string BenchmarkSignature { get; set; }
 	public string? AdditionalCompilerOptions { get; set; }
+	public string? JavaPath { get; set; }
 
 	protected override IpcState Generate() {
 		//Create directory and copy lib
@@ -33,10 +34,11 @@ public class JavaState : IpcState {
 		// Write benchmark file
 		var bench = File.ReadAllLines($"{LibPath}/{JavaFile}").ToList();
 		File.WriteAllLines($"{dir.FullName}/{JavaFile}", bench);
-		
+
+		JavaPath ??= "java";
 		//Run compile script
 		var compile = new ProcessStartInfo("CompileJavaBenchmarks.sh") {
-			Arguments =  dir.FullName + " \"" + AdditionalCompilerOptions + "\"",
+			Arguments =  dir.FullName + " " + JavaPath + " \"" + AdditionalCompilerOptions + "\"",
 			UseShellExecute = true,
 			CreateNoWindow = true
 		};
