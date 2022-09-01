@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using CsvHelper;
 using SocketComm;
 
@@ -11,51 +12,82 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 	public MethodInfo BenchmarkedMethod { get; }
 	public BenchmarkInfo BenchmarkInfo { get; }
 
+
 	public IpcBenchmarkLifecycle(BenchmarkInfo benchmarkInfo, MethodInfo benchmarkedMethod)
 	{
 		BenchmarkInfo = benchmarkInfo;
 		BenchmarkedMethod = benchmarkedMethod;
 	}
 	public IpcState Initialize(IBenchmark benchmark) {
+		//Initialize state
 		var file = "/tmp/" + BenchmarkedMethod.Name + ".pipe";
-		ProcessStartInfo startinfo;
-		//TODO: makeshift implementation. Should be dynamic via attributes
-		if(BenchmarkedMethod.Name.StartsWith("C")) {
-			startinfo = new ProcessStartInfo("Crun");
-		}
-		else
-		{
-			startinfo = new ProcessStartInfo("java", "-jar JavaRun.jar ");
-		}
-		startinfo.UseShellExecute = true;
-		startinfo.Arguments += file;
-		Process.Start(startinfo);
-		var state = new IpcState(new FPipe(file));
+		var state = new IpcState(file, benchmark);
+		
+		//Get benchmark information
+		state = (IpcState)BenchmarkedMethod.Invoke(null, new object?[]{state})!;
+		
+		//Open pipe for connection
+		state.Pipe.Connect();
 		state.Pipe.ExpectCmd(Cmd.Ready);
 		return state;
 	}
 
+
 	public IpcState WarmupIteration(IpcState oldstate) {
-		oldstate.Pipe.ExpectCmd(Cmd.Ready);
-		oldstate.Pipe.WriteCmd(Cmd.Go);
-		oldstate.Pipe.ExpectCmd(Cmd.Done);
-		oldstate.Pipe.WriteCmd(Cmd.Ready);
+		try {
+			if (!oldstate.Benchmark.ResetBenchmark) {
+				oldstate.Pipe.ExpectCmd(Cmd.Ready);
+				oldstate.Pipe.WriteCmd(Cmd.Go);
+				oldstate.Pipe.ExpectCmd(Cmd.Done);
+				oldstate.Pipe.WriteCmd(Cmd.Ready);
+			}
+		}
+		catch (Exception) {
+			oldstate.Benchmark.ResetBenchmark = true;
+		}
+
 		return oldstate;
 	}
 
 	public IpcState PreRun(IpcState oldstate) {
-		oldstate.Pipe.ExpectCmd(Cmd.Ready);
+		try {
+			if (!oldstate.Benchmark.ResetBenchmark) {
+				oldstate.Pipe.ExpectCmd(Cmd.Ready);
+			}
+		}
+		catch (Exception) {
+			oldstate.Benchmark.ResetBenchmark = true;
+		}
+
 		return oldstate;
 	}
 
 	public object Run(IpcState state) {
-		state.Pipe.WriteCmd(Cmd.Go);
-		state.Pipe.ExpectCmd(Cmd.Done);
+		try {
+			if (!state.Benchmark.ResetBenchmark) {
+				state.Pipe.WriteCmd(Cmd.Go);
+				state.Pipe.ExpectCmd(Cmd.Done);
+			}
+		}
+		catch (Exception e) {
+			state.Benchmark.ResetBenchmark = true;
+		}
 		return state;
 	}
 
 	public IpcState PostRun(IpcState oldstate) {
-		oldstate.Pipe.WriteCmd(oldstate.Hasrun ? Cmd.Done : Cmd.Ready);
+		try {
+			if (!oldstate.Benchmark.ResetBenchmark) {
+				oldstate.Pipe.WriteCmd(oldstate.HasRun ? Cmd.Done : Cmd.Ready);
+			}
+			else {
+				oldstate.Pipe.WriteCmd(Cmd.Exit);
+			}
+		}
+		catch (Exception) {
+			oldstate.Benchmark.ResetBenchmark = true;
+		}
+
 		return oldstate;
 	}
 
@@ -66,7 +98,7 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 	}
 
 	public IpcState End(IpcState oldstate) {
-		oldstate.Hasrun = true;
+		oldstate.HasRun = true;
 		return oldstate;
 	}
 }

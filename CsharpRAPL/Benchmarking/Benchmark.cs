@@ -47,6 +47,9 @@ public class Benchmark<T> : IBenchmark {
 	//private readonly FieldInfo _loopIterationsFieldInfo;
 
 	//public Benchmark(BenchmarkInfo bi, IBenchmarkLifecycle)
+	
+	private const int MaxAttempts = 5;
+	private int _currentAttempt = 0;
 
 	public Benchmark(IBenchmarkLifecycle blc, bool silenceBenchmarkOutput = true) {
 		MeasureApiApi = null!;
@@ -133,18 +136,19 @@ public class Benchmark<T> : IBenchmark {
 	public void Run() {
 		Console.WriteLine($"BenchmarkLifecycle: {BenchmarkLifecycle?.GetType().FullName}") ;
 		Setup();
-		Console.WriteLine("Initializing benchmark");
+		Print(Console.WriteLine,"Initializing benchmark");
 		object state = BenchmarkLifecycle.Initialize(this);
-		Console.WriteLine("Warmup");
+		Print(Console.WriteLine,"Warmup");
 		for(ulong i=0;i<BenchmarkInfo.Iterations;i++) {
+			if (ResetBenchmark) {
+				break;
+			}
 			state = BenchmarkLifecycle.WarmupIteration(state);
 		}
-
 
 		for (ulong i = 0; i <= BenchmarkInfo.Iterations; i++) {
 			PrintExecutionHeader(i);
 			
-
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
 				GC.Collect();
 				GC.TryStartNoGCRegion(CsharpRAPLCLI.Options.GCMemory, false);
@@ -163,10 +167,7 @@ public class Benchmark<T> : IBenchmark {
 			//T benchmarkOutput = _benchmark();
 			state = BenchmarkLifecycle.Run(state);
 			End(state);
-			if (i == BenchmarkInfo.Iterations) {
-				state = BenchmarkLifecycle.End(state);
-			}
-			state = BenchmarkLifecycle.PostRun(state);
+			
 
 			if (CsharpRAPLCLI.Options.TryTurnOffGC) {
 				try {
@@ -186,24 +187,53 @@ public class Benchmark<T> : IBenchmark {
 				BenchmarkInfo.NormalizedResults[^1].MemoryMeasurement = measure;
 			}
 
-			if (CsharpRAPLCLI.Options.UseLoopIterationScaling &&
-				BenchmarkInfo.RawResults[^1].ElapsedTime < TargetLoopIterationTime) {
-				state = BenchmarkLifecycle.AdjustLoopIterations(state);
-				if (ResetBenchmark) {
-					i = 0;
-					ResetBenchmark = false;
+			
+			if (ResetBenchmark) {
+				i--;
+				Print(Console.WriteLine, "\nResetting benchmark!");
+				BenchmarkInfo.RawResults.RemoveAt(BenchmarkInfo.RawResults.Count-1);
+				BenchmarkInfo.NormalizedResults.RemoveAt(BenchmarkInfo.NormalizedResults.Count-1);
+				ResetBenchmark = false;
+				if (_currentAttempt < MaxAttempts) {
+					_currentAttempt++;
+					state = BenchmarkLifecycle.Initialize(this);
+				}
+				else {
+					BenchmarkInfo.HasRun = true;
+				}
+			}
+			else {
+				if (CsharpRAPLCLI.Options.UseLoopIterationScaling &&
+				    BenchmarkInfo.RawResults[^1].ElapsedTime < TargetLoopIterationTime) {
+					state = BenchmarkLifecycle.AdjustLoopIterations(state);
+					if (ResetBenchmark) {
+						i = 0;
+						ResetBenchmark = false;
+					}
 				}
 			}
 
-			if (BenchmarkInfo.ElapsedTime < MaxExecutionTime) {
+
+			if (BenchmarkInfo.ElapsedTime < MaxExecutionTime && !BenchmarkInfo.HasRun) {
 				if (CsharpRAPLCLI.Options.UseIterationCalculation) {
 					BenchmarkInfo.Iterations = IterationCalculationAll();
 				}
+				
+				if (i >= BenchmarkInfo.Iterations) {
+					state = BenchmarkLifecycle.End(state);
+				}
+				state = BenchmarkLifecycle.PostRun(state);
 
 				continue;
 			}
 
-			Print(Console.WriteLine, $"\rEnding for {BenchmarkInfo.Name} benchmark due to time constraints");
+			Print(Console.WriteLine,
+				BenchmarkInfo.HasRun
+					? $"\rEnding for {BenchmarkInfo.Name} benchmark due to repeated failure"
+					: $"\rEnding for {BenchmarkInfo.Name} benchmark due to time constraints");
+			state = BenchmarkLifecycle.End(state);
+			state = BenchmarkLifecycle.PostRun(state);
+
 			break;
 		}
 		if(CsharpRAPLCLI.Options.Verbose) {

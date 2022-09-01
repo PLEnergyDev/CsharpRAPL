@@ -4,6 +4,21 @@
 
 Fork of https://gitlab.com/ImDreamer/CsharpRAPL
 
+# Table of contents 
+1. [Introduction](#introduction)
+2. [Requirements](#requirements)
+3. [Usage](#usage)
+   1. [Registering Benchmarks](#registering-benchmarks)
+      1. [Attributes](#attributes)
+      2. [Manual](#attributes)
+      3. [IPC Benchmarks](#ipc-benchmarks)
+      4. [Automatic Compilation of IPC Benchmarks](#automatic-compilation-of-ipc-benchmarks)
+   2. [Running the Benchmarks](#running-the-benchmarks)
+4. [Scripts](#scripts)
+5. [CLI Options](#cli-options)
+
+# Introduction
+
 CSharpRAPL is a framework for benchmarking C# in regards to energy.
 In the Benchmarks folder, all the benchmarks created for this project can be found.
 
@@ -122,10 +137,72 @@ public static int DummyBenchmark() {
 }
 ```
 
+### IPC Benchmarks
+From version [1.4.1](https://github.com/PLEnergyDev/CsharpRAPL/packages/1521502?version=1.4.1) CsharpRAPL support running benchmarks that are not necessarily written in C# by communicating over sockets using our IPC benchmark protocol.
+Documentation as well as implementations for C#, Java and C are available [here](https://github.com/PLEnergyDev/IPC).
+
+To register an IPC benchmark, make use of the ``IpcBenchmarkLifecycle`` in the ``Benchamrk`` attribute like so:
+```c#
+[Benchmark("IPC", "An IPC benchamrk", typeof(IpcBenchmarkLifecycle)]
+public static IpcState IpcBenchmark(IpcState s){
+    s.ExecutablePath = "MyIpcExecutable";
+    return s; 
+}
+```
+The method needs to have the signature ``(IpcState) => IpcState`` and set the ``ExecutablePath`` property of the state.
+The file located at the given path will be launched and given the path to an ``FPipe`` (See [IPC](https://github.com/PLEnergyDev/IPC)) open for connection as argument.
+
+To function correctly, your program should adhere to the IPC protocol.
+
+### Automatic Compilation of IPC Benchmarks
+To make IPC benchmarking easier, pipelines for compiling C and Java benchmarks have been implemented.
+1. Write a C or Java function you want to benchmark
+2. Copy the files from either [CSocketComm](https://github.com/PLEnergyDev/IPC/tree/master/CSocketComm) or [JSocketComm](https://github.com/PLEnergyDev/IPC/tree/master/JSocketComm/src) to be in the same directory as your source file
+3. Copy either the [CompileC](https://github.com/PLEnergyDev/CsharpRAPL/blob/master/CsharpRAPL/Benchmarking/CompileCBenchmarks.sh) or [CompileJava](https://github.com/PLEnergyDev/CsharpRAPL/blob/master/CsharpRAPL/Benchmarking/CompileJavaBenchmarks.sh) script to be in working directory of your C# benchmarking program.
+4. Your C# benchmark method should then return either a ``CState`` or ``JavaState`` (see examples below)
+5. Your benchmark method should set the following properties in the state:
+    - ``LibPath`` - The path to your source directory containing the files from step 1 & 2
+    - ``JavaFile``/``CFile`` - The path, from ``LibPath``, to the file containing the method you want to benchmark.
+    - ``BenchmarkSignature`` - Commands you want to execute during the benchmarking (including ;)
+    - ``AdditionalCompilerOptions`` - (optional) Any additional options passed to the compiler e.g. optimizations or library linking
+    - ``KeepCompilationResults`` - (optional) Keep the generated source files and compilation results of the benchmark. Default is false
+    - ``HeaderFile``(C only) - The Path, from ``LibPath``, to the appropriate header file to your ``CFile``
+
+**NB!**
+Make sure that your compile script is marked as executable. If not, it cannot be launched. This can be done with the command ``sudo chmod +x <path/to/script>``
+
+**Example of a Java benchmark**
+```c#
+[Benchmark("Java", "A Java IPC benchamrk", typeof(IpcBenchmarkLifecycle)]
+public static JavaState IpcBenchmark(IpcState s){
+    return new JavaState(s.pipePath){
+        LibPath = "Benchmarks/Java",
+        JavaFile = "Bench.java",
+        BenchmarkSignature = "Bench.Run();",
+        KeepCompilationResults = true 
+    };
+}
+```
+**Example of a C benchmark**
+```c#
+[Benchmark("C", "A C IPC benchamrk", typeof(IpcBenchmarkLifecycle)]
+public static CState IpcBenchmark(IpcState s){
+    return new CState(s.pipePath){
+        LibPath = "Benchmarks/C",
+        JavaFile = "bench.c",
+        HeaderFile = "bench.h",
+        BenchmarkSignature = "RunBenchmark();",
+        AdditionalCompilerOptions = "-lm"
+    };
+}
+```
+See more examples [here](#https://github.com/PLEnergyDev/CSNumericPerformance/tree/master)
+
+
 ## Running the Benchmarks 
 To run the benchmarks simply call ``RunAll`` on either your ``BenchmarkSuite`` or ``BenchmarkCollector`` instance.
 
-For more examples look at [Suite.cs](https://gitlab.com/Plagiatdrengene/CsharpRAPL/-/blob/main/Benchmarks/Suite.cs) or at the tests.
+For more examples look at [Suite.cs](https://github.com/PLEnergyDev/CsharpRAPL/blob/master/Benchmarks/Suite.cs) or at the tests.
 
 
 # Scripts
