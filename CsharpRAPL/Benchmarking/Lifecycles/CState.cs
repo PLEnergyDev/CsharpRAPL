@@ -16,6 +16,10 @@ public class CState : IpcState {
 	public string LibPath { get; set; }
 	private List<string> _libs = new List<string>{"libSocketComm.a"};
 	private List<string> _includes = new List<string>{"SocketComm"};
+	
+	/// <summary>
+	/// List of library files relative to LibPath/lib to link in compilation
+	/// </summary>
 	public List<string> Libs {
 		get => _libs;
 		set {
@@ -26,6 +30,9 @@ public class CState : IpcState {
 		}
 	}
 
+	/// <summary>
+	/// List of include directories relative to LibPath/include to include in compilation
+	/// </summary>
 	public List<string> Includes {
 		get => _includes;
 		set {
@@ -53,6 +60,9 @@ public class CState : IpcState {
 
 	private string _sendSignature;
 
+	/// <summary>
+	/// C code for sending benchmark result to benchmarkrunner 
+	/// </summary>
 	public string SendSignature {
 		get => _sendSignature;
 		set {
