@@ -68,7 +68,7 @@ public class NopBenchmarkLifecycle : IBenchmarkLifecycle<IBenchmark> {
 	public IBenchmark PostRun(IBenchmark oldstate) => oldstate;
 	public IBenchmark PreRun(IBenchmark oldstate) => oldstate;
 
-	public object Run(IBenchmark state) {
+	public IBenchmark Run(IBenchmark state) {
 		object? instance = BenchmarkedMethod.IsStatic ? null : Activator.CreateInstance(BenchmarkedMethod.DeclaringType!);
 		var parameters = this.GetParameters();
 		BenchmarkedMethod.Invoke(instance, parameters);

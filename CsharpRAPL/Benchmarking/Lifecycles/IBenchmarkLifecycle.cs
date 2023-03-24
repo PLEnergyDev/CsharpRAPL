@@ -27,8 +27,9 @@ public interface IBenchmarkLifecycle <T> : IBenchmarkLifecycle{
 	public new T Initialize(IBenchmark benchmark); //TODO: should be fine.... create tests 
 	public T WarmupIteration(T oldstate);
 	public T PreRun(T oldstate);
-	public object Run(T state);
+	public T Run(T state);
 	public T PostRun(T oldstate);
 	public T AdjustLoopIterations(T oldstate);
 	public T End(T oldstate);
+	
 }
