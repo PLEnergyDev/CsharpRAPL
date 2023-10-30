@@ -23,6 +23,10 @@ public class IpcState {
 	protected string CompilationPath { get; set; }
 	public bool KeepCompilationResults = false;
 
+	public Func<IpcState,IpcState> prerun = s => s;
+
+	public Func<IpcState,IpcState> postrun = s => s;
+
 	protected virtual IpcState Generate() => this;
 
 	protected virtual void OnPipeListening(object? sender, EventArgs e) {
