@@ -16,10 +16,10 @@ else
   echo -n "No additional compiler options found... " || exit 1
 fi
 
-gcc -c cmd.c -o cmd.o || exit 1
-gcc -c scomm.c -o scomm.o || exit 1
-gcc -c "$2" -o bench.o || exit 1
-gcc main.c cmd.o scomm.o bench.o -o CBench $SUBSTRING || exit 1
+#gcc -c cmd.c -o cmd.o || exit 1
+#gcc -c scomm.c -o scomm.o || exit 1
+#gcc -c "$2" -o bench.o || exit 1
+gcc main.c "$2" -o CBench $SUBSTRING  || exit 1
 
 echo "Done!"
 exit 0

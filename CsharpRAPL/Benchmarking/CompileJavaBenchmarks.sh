@@ -16,15 +16,16 @@ fi
 
 
 cd "$1" || exit 1
-
 echo -n "Compiling... "
-SUBSTRING=$(echo "$3"| cut -d'"' -f 2) || exit 1
+SUBSTRING=$(echo "$4"| cut -d'"' -f 2) || exit 1
+FLAG=$(echo "$3" | cut -d' ' -f 1) || exit 1
+CP=$(echo "$3" | cut -d' ' -f 2) || exit 1
 if test "$SUBSTRING" != "" ; then
   echo -n "Compiler options: $SUBSTRING... "
-  javac *.java "$SUBSTRING" || exit 1
+  javac "$FLAG" "$CP" "$SUBSTRING" *.java  || exit 1
 else
   echo -n "No additional compiler options found... "
-  javac *.java || exit 1
+  javac "$FLAG" "$CP" *.java || exit 1
 fi
 
 jar -cmf MANIFEST.MF JavaBench.jar *.class || exit 1

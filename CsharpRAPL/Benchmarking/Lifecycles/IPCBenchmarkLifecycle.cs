@@ -36,9 +36,13 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 	public IpcState WarmupIteration(IpcState oldstate) {
 		try {
 			if (!oldstate.Benchmark.ResetBenchmark) {
-				oldstate.Pipe.ExpectCmd(Cmd.Ready);
-				oldstate.Pipe.WriteCmd(Cmd.Go);
-				oldstate.Pipe.ExpectCmd(Cmd.Done);
+				oldstate = PreRun(oldstate);
+				oldstate = Run(oldstate);
+				//oldstate.Pipe.ExpectCmd(Cmd.Ready);
+				//oldstate.Pipe.WriteCmd(Cmd.Go);
+				//oldstate.Pipe.ExpectCmd(Cmd.Done);
+				//oldstate.Pipe.WriteCmd(Cmd.Ready);
+				oldstate.postrun(oldstate);
 				oldstate.Pipe.WriteCmd(Cmd.Ready);
 			}
 		}
@@ -53,6 +57,9 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 		try {
 			if (!oldstate.Benchmark.ResetBenchmark) {
 				oldstate.Pipe.ExpectCmd(Cmd.Ready);
+				oldstate.Pipe.SendValue(BenchmarkInfo.LoopIterations, SimpleConversion.NumberToBytes);
+				oldstate.prerun(oldstate);
+				oldstate.Pipe.ExpectCmd(Cmd.Ready);
 			}
 		}
 		catch (Exception) {
@@ -62,7 +69,7 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 		return oldstate;
 	}
 
-	public object Run(IpcState state) {
+	public IpcState Run(IpcState state) {
 		try {
 			if (!state.Benchmark.ResetBenchmark) {
 				state.Pipe.WriteCmd(Cmd.Go);
@@ -78,6 +85,7 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 	public IpcState PostRun(IpcState oldstate) {
 		try {
 			if (!oldstate.Benchmark.ResetBenchmark) {
+				oldstate.postrun(oldstate);
 				oldstate.Pipe.WriteCmd(oldstate.HasRun ? Cmd.Done : Cmd.Ready);
 			}
 			else {
@@ -93,12 +101,33 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 
 	public IpcState AdjustLoopIterations(IpcState oldstate) {
 		//TODO: scale over IPC
-		//BenchmarkInfo.LoopIterations = 10;
+		if (ScaleLoopIterations()) {
+			oldstate.Benchmark.ResetBenchmark = true;
+		}
 		return oldstate;
 	}
 
 	public IpcState End(IpcState oldstate) {
 		oldstate.HasRun = true;
 		return oldstate;
+	}
+	
+	private bool ScaleLoopIterations() {
+		ulong currentValue = BenchmarkInfo.LoopIterations;
+		
+		switch (currentValue) {
+			case ulong.MaxValue:
+				return false;
+			case >= ulong.MaxValue / 2:
+				BenchmarkInfo.LoopIterations =  ulong.MaxValue;
+				BenchmarkInfo.RawResults.Clear();
+				BenchmarkInfo.NormalizedResults.Clear();
+				return true;
+			default:
+				BenchmarkInfo.LoopIterations = currentValue + currentValue;
+				BenchmarkInfo.RawResults.Clear();
+				BenchmarkInfo.NormalizedResults.Clear();
+				return true;
+		}
 	}
 }
