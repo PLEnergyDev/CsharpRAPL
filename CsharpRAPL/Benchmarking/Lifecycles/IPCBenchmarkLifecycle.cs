@@ -38,11 +38,6 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 			if (!oldstate.Benchmark.ResetBenchmark) {
 				oldstate = PreRun(oldstate);
 				oldstate = Run(oldstate);
-				//oldstate.Pipe.ExpectCmd(Cmd.Ready);
-				//oldstate.Pipe.WriteCmd(Cmd.Go);
-				//oldstate.Pipe.ExpectCmd(Cmd.Done);
-				//oldstate.Pipe.WriteCmd(Cmd.Ready);
-				oldstate.postrun(oldstate);
 				oldstate.Pipe.WriteCmd(Cmd.Ready);
 			}
 		}
@@ -56,9 +51,7 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 	public IpcState PreRun(IpcState oldstate) {
 		try {
 			if (!oldstate.Benchmark.ResetBenchmark) {
-				oldstate.Pipe.ExpectCmd(Cmd.Ready);
-				oldstate.Pipe.SendValue(BenchmarkInfo.LoopIterations, SimpleConversion.NumberToBytes);
-				oldstate.prerun(oldstate);
+				// oldstate.Pipe.SendValue(BenchmarkInfo.LoopIterations, SimpleConversion.NumberToBytes);
 				oldstate.Pipe.ExpectCmd(Cmd.Ready);
 			}
 		}
@@ -85,7 +78,6 @@ public class IpcBenchmarkLifecycle : IBenchmarkLifecycle<IpcState> {
 	public IpcState PostRun(IpcState oldstate) {
 		try {
 			if (!oldstate.Benchmark.ResetBenchmark) {
-				oldstate.postrun(oldstate);
 				oldstate.Pipe.WriteCmd(oldstate.HasRun ? Cmd.Done : Cmd.Ready);
 			}
 			else {

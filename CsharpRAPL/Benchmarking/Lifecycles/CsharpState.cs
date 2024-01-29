@@ -6,8 +6,8 @@ using System.Linq;
 
 namespace CsharpRAPL.Benchmarking.Lifecycles; 
 
-public class CState : IpcState {
-	public CState(IpcState state) : base(state.PipePath, state.Benchmark) { }
+public class CsharpState : IpcState {
+	public CsharpState(IpcState state) : base(state.PipePath, state.Benchmark) { }
 
 	public string RootPath { get; set; }
 	public string BenchmarkPath { get; set; }
@@ -66,15 +66,9 @@ public class CState : IpcState {
 
 		File.Copy(sourceScriptPath, destinationScriptPath);
 
-		var mainFilePath = Path.Combine(destinationLibPath, "main.c");
+		var mainFilePath = Path.Combine(destinationLibPath, "Program.cs");
 		var mainFile = File.ReadAllLines(mainFilePath);
 
-		var headerFiles = Directory.GetFiles(sourceBenchmarkPath, "*.h");
-		var includeStatements = string.Join("\n", headerFiles.Select(file =>
-			$"#include \"{Path.GetFileName(file)}\""
-		));
-
-	    ReplaceLine(ref mainFile, "///[INCLUDES]", includeStatements);
 	    ReplaceLine(ref mainFile, "///[BENCHMARK]", BenchmarkSignature);
 	    // ReplaceLine(ref mainFile, "///[RESULT]", SendSignature);
 
@@ -96,7 +90,7 @@ public class CState : IpcState {
 	    }
 
 		CompilationPath = destinationPath;
-	    ExecutablePath = Path.Combine(destinationPath, "CBench");
+	    ExecutablePath = Path.Combine(destinationPath, "CsharpBench");
 
 	    return this;
 	}

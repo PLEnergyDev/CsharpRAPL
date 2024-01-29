@@ -9,103 +9,89 @@ namespace CsharpRAPL.Benchmarking.Lifecycles;
 public class JavaState : IpcState {
 	public JavaState(IpcState state) : base(state.PipePath, state.Benchmark) { }
 
-	public string JavaFile { get; set; }
-	public string LibPath { get; set; }
-	public string BenchmarkSignature { get; set; }
+	public string RootPath { get; set; }
+	public string BenchmarkPath { get; set; }
 	public string? AdditionalCompilerOptions { get; set; }
-	public string? JavaPath { get; set; }
 
-	private List<string> _libs = new List<string> { "JSocketComm.jar" };
-		
-	private string _sendSignature;
+	private string _benchmarkSignature;
+	// private string _sendSignature;
 
-	/// <summary>
-	/// Java code for sending benchmark result to benchmarkrunner 
-	/// </summary>
-	public string SendSignature {
-		get => _sendSignature;
+	public string BenchmarkSignature {
+		get => _benchmarkSignature;
 		set {
-			_sendSignature = value;
-			if (!value.EndsWith(";")) {
-				_sendSignature += ";";
-			}
+	        if (value == null) throw new ArgumentNullException(nameof(value));
+	        _benchmarkSignature = value.EndsWith(";") ? value : value + ";";
 		}
 	}
-	
+
 	/// <summary>
-	/// List of library files relative to LibPath/lib to link in compilation
+	/// Java code for sending benchmark result to benchmarkrunner
 	/// </summary>
-	public List<string> Libs {
-		get => _libs;
-		set {
-			var result = new List<string>();
-			result.Add("JSocketComm.jar");
-			result.AddRange(value);
-			_libs = result;
-		}
+	// public string SendSignature {
+	// 	get => _sendSignature;
+	// 	set {
+	//         if (value == null) throw new ArgumentNullException(nameof(value));
+	//         _sendSignature = value.EndsWith(";") ? value : value + ";";
+	// 	}
+	// }
+
+	private void ReplaceLine(ref string[] fileLines, string lineIdentifier, string newLineContent) {
+	    var lineIndex = Array.FindIndex(fileLines, line => line.Contains(lineIdentifier));
+	    if (lineIndex != -1) {
+	        fileLines[lineIndex] = newLineContent;
+	    }
 	}
 
 	protected override IpcState Generate() {
-		//Create directory and copy lib
-		string[] filesToCopy = _libs.ToArray();
-		var dt = DateTime.Now;
-		var dir = Directory.CreateDirectory(
-			$"tmp/JavaBench/{BenchmarkSignature}-{dt.ToString("s").Replace(":", "-")}-{dt.Millisecond}");
-		CompilationPath = dir.FullName;
-		foreach (var f in filesToCopy) {
-			File.Copy($"{LibPath}/{f}",$"{dir.FullName}/{f}");
-		}
-		
-		// Write main file
-		var main = File.ReadAllLines(LibPath + "/Main.java").ToList();
-		var benchmarkLine = main.FindIndex(s => s.Contains("///Compute benchmark here"));
-		var sendLine = main.FindIndex(s => s.Contains("///Send return value here"));
-		main[benchmarkLine] = BenchmarkSignature;
-		main[sendLine] = SendSignature;
-		File.WriteAllLines(dir.FullName + "/Main.java", main);
-		
-		// Write benchmark file
-		//var bench = File.ReadAllLines($"{LibPath}/{JavaFile}").ToList();
-		//File.WriteAllLines($"{dir.FullName}/{JavaFile}", bench);
-		File.Copy($"{LibPath}/{JavaFile}",$"{dir.FullName}/{JavaFile}");
-		
-		// Write MANIFEST file
-		var manifest = new List<string> { "Main-Class: Main" };
-		var cp = "Class-Path: ";
-		foreach (var lib in Libs) {
-			cp += lib + " ";
-		}
-		manifest.Add(cp);
-		//manifest files need to end in blank line
-		manifest.Add("");
-		
-		File.WriteAllLines(dir.FullName + "/MANIFEST.MF", manifest);
-			
+		var now = DateTime.Now;
+		var safeDateTime = now.ToString("yyyyMMdd-HHmmss-fff");
 
-		JavaPath ??= "java";
-		//Run compile script
-		var classPath = Libs[0];
-		foreach (var lib in Libs.Skip(1)) {
-			classPath += ":" + lib;
+		var sourceLibPath = Path.Combine(RootPath, "lib");
+		var sourceScriptPath = Path.Combine(RootPath, "CompileBenchmark.sh");
+		var sourceBenchmarkPath = Path.Combine(RootPath, BenchmarkPath);
+
+		var destinationPath = $"tmp/{RootPath}/{BenchmarkSignature}-{safeDateTime}";
+		Directory.CreateDirectory(destinationPath);
+		var destinationLibPath = Path.Combine(destinationPath, "lib");
+		Directory.CreateDirectory(destinationLibPath);
+		var destinationScriptPath = Path.Combine(destinationPath, "CompileBenchmark.sh");
+
+		var libFiles = Directory.GetFiles(sourceLibPath);
+		var benchmarkFiles = Directory.GetFiles(sourceBenchmarkPath);
+		var filesToCopy = libFiles.Concat(benchmarkFiles);
+		foreach (var file in filesToCopy) {
+			var destPath = Path.Combine(destinationLibPath, Path.GetFileName(file));
+			File.Copy(file, destPath, true);
 		}
 
-		var args = "\"" + dir.FullName + "\" " +
-		           JavaPath + " " +
-		           "\"-cp " + classPath + "\" " +
-		           "\"" + AdditionalCompilerOptions + "\"";
-		           
+		File.Copy(sourceScriptPath, destinationScriptPath);
 
-		var compile = new ProcessStartInfo("CompileJavaBenchmarks.sh") {
-			Arguments = args,
-			UseShellExecute = true,
-			CreateNoWindow = true
-		};
-		var compP = Process.Start(compile);
-		compP?.WaitForExit();
-		if (compP!.ExitCode != 0) {
-			throw new InvalidOperationException($"Compilation for {JavaFile} failed!");
-		}
-		ExecutablePath = dir.FullName + "/JavaBench.sh";
-		return this;
+		var mainFilePath = Path.Combine(destinationLibPath, "Main.java");
+		var mainFile = File.ReadAllLines(mainFilePath);
+
+	    ReplaceLine(ref mainFile, "///[BENCHMARK]", BenchmarkSignature);
+	    // ReplaceLine(ref mainFile, "///[RESULT]", SendSignature);
+
+	    File.WriteAllLines(mainFilePath, mainFile);
+		
+	    var compileProc = new ProcessStartInfo() {
+	    	FileName = destinationScriptPath,
+	        WorkingDirectory = destinationPath,
+	        Arguments = AdditionalCompilerOptions,
+	        CreateNoWindow = true,
+	        UseShellExecute = false,
+	    };
+
+	    using (var proc = Process.Start(compileProc)) {
+	        proc.WaitForExit();
+		    if (proc == null || proc.ExitCode != 0) {
+		        throw new InvalidOperationException($"[ERROR] Compilation failed!");
+		    }
+	    }
+
+		CompilationPath = destinationPath;
+	    ExecutablePath = Path.Combine(destinationPath, "JavaBench");
+
+	    return this;
 	}
 }
