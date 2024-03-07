@@ -36,7 +36,7 @@ public class IpcState {
 				UseShellExecute = false
 			};
 
-			using (var proc = new Process { StartInfo = serverProcInfo }) {
+			using (var proc = Process.Start(serverProcInfo)) {
 				proc.EnableRaisingEvents = true;
 				proc.Exited += (sender, args) => {
 					if (proc.ExitCode == 0) {
@@ -47,8 +47,6 @@ public class IpcState {
 						Benchmark.ResetBenchmark = true;
 					}
 				};
-
-				proc.Start();
 			}
 		} catch (Exception){
 			if (File.Exists(PipePath)) {

@@ -13,6 +13,10 @@ public class Options {
 	private ulong _loopIterations;
 	private long _memoryForTurningOffGarbageCollection;
 
+	[Option('w', nameof(Warmup), Required = false,
+		HelpText = "Wether to run benchmarks after wamup runs.")]
+	public bool Warmup { get; set; } = false;
+
 	[Option('g', nameof(SkipPlotGroups), Required = false,
 		HelpText = "If plotting each benchmark group should be skipped.")]
 	public bool SkipPlotGroups { get; set; }

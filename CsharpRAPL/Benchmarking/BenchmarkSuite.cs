@@ -99,7 +99,7 @@ public class BenchmarkSuite {
 
 			Console.WriteLine(
 				$"Starting {bench.BenchmarkInfo.Name} which is the {index + 1} benchmark out of {benchmarks.Count} benchmarks");
-			bench.Run();
+			bench.Run(warmup);
 			Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
 			Console.WriteLine(
 				$"\rFinished {bench.BenchmarkInfo.Name} in {bench.BenchmarkInfo.ElapsedTime:F3}s with {bench.GetResults().Count} iterations\n");

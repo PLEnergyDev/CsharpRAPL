@@ -133,17 +133,18 @@ public class Benchmark<T> : IBenchmark {
 	}
 	//Performs benchmarking
 	//Writes progress to stdout if there is more than one iteration
-	public void Run() {
+	public void Run(bool warmup = true) {
 		Console.WriteLine($"BenchmarkLifecycle: {BenchmarkLifecycle?.GetType().FullName}") ;
 		Setup();
-		Print(Console.WriteLine,"Initializing benchmark");
+		Print(Console.WriteLine,"RAPL INFO: Initializing benchmark");
 		object state = BenchmarkLifecycle.Initialize(this);
-		Print(Console.WriteLine,"Warmup");
-		for(ulong i=0;i<BenchmarkInfo.Iterations;i++) {
-			if (ResetBenchmark) {
-				break;
+
+		if (warmup) {
+			Print(Console.WriteLine, $"RAPL INFO: Commencing {BenchmarkInfo.Iterations} Warmup runs\n");
+			for(ulong i = 0; i < BenchmarkInfo.Iterations && !ResetBenchmark; i++) {
+				state = BenchmarkLifecycle.WarmupIteration(state);
 			}
-			state = BenchmarkLifecycle.WarmupIteration(state);
+			Print(Console.WriteLine, $"RAPL INFO: Warmup done!\n");
 		}
 
 		for (ulong i = 0; i <= BenchmarkInfo.Iterations; i++) {
@@ -290,7 +291,7 @@ public class Benchmark<T> : IBenchmark {
 
 
 	/// Used to print to standard out -- Everything printed outside this method will not be shown
-	private void Print(Action<string> printAction, string value = "") {
+	public void Print(Action<string> printAction, string value = "") {
 		Console.SetOut(_stdout);
 		printAction(value);
 		Console.Out.Flush();
